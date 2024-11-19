@@ -7,12 +7,8 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema triplog
 -- -----------------------------------------------------
-
--- -----------------------------------------------------
--- Schema triplog
--- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `triplog` DEFAULT CHARACTER SET utf8mb3 ;
-USE `mydb` ;
+USE `triplog` ;
 
 -- -----------------------------------------------------
 -- Table `triplog`.`user`
@@ -26,58 +22,13 @@ CREATE TABLE IF NOT EXISTS `triplog`.`user` (
   `admin` TINYINT NOT NULL DEFAULT '0',
   `email_id` VARCHAR(45) NOT NULL,
   `email_domain` VARCHAR(45) NOT NULL,
-  `created_at` VARCHAR(45) NULL,
+  `created_at` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`user_no`),
   UNIQUE INDEX `user_id_UNIQUE` (`user_id` ASC) VISIBLE,
   UNIQUE INDEX `nickname_UNIQUE` (`nickname` ASC) VISIBLE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
-
--- -----------------------------------------------------
--- Table `triplog`.`plan`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `triplog`.`plan` (
-  `plan_no` INT NOT NULL AUTO_INCREMENT,
-  `user_no` INT NOT NULL,
-  `title` VARCHAR(100) NOT NULL,
-  `registtime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `description` VARCHAR(100) NULL DEFAULT '',
-  PRIMARY KEY (`plan_no`),
-  INDEX `fk_plan_user1_idx` (`user_no` ASC) VISIBLE,
-  CONSTRAINT `fk_plan_user1`
-    FOREIGN KEY (`user_no`)
-    REFERENCES `triplog`.`user` (`user_no`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb3;
-
-
--- -----------------------------------------------------
--- Table `triplog`.`article_plan`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `triplog`.`article_plan` (
-  `article_no` INT NOT NULL,
-  `plan_no` INT NOT NULL,
-  `user_no` INT NOT NULL,
-  `title` VARCHAR(45) NOT NULL,
-  `content` VARCHAR(10000) NOT NULL,
-  `created_at` TIMESTAMP NULL DEFAULT CURRUNT_TIMESTAMP,
-  PRIMARY KEY (`article_no`),
-  INDEX `fk_article_plan_plan_idx` (`plan_no` ASC) VISIBLE,
-  INDEX `fk_article_plan_user1_idx` (`user_no` ASC) VISIBLE,
-  CONSTRAINT `fk_article_plan_plan`
-    FOREIGN KEY (`plan_no`)
-    REFERENCES `triplog`.`plan` (`plan_no`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_article_plan_user1`
-    FOREIGN KEY (`user_no`)
-    REFERENCES `triplog`.`user` (`user_no`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-USE `triplog` ;
 
 -- -----------------------------------------------------
 -- Table `triplog`.`article`
@@ -125,6 +76,47 @@ CREATE TABLE IF NOT EXISTS `triplog`.`article_picture` (
   CONSTRAINT `fk_board_picture_picture1`
     FOREIGN KEY (`picture_no`)
     REFERENCES `triplog`.`picture` (`picture_no`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `triplog`.`plan`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `triplog`.`plan` (
+  `plan_no` INT NOT NULL AUTO_INCREMENT,
+  `user_no` INT NOT NULL,
+  `title` VARCHAR(100) NOT NULL,
+  `registtime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `description` VARCHAR(100) NULL DEFAULT '',
+  PRIMARY KEY (`plan_no`),
+  INDEX `fk_plan_user1_idx` (`user_no` ASC) VISIBLE,
+  CONSTRAINT `fk_plan_user1`
+    FOREIGN KEY (`user_no`)
+    REFERENCES `triplog`.`user` (`user_no`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `triplog`.`article_plan`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `triplog`.`article_plan` (
+  `article_no` INT NOT NULL,
+  `plan_no` INT NOT NULL,
+  `user_no` INT NOT NULL,
+  `title` VARCHAR(45) NOT NULL,
+  `content` VARCHAR(10000) NOT NULL,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`article_no`),
+  INDEX `fk_article_plan_plan_idx` (`plan_no` ASC) VISIBLE,
+  INDEX `fk_article_plan_user1_idx` (`user_no` ASC) VISIBLE,
+  CONSTRAINT `fk_article_plan_plan`
+    FOREIGN KEY (`plan_no`)
+    REFERENCES `triplog`.`plan` (`plan_no`),
+  CONSTRAINT `fk_article_plan_user1`
+    FOREIGN KEY (`user_no`)
+    REFERENCES `triplog`.`user` (`user_no`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
@@ -290,14 +282,12 @@ CREATE TABLE IF NOT EXISTS `triplog`.`hit_plan` (
   PRIMARY KEY (`hit_no`),
   INDEX `fk_hit_plan_user1` (`user_no` ASC) VISIBLE,
   INDEX `fk_hit_plan_article_plan1_idx` (`article_no` ASC) VISIBLE,
-  CONSTRAINT `fk_hit_plan_user1`
-    FOREIGN KEY (`user_no`)
-    REFERENCES `triplog`.`user` (`user_no`),
   CONSTRAINT `fk_hit_plan_article_plan1`
     FOREIGN KEY (`article_no`)
-    REFERENCES `mydb`.`article_plan` (`article_no`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    REFERENCES `triplog`.`article_plan` (`article_no`),
+  CONSTRAINT `fk_hit_plan_user1`
+    FOREIGN KEY (`user_no`)
+    REFERENCES `triplog`.`user` (`user_no`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
@@ -336,12 +326,28 @@ CREATE TABLE IF NOT EXISTS `triplog`.`plan_stars` (
   PRIMARY KEY (`star_no`),
   INDEX `fk_plan_stars_user1_idx` (`user_no` ASC) VISIBLE,
   INDEX `fk_plan_stars_article_plan1_idx` (`article_no` ASC) VISIBLE,
-  CONSTRAINT `fk_plan_stars_user1`
-    FOREIGN KEY (`user_no`)
-    REFERENCES `triplog`.`user` (`user_no`),
   CONSTRAINT `fk_plan_stars_article_plan1`
     FOREIGN KEY (`article_no`)
-    REFERENCES `mydb`.`article_plan` (`article_no`)
+    REFERENCES `triplog`.`article_plan` (`article_no`),
+  CONSTRAINT `fk_plan_stars_user1`
+    FOREIGN KEY (`user_no`)
+    REFERENCES `triplog`.`user` (`user_no`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `triplog`.`user_image`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `triplog`.`user_image` (
+  `image_no` INT NOT NULL AUTO_INCREMENT,
+  `user_no` INT NOT NULL,
+  `image` VARCHAR(200) NULL DEFAULT NULL,
+  PRIMARY KEY (`image_no`),
+  INDEX `fk_user_image_user1_idx` (`user_no` ASC) VISIBLE,
+  CONSTRAINT `fk_user_image_user1`
+    FOREIGN KEY (`user_no`)
+    REFERENCES `triplog`.`user` (`user_no`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
