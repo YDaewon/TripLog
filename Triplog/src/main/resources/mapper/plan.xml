@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.triplog.plan.model.mapper.PlanMapper">
+	<resultMap type="PlanDto" id="plan">
+		<result column="plan_no" property="planNo" />
+		<result column="user_no" property="userNo" />
+		<result column="title" property="title" />
+		<result column="description" property="description" />
+		<result column="fork_count" property="forkCount" />
+	</resultMap>
+
+	<resultMap type="DestinationDto" id="destination">
+		<result property="destinationNo" column="destination_no" />
+		<result property="destinationOrder" column="destination_order" />
+		<result property="visitDate" column="visit_date" />
+		<result property="memo" column="memo" />
+		<result property="attractionNo" column="attraction_no" />
+		<result property="attractionTitle" column="attraction_title" />
+		<result property="contentTypeId" column="content_type_id" />
+		<result property="firstImage1" column="first_image1" />
+		<result property="addr1" column="addr1" />
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude" />
+	</resultMap>
+
+	<!-- plan insert -->
+	<insert id="createPlan" parameterType="PlanDto">
+		INSERT INTO plans (user_no, title, description) VALUES(#{userNo}, #{title},
+		#{description});
+	</insert>
+
+	<!-- plan delete -->
+	<delete id="deletePlan" parameterType="String">
+		DELETE FROM plans
+		WHERE plan_no = #{planNo};
+	</delete>
+
+	<!-- plan read -->
+	<select id="getPlan" parameterType="map" resultMap="plan">
+		SELECT p.plan_no, p.title, p.description, p.created_at, p.fork_count,
+		u.user_name, u.user_image,
+		(SELECT COUNT(*) FROM plan_destinations pd WHERE pd.plan_no = p.plan_no) as
+		destination_count
+		FROM plans p
+		JOIN users u ON p.user_no = u.user_no
+		WHERE p.plan_no = #{planNo}
+		AND p.deleted_at IS NULL;
+	</select>
+
+	<select id="getDestinations" parameterType="String"
+		resultMap="destination">
+		SELECT destination_no, destination_order, visit_date, memo, a.attraction_no,
+		title as attraction_title, content_type_id, first_image1, addr1,
+		latitude, longitude
+		FROM plan_destinations pd
+		JOIN attractions a ON pd.attraction_no = a.attraction_no
+		WHERE pd.plan_no = #{planNo}
+		ORDER BY destination_order;
+	</select>
+
+	<select id="getPlans" parameterType="String" resultMap="plan">
+		SELECT plan_no, p.user_no, title, p.created_at, description, fork_count,
+		u.user_name
+		FROM plans p
+		JOIN users u ON u.user_id = #{userId}
+		AND u.user_no = p.user_no
+		WHERE p.deleted_at IS NULL;
+	</select>
+
+	<!-- plan update -->
+	<update id="updatePlan" parameterType="PlanDto">
+		UPDATE plans
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="title != null">title = #{title},</if>
+			<if test="description != null">description = #{description},</if>
+		</trim>
+		WHERE plan_no = #{planNo}
+	</update>
+
+	<!-- delete(admin) -->
+	<delete id="deletePlanAdmin" parameterType="String">
+		DELETE FROM plans WHERE plan_no = #{planNo}
+	</delete>
+
+</mapper>
