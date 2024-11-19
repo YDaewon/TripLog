@@ -3,10 +3,13 @@ package com.triplog.plan.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import com.triplog.plan.model.DestinationDto;
 import com.triplog.plan.model.PlanDto;
 import com.triplog.plan.model.mapper.PlanMapper;
 
+@Service
 public class PlanServiceImpl implements PlanService {
 
 	private final PlanMapper planMapper;
@@ -17,8 +20,8 @@ public class PlanServiceImpl implements PlanService {
 	}
 
 	@Override
-	public void createPlan(PlanDto planDto) {
-		planMapper.createPlan(planDto);
+	public int createPlan(PlanDto planDto) {
+		return planMapper.createPlan(planDto);
 	}
 
 	@Override
@@ -37,12 +40,12 @@ public class PlanServiceImpl implements PlanService {
 	}
 
 	@Override
-	public void updatePlan(PlanDto planDto) {
-		planMapper.updatePlan(planDto);
+	public int updatePlan(PlanDto planDto) {
+		return planMapper.updatePlan(planDto);
 	}
 
 	@Override
-	public void deletePlan(String planNo) {
-		planMapper.deletePlan(planNo);
+	public int deletePlan(String planNo) {
+		return planMapper.deletePlan(planNo);
 	}
 }
