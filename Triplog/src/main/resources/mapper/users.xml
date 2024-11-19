@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.triplog.user.model.mapper.UserMapper">
+
+	<resultMap type="UserDto" id="user">
+		<result column="user_no" property="userNo"/>
+		<result column="user_id" property="userId"/>
+		<result column="user_pwd" property="userPwd"/>
+		<result column="nickname" property="nickname"/>
+		<result column="user_image" property="userImage"/>
+		<result column="admin" property="admin"/>
+	</resultMap>
+	
+	<!-- Detail -->
+	<resultMap type="UserDto" id="userAll" extends="user">
+		<result column="user_name" property="userName"/>
+		<result column="email_id" property="emailId"/>
+		<result column="email_domain" property="emailDomain"/>
+		<result column="created_at" property="createdAt"/>
+		<result column="deleted_at" property="deletedAt"/>
+	</resultMap>
+
+	<select id="idCheck" parameterType="string" resultType="int">
+		select count(user_id)
+		from users
+		where user_id = #{userId}
+	</select>
+
+	<insert id="joinUser" parameterType="UserDto">
+		insert into users (user_name, user_id, user_pwd, email_id, email_domain, user_image, nickname) 
+		values (#{Name}, #{Id}, #{Pwd}, #{emailId}, #{emailDomain}, #{Image}, #{Nickname})
+	</insert>
+
+	<select id="loginUser" parameterType="map" resultMap="user">
+		select *
+		from users
+		where user_id = #{Id} and user_pwd = #{Pwd}
+	</select>
+	
+	<select id="getUser" parameterType="int" resultMap="userAll">
+		SELECT user_no, user_id, user_pwd, user_name, nickname, email_id, email_domain, 
+				admin, created_at, deleted_at, user_image FROM users
+	</select>
+	
+	<update id="updateUser" parameterType="UserDto">
+		UPDATE users 
+			<trim prefix="set" suffixOverrides=",">
+			    <if test="userPwd != null">user_pwd = #{Pwd}</if>
+			    <if test="userNickname != null">nickname = #{Nickname}</if>
+			    <if test="emailId != null">email_id = #{emailId}</if>
+			    <if test="emailDomain != null">email_domain = #{emailDomain}</if>
+			    <if test="userImage != null">user_image = #{Image}</if>
+			    <if test="admin != null and admin_check != 0">admin = #{Admin}</if>
+			</trim>
+		where user_no = #{userNo}
+	</update>
+	
+	<delete id="deleteUser" parameterType="int">
+		UPDATE users set deleted_at = CURRENT_TIMESTAMP where user_no= #{userNo}
+	</delete>
+	
+	<!-- ADMIN -->
+	<select id="listUser" resultMap="userAll">
+		select user_no, user_id, user_pwd, user_name, nickname, email_id, email_domain, 
+				admin, created_at, deleted_at, user_image from users
+		order by join_date
+	</select>
+
+	
+</mapper>

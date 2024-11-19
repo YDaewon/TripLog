@@ -1,0 +1,71 @@
+3. 게시글 리스트
+input: x
+output: List<articleDto>
+sql: SELECT 
+    a.article_no AS articleNo,
+    a.title AS articleTitle,
+    u.nickname AS author,
+    (SELECT count(*) from article_stars s where a.article_no = s.article.no) AS star,
+    hit_count AS hitCount,
+    a.created_at AS registTime
+  FROM 
+    article a
+  LEFT JOIN
+    user u ON a.user_id = u.id
+  WHERE 
+    deleted_at IS NULL
+    <trim prefix="AND (" suffix=")" suffixOverrides="OR">
+      <if test="title != null and title != ''"> 
+        a.title LIKE CONCAT('%', #{keyword}, '%') OR 
+      </if>
+      <if test="content != null and content != ''"> 
+        a.content LIKE CONCAT('%', #{keyword}, '%') OR 
+      </if>
+      <if test="name != null and name != ''"> 
+        u.userNickname LIKE CONCAT('%', #{keyword}, '%') OR 
+      </if>
+    </trim>
+  ORDER BY created_at DESC
+
+3-1 게시글 상세 페이지
+input: articleNo
+output: 1
+sql: INSERT INTO hit_article (user_no, article_no)
+    values(#{userNo}, #{articleNo}) -- 조회 로그 기록
+UPDATE article set hit_count = hit_count + 1 where article_no = #{articleNo};
+---------------------------------------------------------
+SELECT * from article where article_no = #{articleNo};
+
+3-2. 게시글 생성(이미지의 생성도 같이 해야함)
+input: MAP (userNo, title, content)
+output: 1
+sql: insert into article (user_no, title, content) 
+    values (#{userNo}, #{title}, #{content})
+
+3-3. 게시글 삭제(이미지의 삭제도 같이 해야함)
+input: articleNo
+output: 1
+sql: UPDATE article set
+   deleted_at = current_timestamp
+where article_no = #{articleNo}
+
+3-4. 게시글 수정 (이미지는 삭제 + 생성)
+input: articleNo, titie, content, planNo
+output: 1
+sql: UPDATE article
+<trim prefix="set" suffixOverrides=",">
+    <if test="title != null">title = #{title}</if>
+    <if test="content != null">content = #{content}</if>
+</trim>
+where article_no = #{articleNo}
+
+3-5. 즐겨찾기 추가
+input: articleNo, user_no
+output: 1
+sql: INSERT INTO article_stars (article_no, user_no)
+	VALUES (#{articleNo}, #{userNo})
+
+3-6. 즐겨찾기 삭제
+input: articleNo, user_no
+output: 1
+sql: DELETE FROM article_stars WHERE article_no = #{articleNo} AND user_no = #{userNo}
