@@ -80,8 +80,9 @@ public class UserController {
 			UserDto loginUser = UserService.loginUser(loginInfo);
 			if (loginUser != null) {
 				System.out.println(loginUser.getNickname());
-				String accessToken = jwtUtil.createAccessToken(loginUser.getUserId(), loginUser.getUserNo());
-				String refreshToken = jwtUtil.createRefreshToken(loginUser.getUserId(), loginUser.getUserNo());
+
+				String accessToken = jwtUtil.createAccessToken(loginUser.getUserId(), loginUser.getUserNo(), loginUser.getRole());
+				String refreshToken = jwtUtil.createRefreshToken(loginUser.getUserId(), loginUser.getUserNo(), loginUser.getRole());
 				log.debug("access token : {}", accessToken);
 				log.debug("refresh token : {}", refreshToken);
 				
@@ -165,6 +166,7 @@ public class UserController {
 			log.info("사용 가능한 토큰!!!");
 			try {
 //				로그인 사용자 정보.
+				UserDto.setUserId(userId);
 				UserService.updateUser(UserDto);
 				resultMap.put("message", "회원 정보 수정 성공");
 				status = HttpStatus.OK;

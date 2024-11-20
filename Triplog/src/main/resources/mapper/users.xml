@@ -11,6 +11,7 @@
 		<result column="user_image" property="userImage"/>
 		<result column="token" property="token"/>
 		<result column="deleted_at" property="deletedAt"/>
+		<result column="role" property="role"/>
 	</resultMap>
 	
 	<!-- Detail -->
@@ -60,7 +61,7 @@
 
 	<select id="getUser" parameterType="string" resultMap="userAll">
 		SELECT user_no, user_id, user_pwd, user_name, nickname, email_id, email_domain, 
-				created_at, deleted_at, user_image, token FROM users
+				created_at, deleted_at, user_image, role FROM users
 				where user_id = #{userId}
 	</select>
 	
@@ -76,14 +77,14 @@
 		where user_id = #{userId}
 	</update>
 	
-	<delete id="deleteUser" parameterType="string">
+	<update id="deleteUser" parameterType="string">
 		UPDATE users set deleted_at = CURRENT_TIMESTAMP where user_id= #{userId}
-	</delete>
+	</update>
 	
 	<!-- ADMIN -->
 	<select id="listUser" resultMap="userAll">
 		select user_no, user_id, user_pwd, user_name, nickname, email_id, email_domain, 
-				created_at, deleted_at, user_image, token from users
+				created_at, deleted_at, user_image, token, role from users
 		order by join_date
 	</select>
 

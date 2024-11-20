@@ -13,7 +13,6 @@
 	    <result column="fork_count" property="forkCount" />
 	</resultMap>
 
-
 	<resultMap type="DestinationDto" id="destination">	
 	    <result property="planNo" column="plan_no"/>
 	    <result property="destinationNo" column="destination_no"/>
@@ -31,8 +30,8 @@
 
 	<!-- plans -->
 	<insert id="createPlan" parameterType="PlanDto">
-		INSERT INTO plans (user_no, title, description)
-		VALUES(#{userNo}, #{title}, #{description});
+		INSERT INTO plans (user_no, title, description) VALUES(#{userNo}, #{title},
+		#{description});
 	</insert>
 
 	<update id="deletePlan" parameterType="int">

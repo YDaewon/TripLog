@@ -31,7 +31,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Tag(name = "Plan Controller", description = "여행 계획 정보를 담당하는 컨트롤러입니다.")
+@Tag(name = "Plan Controller", description = "여행계획 정보를 담당하는 컨트롤러입니다.")
 @RestController
 @RequestMapping("/plan")
 public class PlanController {
@@ -43,7 +43,7 @@ public class PlanController {
 	}
 
 	@PostMapping("/")
-	@Operation(summary = "여행 계획 생성", description = "새 여행 계획을 추가합니다.")
+	@Operation(summary = "여행 계획 생성", description = "새 여행계획을 추가합니다.")
 	public ResponseEntity<String> createPlan(
 			@Parameter(description = "여행 계획 기본정보", required = true) @RequestBody PlanDto planDto,
 			HttpServletRequest request) {
