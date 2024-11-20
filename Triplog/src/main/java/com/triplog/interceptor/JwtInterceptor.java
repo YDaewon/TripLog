@@ -28,21 +28,6 @@ public class JwtInterceptor implements HandlerInterceptor {
 			return false;
 		}
 
-<<<<<<< HEAD
-		try {
-			// JWT 토큰 검증
-			if (!jwtUtil.checkToken(token)) {
-				throw new UnAuthorizedException();
-			}
-
-			Map<String, Object> userInfo = jwtUtil.getUserInfo(token);
-			String userId = (String) userInfo.get("userId");
-			int userNo = (int) userInfo.get("userNo");
-
-			// 사용자 정보를 요청에 저장
-			request.setAttribute("userId", userId);
-			request.setAttribute("userNo", userNo);
-=======
         try {
             // JWT 토큰 검증
             if (!jwtUtil.checkToken(token)) {
@@ -60,12 +45,6 @@ public class JwtInterceptor implements HandlerInterceptor {
             response.sendRedirect(request.getContextPath() + "/user/login");
             return false;
         }
->>>>>>> 3e68b6880ef9a8964cf19ad8598f79c87c7e0d57
-
-		} catch (UnAuthorizedException e) {
-			response.sendRedirect(request.getContextPath() + "/user/login");
-			return false;
-		}
 
 		return true;
 	}
