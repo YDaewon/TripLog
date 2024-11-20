@@ -12,52 +12,63 @@
 	</resultMap>
 
 	<resultMap type="DestinationDto" id="destination">
-		<result property="destinationNo" column="destination_no" />
-		<result property="destinationOrder" column="destination_order" />
-		<result property="visitDate" column="visit_date" />
-		<result property="memo" column="memo" />
-		<result property="attractionNo" column="attraction_no" />
-		<result property="attractionTitle" column="attraction_title" />
-		<result property="contentTypeId" column="content_type_id" />
-		<result property="firstImage1" column="first_image1" />
-		<result property="addr1" column="addr1" />
-		<result property="latitude" column="latitude" />
-		<result property="longitude" column="longitude" />
+	    <result property="destinationNo" column="destination_no"/>
+	    <result property="destinationOrder" column="destination_order"/>
+	    <result property="visitDate" column="visit_date"/>
+	    <result property="memo" column="memo"/>
+	    <result property="attractionNo" column="attraction_no"/>
+	    <result property="attractionTitle" column="title"/>
+	    <result property="contentTypeName" column="content_type_name"/>
+	    <result property="firstImage1" column="first_image1"/>
+	    <result property="addr1" column="addr1"/>
+	    <result property="latitude" column="latitude"/>
+	    <result property="longitude" column="longitude"/>
 	</resultMap>
 
 	<!-- plan insert -->
 	<insert id="createPlan" parameterType="PlanDto">
-		INSERT INTO plans (user_no, title, description) VALUES(#{userNo}, #{title},
-		#{description});
+		INSERT INTO plans (user_no, title, description)
+		VALUES(#{userNo}, #{title}, #{description});
 	</insert>
 
 	<!-- plan delete -->
-	<delete id="deletePlan" parameterType="String">
-		DELETE FROM plans
-		WHERE plan_no = #{planNo};
-	</delete>
+	<update id="deletePlan" parameterType="String">
+		UPDATE plans
+		SET deleted_at = CURRENT_TIMESTAMP
+		WHERE plan_no = #{planNo}
+	</update>
+
 
 	<!-- plan read -->
 	<select id="getPlan" parameterType="map" resultMap="plan">
-		SELECT p.plan_no, p.title, p.description, p.created_at, p.fork_count,
-		u.user_name, u.user_image,
-		(SELECT COUNT(*) FROM plan_destinations pd WHERE pd.plan_no = p.plan_no) as
-		destination_count
+		SELECT p.plan_no, p.title, p.description, p.created_at, p.fork_count, u.user_name, u.user_image,
+		(SELECT COUNT(*) FROM plan_destinations pd WHERE pd.plan_no = p.plan_no) as destination_count
 		FROM plans p
 		JOIN users u ON p.user_no = u.user_no
 		WHERE p.plan_no = #{planNo}
+		AND u.user_id = #{userId}
 		AND p.deleted_at IS NULL;
 	</select>
 
-	<select id="getDestinations" parameterType="String"
-		resultMap="destination">
-		SELECT destination_no, destination_order, visit_date, memo, a.attraction_no,
-		title as attraction_title, content_type_id, first_image1, addr1,
-		latitude, longitude
+	<!-- destinations read -->
+	<select id="getDestinations" parameterType="String" resultMap="destination">
+		SELECT 
+		    pd.destination_no,
+		    pd.destination_order,
+		    pd.visit_date,
+		    pd.memo,
+		    a.attraction_no,
+		    a.title,
+		    ct.content_type_name,
+		    a.first_image1,
+		    a.addr1,
+		    a.latitude,
+		    a.longitude
 		FROM plan_destinations pd
 		JOIN attractions a ON pd.attraction_no = a.attraction_no
-		WHERE pd.plan_no = #{planNo}
-		ORDER BY destination_order;
+		JOIN contenttypes ct ON a.content_type_id = ct.content_type_id
+		WHERE pd.plan_no = 1
+		ORDER BY pd.destination_order;
 	</select>
 
 	<select id="getPlans" parameterType="String" resultMap="plan">
@@ -83,5 +94,4 @@
 	<delete id="deletePlanAdmin" parameterType="String">
 		DELETE FROM plans WHERE plan_no = #{planNo}
 	</delete>
-
 </mapper>
