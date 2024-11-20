@@ -32,7 +32,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto loginUser(Map<String, String> map) throws SQLException {
-		return userMapper.loginUser(map);
+		UserDto dto = userMapper.loginUser(map);
+		if(dto.getDeletedAt() == null) {
+			return dto;
+		}
+		else return null;
 	}
 
 	@Override

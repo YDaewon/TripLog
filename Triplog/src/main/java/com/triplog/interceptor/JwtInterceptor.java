@@ -21,7 +21,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             throws Exception {
         String token = request.getHeader("accessToken");
         // JWT 토큰이 없거나 형식이 올바르지 않으면 로그인 페이지로 리다이렉트
-        if (token == null || !token.isEmpty()) {
+        if (token == null || token.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/user/login");
             return false;
         }
@@ -33,7 +33,6 @@ public class JwtInterceptor implements HandlerInterceptor {
             }
 
             String userId = jwtUtil.getUserId(token);
-
             // 사용자 정보를 요청에 저장
             request.setAttribute("userId", userId);
 

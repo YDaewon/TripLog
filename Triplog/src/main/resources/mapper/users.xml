@@ -10,6 +10,7 @@
 		<result column="nickname" property="nickname"/>
 		<result column="user_image" property="userImage"/>
 		<result column="token" property="token"/>
+		<result column="deleted_at" property="deletedAt"/>
 	</resultMap>
 	
 	<!-- Detail -->
@@ -19,7 +20,6 @@
 		<result column="email_id" property="emailId"/>
 		<result column="email_domain" property="emailDomain"/>
 		<result column="created_at" property="createdAt"/>
-		<result column="deleted_at" property="deletedAt"/>
 	</resultMap>
 
 	<select id="idCheck" parameterType="string" resultType="int">
@@ -60,18 +60,18 @@
 
 	<select id="getUser" parameterType="string" resultMap="userAll">
 		SELECT user_no, user_id, user_pwd, user_name, nickname, email_id, email_domain, 
-				admin, created_at, deleted_at, user_image FROM users
+				created_at, deleted_at, user_image, token FROM users
 				where user_id = #{userId}
 	</select>
 	
 	<update id="updateUser" parameterType="UserDto">
 		UPDATE users 
 			<trim prefix="set" suffixOverrides=",">
-			    <if test="userPwd != null">user_pwd = #{Pwd}</if>
-			    <if test="userNickname != null">nickname = #{Nickname}</if>
-			    <if test="emailId != null">email_id = #{emailId}</if>
-			    <if test="emailDomain != null">email_domain = #{emailDomain}</if>
-			    <if test="userImage != null">user_image = #{Image}</if>
+			    <if test="userPwd != null">user_pwd = #{userPwd},</if>
+			    <if test="nickname != null">nickname = #{nickname},</if>
+			    <if test="emailId != null">email_id = #{emailId},</if>
+			    <if test="emailDomain != null">email_domain = #{emailDomain},</if>
+			    <if test="userImage != null">user_image = #{userImage},</if>
 			</trim>
 		where user_id = #{userId}
 	</update>
@@ -83,7 +83,7 @@
 	<!-- ADMIN -->
 	<select id="listUser" resultMap="userAll">
 		select user_no, user_id, user_pwd, user_name, nickname, email_id, email_domain, 
-				admin, created_at, deleted_at, user_image from users
+				created_at, deleted_at, user_image, token from users
 		order by join_date
 	</select>
 
