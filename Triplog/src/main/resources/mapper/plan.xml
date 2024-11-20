@@ -14,7 +14,8 @@
 	</resultMap>
 
 
-	<resultMap type="DestinationDto" id="destination">
+	<resultMap type="DestinationDto" id="destination">	
+	    <result property="planNo" column="plan_no"/>
 	    <result property="destinationNo" column="destination_no"/>
 	    <result property="destinationOrder" column="destination_order"/>
 	    <result property="visitDate" column="visit_date"/>
@@ -28,31 +29,52 @@
 	    <result property="longitude" column="longitude"/>
 	</resultMap>
 
-	<!-- plan insert -->
+	<!-- plans -->
 	<insert id="createPlan" parameterType="PlanDto">
 		INSERT INTO plans (user_no, title, description)
 		VALUES(#{userNo}, #{title}, #{description});
 	</insert>
 
-	<!-- plan delete -->
 	<update id="deletePlan" parameterType="int">
 		UPDATE plans
 		SET deleted_at = CURRENT_TIMESTAMP
 		WHERE plan_no = #{planNo}
 	</update>
 
-	<!-- plan read -->
 	<select id="getPlan" parameterType="int" resultMap="plan">
-		SELECT p.plan_no, p.title, p.description, p.created_at, p.fork_count, u.user_name, u.user_image
+		SELECT p.plan_no, p.user_no, p.title, p.description, p.created_at, p.deleted_at, p.fork_count
 		FROM plans p
-		JOIN users u ON p.user_no = u.user_no
 		WHERE p.plan_no = #{planNo}
 		AND p.deleted_at IS NULL;
 	</select>
+	
+	<select id="getPlans" parameterType="int" resultMap="plan">
+		SELECT p.plan_no, p.user_no, p.title, p.description, p.created_at, p.deleted_at, p.fork_count
+		FROM plans p
+		JOIN users u ON u.user_no = p.user_no
+		AND u.user_no = #{userNo}
+		WHERE p.deleted_at IS NULL;
+	</select>
+	
+	<update id="updatePlan" parameterType="PlanDto">
+		UPDATE plans
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="title != null">title = #{title},</if>
+			<if test="description != null">description = #{description},</if>
+		</trim>
+		WHERE plan_no = #{planNo}
+		AND deleted_at IS NULL;
+	</update>
 
-	<!-- destinations read -->
+	<!-- delete(admin) -->
+	<delete id="deletePlanAdmin" parameterType="map">
+		DELETE FROM plans WHERE plan_no = #{planNo}
+	</delete>
+	
+	<!-- destinations -->
 	<select id="getDestinations" parameterType="int" resultMap="destination">
 		SELECT 
+			pd.plan_no,
 		    pd.destination_no,
 		    pd.destination_order,
 		    pd.visit_date,
@@ -71,28 +93,37 @@
 		ORDER BY pd.destination_order;
 	</select>
 
-	<select id="getPlans" parameterType="int" resultMap="plan">
-		SELECT plan_no, p.user_no, title, description, p.created_at, fork_count,
-		u.user_name
-		FROM plans p
-		JOIN users u ON u.user_no = p.user_no
-		AND u.user_no = #{userNo}
-		WHERE p.deleted_at IS NULL;
-	</select>
+	<insert id="addDestinations" parameterType="DestinationDto">
+	    INSERT INTO plan_destinations (
+	        attraction_no,
+	        plan_no,
+	        visit_date,
+	        destination_order,
+	        memo
+	    )
+	    VALUES (
+	        #{attractionNo},
+	        #{planNo},
+	        #{visitDate},
+	        #{destinationOrder},
+	        #{memo}
+	    )
+	</insert>
 
-	<!-- plan update -->
-	<update id="updatePlan" parameterType="PlanDto">
-		UPDATE plans
-		<trim prefix="SET" suffixOverrides=",">
-			<if test="title != null">title = #{title},</if>
-			<if test="description != null">description = #{description},</if>
-		</trim>
-		WHERE plan_no = #{planNo}
-		AND deleted_at IS NULL;
+	<update id="updateDestination" parameterType="DestinationDto">
+	    UPDATE plan_destinations
+	    <set>
+	        <if test="destinationOrder != null">destination_order = #{destinationOrder},</if>
+	        <if test="visitDate != null">visit_date = #{visitDate},</if>
+	        <if test="memo != null">memo = #{memo},</if>
+	        <if test="attractionNo != null">attraction_no = #{attractionNo},</if>
+	    </set>
+	    WHERE destination_no = #{destinationNo}
 	</update>
 
-	<!-- delete(admin) -->
-	<delete id="deletePlanAdmin" parameterType="map">
-		DELETE FROM plans WHERE plan_no = #{planNo}
+	<delete id="deleteDestination" parameterType="int">
+	    DELETE FROM plan_destinations
+	    WHERE destination_no = #{destinationNo}
 	</delete>
+
 </mapper>

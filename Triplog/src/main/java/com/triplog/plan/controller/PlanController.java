@@ -83,24 +83,6 @@ public class PlanController {
 		}
 	}
 
-	@GetMapping("/dest")
-	@Operation(summary = "여행 목적지 조회", description = "여행 목적지 정보들을 조회합니다.")
-	public ResponseEntity<?> getDestinations(
-			@Parameter(description = "계획 번호", required = true) @RequestParam("planNo") int planNo) {
-		try {
-			List<DestinationDto> results = planService.getDestinations(planNo);
-			for (DestinationDto d : results) {
-				System.out.println(d.toString());
-			}
-			return new ResponseEntity<>(results, HttpStatus.OK);
-		} catch (Exception e) {
-			System.out.println(e.toString());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 목적지 조회 중 문제 발생");
-		}
-	}
-
-	// TODO: dest CRUD 작성
-
 	@PutMapping("/")
 	@Operation(summary = "여행 계획 수정", description = "여행 계획 기본정보를 수정합니다.")
 	public ResponseEntity<String> updatePlan(
@@ -140,4 +122,81 @@ public class PlanController {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("삭제 권한이 없습니다.");
 		}
 	}
+	// 여행계획 CRUD ↑ ----------------------------------------------------
+	// 목적지 CRUD ↓ ------------------------------------------------------
+	
+	@GetMapping("/dest")
+	@Operation(summary = "여행 목적지 조회", description = "여행 목적지 정보들을 조회합니다.")
+	public ResponseEntity<?> getDestinations(
+			@Parameter(description = "소속된 여행계획 번호", required = true) @RequestParam("planNo") int planNo) {
+		try {
+			List<DestinationDto> results = planService.getDestinations(planNo);
+			for(DestinationDto d : results) {
+				System.out.println(d.toString());
+			}
+			return new ResponseEntity<>(results, HttpStatus.OK);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 목적지 조회 중 문제 발생");
+		}
+	}
+	
+	
+	/* 목적지 추가
+	{
+	  "planNo": 2,
+	  "destinationOrder": 3,
+	  "visitDate": "2024-12-12",
+	  "memo": "추가테스트",
+	  "attractionNo": 3
+	}
+	*/
+	@PostMapping("/dest")
+	@Operation(summary = "여행 목적지 추가", description = "여행 목적지 정보를 추가합니다.")
+	public ResponseEntity<?> addDestinations(
+			@Parameter(description = "추가할 목적지 정보", required = true) @RequestBody DestinationDto destinationDto) {
+		try {
+			System.out.println(destinationDto.toString());
+			planService.addDestinations(destinationDto);
+			return ResponseEntity.status(HttpStatus.CREATED).body("목적지 추가 성공");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("목적지 추가 중 문제 발생");
+		}
+	}
+
+	
+	/* 목적지 수정
+	{
+		"planNo": 2,
+		"destinationNo": 5,
+		"destinationOrder": 3,
+		"visitDate": "2024-12-12",
+		"memo": "수정테스트",
+		"attractionNo": 3
+	}
+	*/
+	@PutMapping("/dest")
+	@Operation(summary = "여행 목적지 수정", description = "기존의 여행 목적지를 수정합니다.")
+	public ResponseEntity<?> updateDestination(
+			@Parameter(description = "변경할 목적지 정보", required = true) @RequestBody DestinationDto destinationDto) {
+	    try {
+	        planService.updateDestination(destinationDto);
+	        return new ResponseEntity<>("여행 목적지 수정 성공", HttpStatus.OK);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 목적지 수정 중 문제 발생");
+	    }
+	}
+	
+	@DeleteMapping("/dest/{destinationNo}")
+	@Operation(summary = "여행 목적지 삭제", description = "여행 목적지를 삭제합니다.")
+	public ResponseEntity<?> deleteDestination(
+			@Parameter(description = "삭제할 목적지 번호", required = true) @PathVariable("destinationNo") int destinationNo) {
+	    try {
+	        planService.deleteDestination(destinationNo);
+	        return new ResponseEntity<>("여행 목적지 삭제 성공", HttpStatus.NO_CONTENT);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 목적지 삭제 중 문제 발생");
+	    }
+	}
+
+	
 }
