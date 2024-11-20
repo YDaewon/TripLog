@@ -26,17 +26,17 @@ public class PlanServiceImpl implements PlanService {
 	}
 
 	@Override
-	public PlanDto getPlan(Map<String, String> map) {
-		return planMapper.getPlan(map);
+	public PlanDto getPlan(int planNo) {
+		return planMapper.getPlan(planNo);
 	}
 
 	@Override
-	public List<PlanDto> getPlans(String userId) {
+	public List<PlanDto> getPlans(int userId) {
 		return planMapper.getPlans(userId);
 	}
 
 	@Override
-	public List<DestinationDto> getDestinations(String planNo) {
+	public List<DestinationDto> getDestinations(int planNo) {
 		return planMapper.getDestinations(planNo);
 	}
 
@@ -46,12 +46,12 @@ public class PlanServiceImpl implements PlanService {
 	}
 
 	@Override
-	public int deletePlan(String planNo) {
+	public int deletePlan(int planNo) {
 		return planMapper.deletePlan(planNo);
 	}
 	
 	@Override
-	public int deletePlanAdmin(String planNo) {
-		return planMapper.deletePlanAdmin(planNo);
+	public int deletePlanAdmin(Map<String, Integer> map) {
+		return planMapper.deletePlanAdmin(map);
 	}
 }
