@@ -2,6 +2,7 @@ package com.triplog.user.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
 @Data
 @Schema(title = "UserDto (회원정보)", description = "회원 정보를 가진 Domain Class")
 public class UserDto {
