@@ -54,4 +54,23 @@ public class PlanServiceImpl implements PlanService {
 	public int deletePlanAdmin(Map<String, Integer> map) {
 		return planMapper.deletePlanAdmin(map);
 	}
+
+	@Override
+	public void addDestinations(DestinationDto destinationDto) {
+		planMapper.addDestinations(destinationDto);
+	}
+
+	@Override
+	public void deleteDestination(int destinationNo) {
+		planMapper.deleteDestination(destinationNo);
+	}
+
+	@Override
+	public void updateDestination(DestinationDto destinationDto) {
+		try {			
+			planMapper.updateDestination(destinationDto);
+		}catch (Exception e) {
+			System.out.println(e.toString());
+		}
+	}
 }

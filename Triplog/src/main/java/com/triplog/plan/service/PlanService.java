@@ -10,8 +10,12 @@ public interface PlanService {
 	int createPlan(PlanDto planDto);
 	PlanDto getPlan(int planNo);
 	List<PlanDto> getPlans(int userId);
-	List<DestinationDto> getDestinations(int planNo);
 	int updatePlan(PlanDto planDto);
 	int deletePlan(int planNo);
 	int deletePlanAdmin(Map<String, Integer> map);
+	
+	List<DestinationDto> getDestinations(int planNo);
+	void addDestinations(DestinationDto destinationDto);
+	void deleteDestination(int destinationNo);
+	void updateDestination(DestinationDto destinationDto);
 }
