@@ -1,0 +1,46 @@
+package com.triplog.interceptor;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
+
+import com.triplog.exception.UnAuthorizedException;
+import com.triplog.util.JWTUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@Component
+public class JwtInterceptor implements HandlerInterceptor {
+
+    @Autowired
+    private JWTUtil jwtUtil;
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
+        String token = request.getHeader("accessToken");
+        // JWT 토큰이 없거나 형식이 올바르지 않으면 로그인 페이지로 리다이렉트
+        if (token == null || token.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/user/login");
+            return false;
+        }
+
+        try {
+            // JWT 토큰 검증
+            if (!jwtUtil.checkToken(token)) {
+                throw new UnAuthorizedException();
+            }
+
+            String userId = jwtUtil.getUserId(token);
+            // 사용자 정보를 요청에 저장
+            request.setAttribute("userId", userId);
+
+        } catch (UnAuthorizedException e) {
+            response.sendRedirect(request.getContextPath() + "/user/login");
+            return false;
+        }
+
+        return true;
+    }
+}

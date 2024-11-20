@@ -12,10 +12,16 @@ public interface UserService {
 	int idCheck(String userId) throws SQLException;
 	void joinUser(UserDto userDto) throws SQLException;
 	UserDto loginUser(Map<String, String> map) throws SQLException;
-	UserDto getUser(int userNo) throws SQLException; // Detail
-	void updateUser(UserDto UserDto, @Param("admin_check") int admin_check) throws SQLException;
-	void deleteUser(int userNo) throws SQLException;
+	UserDto getUser(String userId) throws SQLException; // Detail
+	void updateUser(UserDto UserDto) throws SQLException;
+	void deleteUser(String userId) throws SQLException;
+	
+	//JWT
+	void saveRefreshToken(String userId, String refreshToken) throws Exception;
+	Object getRefreshToken(String userId) throws Exception;
+	void deleRefreshToken(String userId) throws Exception;
 	
 	/* Admin */
 	List<UserDto> listUser() throws SQLException;
+
 }
