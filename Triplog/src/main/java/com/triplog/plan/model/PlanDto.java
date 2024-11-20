@@ -1,7 +1,6 @@
 package com.triplog.plan.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
 
 @Schema(title = "PlanDto (여행계획 기본정보)", description = "여행계획의 제목, 설명을 저장하는 Domain Class")
 public class PlanDto {
