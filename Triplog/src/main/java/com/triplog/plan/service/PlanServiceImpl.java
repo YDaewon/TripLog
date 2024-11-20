@@ -21,6 +21,7 @@ public class PlanServiceImpl implements PlanService {
 
 	@Override
 	public int createPlan(PlanDto planDto) {
+		System.out.println(planDto.toString());
 		return planMapper.createPlan(planDto);
 	}
 
@@ -47,5 +48,10 @@ public class PlanServiceImpl implements PlanService {
 	@Override
 	public int deletePlan(String planNo) {
 		return planMapper.deletePlan(planNo);
+	}
+	
+	@Override
+	public int deletePlanAdmin(String planNo) {
+		return planMapper.deletePlanAdmin(planNo);
 	}
 }
