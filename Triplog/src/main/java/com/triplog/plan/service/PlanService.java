@@ -8,9 +8,14 @@ import com.triplog.plan.model.PlanDto;
 
 public interface PlanService {
 	int createPlan(PlanDto planDto);
-	PlanDto getPlan(Map<String, String> map);
-	List<PlanDto> getPlans(String userId);
-	List<DestinationDto> getDestinations(String planNo);
+	PlanDto getPlan(int planNo);
+	List<PlanDto> getPlans(int userId);
 	int updatePlan(PlanDto planDto);
-	int deletePlan(String planNo);
+	int deletePlan(int planNo);
+	int deletePlanAdmin(Map<String, Integer> map);
+	
+	List<DestinationDto> getDestinations(int planNo);
+	void addDestinations(DestinationDto destinationDto);
+	void deleteDestination(int destinationNo);
+	void updateDestination(DestinationDto destinationDto);
 }
