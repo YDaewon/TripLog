@@ -93,7 +93,7 @@ public class UserController {
 
 				status = HttpStatus.CREATED;
 			} else {
-				resultMap.put("message", "아이디 또는 패스워드를 확인해 주세요.");
+				resultMap.put("message", "로그인 중 문제 발생");
 				status = HttpStatus.UNAUTHORIZED;
 
 			}
@@ -134,8 +134,7 @@ public class UserController {
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.ACCEPTED;
 		String tokenId = (String) request.getAttribute("userId");
-		System.out.println(tokenId + "     flag");
-		if (userId == tokenId) {
+		if (userId.equals(tokenId)) {
 			log.info("사용 가능한 토큰!!!");
 			try {
 //				로그인 사용자 정보.
@@ -159,12 +158,11 @@ public class UserController {
 	@PutMapping("/info/{userId}")
 	@Operation(summary = "회원 정보 수정", description = "회원 정보를 수정하는 URL")
 	public ResponseEntity<Map<String, Object>> modify(@RequestBody UserDto UserDto,  @PathVariable("userId") String userId,
-			@RequestHeader("accessToken") String header, HttpServletRequest request) {
-		log.debug("userId : {}, header : {} ", userId, header);
+		HttpServletRequest request) {
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.ACCEPTED;
 		String tokenId = (String) request.getAttribute("userId");
-		if (userId == tokenId) {
+		if (userId.equals(tokenId)) {
 			log.info("사용 가능한 토큰!!!");
 			try {
 //				로그인 사용자 정보.
@@ -187,16 +185,16 @@ public class UserController {
 	@Operation(summary = "계정 삭제", description = "userNo에 해당하는 계정 정보를 삭제")
 	public ResponseEntity<Map<String, Object>> delete(
 			@Parameter(description = "유저 ID", required = true) @PathVariable("userId") String userId,
-			@RequestHeader("accessToken") String header, HttpServletRequest request) {
-		log.debug("userId : {}, header : {} ", userId, header);
+			HttpServletRequest request) {
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.ACCEPTED;
 		String tokenId = (String) request.getAttribute("userId");
-		if (userId == tokenId) {
+		if (userId.equals(tokenId)) {
 			log.info("사용 가능한 토큰!!!");
 			try {
 //				로그인 사용자 정보.
 				UserService.deleteUser(userId);
+				UserService.deleRefreshToken(userId);
 				resultMap.put("message", "회원 삭제 성공");
 				status = HttpStatus.OK;
 			} catch (Exception e) {

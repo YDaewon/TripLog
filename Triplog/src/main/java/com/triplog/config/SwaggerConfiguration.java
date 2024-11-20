@@ -25,13 +25,11 @@ public class SwaggerConfiguration {
 						.email("qkqh9860@naver.com").url("http://edu.ssafy.com"));
 
 		return new OpenAPI().components(new Components()
-                .addSecuritySchemes("bearerAuth",
-                        new SecurityScheme().type(SecurityScheme.Type.HTTP)
-                                .scheme("bearer")
-                                .bearerFormat("JWT")
+                .addSecuritySchemes("accessToken",
+                        new SecurityScheme().type(SecurityScheme.Type.APIKEY)
                                 .in(SecurityScheme.In.HEADER)
                                 .name("accessToken")))
-        .addSecurityItem(new SecurityRequirement().addList("bearerAuth")).info(info);
+        .addSecurityItem(new SecurityRequirement().addList("accessToken")).info(info);
 	}
 
 	@Bean
@@ -39,5 +37,10 @@ public class SwaggerConfiguration {
 		return GroupedOpenApi.builder().group("ssafy-user").pathsToMatch("/user/**").build();
 	}
 
-
+/*
+ * {
+  "userId": "ssafy",
+  "userPwd": "ssafy"
+}
+ */
 }
