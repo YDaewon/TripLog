@@ -1,5 +1,7 @@
 package com.triplog.interceptor;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -13,34 +15,38 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
 
-    @Autowired
-    private JWTUtil jwtUtil;
+	@Autowired
+	private JWTUtil jwtUtil;
 
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
-        String token = request.getHeader("accessToken");
-        // JWT 토큰이 없거나 형식이 올바르지 않으면 로그인 페이지로 리다이렉트
-        if (token == null || token.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/user/login");
-            return false;
-        }
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
+		String token = request.getHeader("accessToken");
+		// JWT 토큰이 없거나 형식이 올바르지 않으면 로그인 페이지로 리다이렉트
+		if (token == null || token.isEmpty()) {
+			response.sendRedirect(request.getContextPath() + "/user/login");
+			return false;
+		}
 
-        try {
-            // JWT 토큰 검증
-            if (!jwtUtil.checkToken(token)) {
-                throw new UnAuthorizedException();
-            }
+		try {
+			// JWT 토큰 검증
+			if (!jwtUtil.checkToken(token)) {
+				throw new UnAuthorizedException();
+			}
 
-            String userId = jwtUtil.getUserId(token);
-            // 사용자 정보를 요청에 저장
-            request.setAttribute("userId", userId);
+			Map<String, Object> userInfo = jwtUtil.getUserInfo(token);
+			String userId = (String) userInfo.get("userId");
+			int userNo = (int) userInfo.get("userNo");
 
-        } catch (UnAuthorizedException e) {
-            response.sendRedirect(request.getContextPath() + "/user/login");
-            return false;
-        }
+			// 사용자 정보를 요청에 저장
+			request.setAttribute("userId", userId);
+			request.setAttribute("userNo", userNo);
 
-        return true;
-    }
+		} catch (UnAuthorizedException e) {
+			response.sendRedirect(request.getContextPath() + "/user/login");
+			return false;
+		}
+
+		return true;
+	}
 }

@@ -1,5 +1,7 @@
 package com.triplog.plan.controller;
 
+import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.triplog.plan.model.DestinationDto;
 import com.triplog.plan.model.PlanDto;
 import com.triplog.plan.service.PlanService;
+import com.triplog.util.JWTUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,58 +36,60 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/plan")
 public class PlanController {
 	private final PlanService planService;
-	
+
 	public PlanController(PlanService planService) {
 		super();
 		this.planService = planService;
 	}
-	
+
 	@PostMapping("/")
 	@Operation(summary = "여행 계획 생성", description = "새 여행 계획을 추가합니다.")
 	public ResponseEntity<String> createPlan(
-			@Parameter(description = "여행 계획 기본정보", required = true) @RequestBody PlanDto planDto) {
+			@Parameter(description = "여행 계획 기본정보", required = true) @RequestBody PlanDto planDto,
+			HttpServletRequest request) {
 		try {
+			int tokenNo = (Integer) request.getAttribute("userNo");
+			planDto.setUserNo(tokenNo);
 			planService.createPlan(planDto);
 			return ResponseEntity.status(HttpStatus.CREATED).body("여행 계획 생성 성공");
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 계획 생성 중 문제 발생");
 		}
 	}
-	
-	@GetMapping("/")
+
+	@GetMapping("/{planNo}")
 	@Operation(summary = "여행 계획 조회", description = "여행 계획 정보를 조회합니다.")
 	public ResponseEntity<?> getPlan(
-			@Parameter(description = "회원 ID", required = true) @RequestParam("userId") String userId,
-			@Parameter(description = "계획 번호", required = true) @RequestParam("planNo") String planNo) {
+			@Parameter(description = "계획 번호", required = true) @PathVariable("planNo") int planNo,
+			HttpServletRequest request) {
 		try {
-			Map<String, String> map = new HashMap<>();
-			map.put("userId", userId);
-			map.put("planNo", planNo);
-			PlanDto result = planService.getPlan(map);
+			PlanDto result = planService.getPlan(planNo);
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (Exception e) {
+			System.out.println(e.toString());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 계획 조회 중 문제 발생");
 		}
 	}
-	
-	@GetMapping("/all")
+
+	@GetMapping("/")
 	@Operation(summary = "여행 계획 조회", description = "여행 계획 정보를 조회합니다.")
-	public ResponseEntity<?> getPlans(
-			@Parameter(description = "회원 ID", required = true) @RequestParam("userId") String userId) {
+	public ResponseEntity<?> getPlans(HttpServletRequest request) {
 		try {
-			List<PlanDto> results = planService.getPlans(userId);
+			List<PlanDto> results = planService.getPlans((Integer)request.getAttribute("userNo"));
 			return new ResponseEntity<>(results, HttpStatus.OK);
 		} catch (Exception e) {
+			System.out.println(e.toString());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 계획 조회 중 문제 발생");
 		}
 	}
+
 	@GetMapping("/dest")
 	@Operation(summary = "여행 목적지 조회", description = "여행 목적지 정보들을 조회합니다.")
 	public ResponseEntity<?> getDestinations(
-			@Parameter(description = "계획 번호", required = true) @RequestParam("planNo") String planNo) {
+			@Parameter(description = "계획 번호", required = true) @RequestParam("planNo") int planNo) {
 		try {
 			List<DestinationDto> results = planService.getDestinations(planNo);
-			for(DestinationDto d : results) {
+			for (DestinationDto d : results) {
 				System.out.println(d.toString());
 			}
 			return new ResponseEntity<>(results, HttpStatus.OK);
@@ -93,53 +98,46 @@ public class PlanController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 목적지 조회 중 문제 발생");
 		}
 	}
-	
+
 	// TODO: dest CRUD 작성
-	
-	
-	
+
 	@PutMapping("/")
 	@Operation(summary = "여행 계획 수정", description = "여행 계획 기본정보를 수정합니다.")
 	public ResponseEntity<String> updatePlan(
-			@Parameter(description = "수정할 여행 계획 정보", required = true) @RequestBody PlanDto planDto) {
-		try {
-			planService.updatePlan(planDto);
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body("여행 계획 수정 성공");
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 계획 수정 중 문제 발생");
+			@Parameter(description = "수정할 여행 계획 정보", required = true) @RequestBody PlanDto planDto,
+			HttpServletRequest request) {
+		int tokenNo = (Integer) request.getAttribute("userNo");
+		if (planDto.getUserNo() == tokenNo) {
+			try {
+				planService.updatePlan(planDto);
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("여행 계획 수정 성공");
+			} catch (Exception e) {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 계획 수정 중 문제 발생");
+			}
+		} else {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("수정 권한이 없습니다.");
 		}
 	}
-	
+
 	@DeleteMapping("/")
 	@Operation(summary = "여행 계획 삭제", description = "여행 계획을 삭제합니다.")
 	public ResponseEntity<String> deletePlan(
-			@Parameter(description = "여행 계획 번호", required = true) @RequestParam String planNo, HttpServletRequest request) {
-		try {
-			int res = planService.deletePlan(planNo);
-			if(res==1) {
-				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("여행 계획 삭제 성공");
-			}else {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
+			@Parameter(description = "여행 계획 번호", required = true) @RequestBody PlanDto planDto,
+			HttpServletRequest request) {
+		int tokenNo = (Integer) request.getAttribute("userNo");
+		if (planDto.getUserNo() == tokenNo) {
+			try {
+				int res = planService.deletePlan(planDto.getPlanNo());
+				if (res == 1) {
+					return ResponseEntity.status(HttpStatus.NO_CONTENT).body("여행 계획 삭제 성공");
+				} else {
+					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
+				}
+			} catch (Exception e) {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 계획 삭제 중 문제 발생");
 			}
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 계획 삭제 중 문제 발생");
-		}
-	}
-	
-	@DeleteMapping("/admin")
-	@Operation(summary = "여행 계획 진짜 삭제", description = "여행 계획을 진짜로 삭제합니다.")
-	public ResponseEntity<String> deletePlanAdmin(
-			@Parameter(description = "여행 계획 번호", required = true) @RequestParam String planNo, HttpServletRequest request) {
-		try {
-			request.getHeader("userId");
-			int res = planService.deletePlanAdmin(planNo);
-			if(res==1) {				
-				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("여행 계획 삭제 성공");
-			}else {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
-			}
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 계획 삭제 중 문제 발생");
+		} else {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("삭제 권한이 없습니다.");
 		}
 	}
 }

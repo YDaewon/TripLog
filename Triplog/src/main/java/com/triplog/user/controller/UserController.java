@@ -72,8 +72,7 @@ public class UserController {
 	@PostMapping("/login")
 	@Operation(summary = "로그인", description = "로그인을 수행")
 	public ResponseEntity<Map<String, Object>> login(
-			@Parameter(description = "로그인 정보", required = true)
-			@RequestBody Map<String, String> loginInfo) {
+			@Parameter(description = "로그인 정보", required = true) @RequestBody Map<String, String> loginInfo) {
 		log.debug("login user : {}", loginInfo);
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		HttpStatus status = HttpStatus.ACCEPTED;
@@ -81,8 +80,8 @@ public class UserController {
 			UserDto loginUser = UserService.loginUser(loginInfo);
 			if (loginUser != null) {
 				System.out.println(loginUser.getNickname());
-				String accessToken = jwtUtil.createAccessToken(loginUser.getUserId());
-				String refreshToken = jwtUtil.createRefreshToken(loginUser.getUserId());
+				String accessToken = jwtUtil.createAccessToken(loginUser.getUserId(), loginUser.getUserNo());
+				String refreshToken = jwtUtil.createRefreshToken(loginUser.getUserId(), loginUser.getUserNo());
 				log.debug("access token : {}", accessToken);
 				log.debug("refresh token : {}", refreshToken);
 				

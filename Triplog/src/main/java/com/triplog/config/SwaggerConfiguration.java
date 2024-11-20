@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 
 //Swagger-UI 확인
 //http://localhost/swagger-ui.html
@@ -22,13 +24,18 @@ public class SwaggerConfiguration {
 				.version("v1").contact(new io.swagger.v3.oas.models.info.Contact().name("ssafy")
 						.email("qkqh9860@naver.com").url("http://edu.ssafy.com"));
 
-		return new OpenAPI().components(new Components()).info(info);
+		return new OpenAPI()
+				.components(new Components().addSecuritySchemes("accessToken",
+						new SecurityScheme().type(SecurityScheme.Type.APIKEY).in(SecurityScheme.In.HEADER)
+								.name("accessToken")))
+				.addSecurityItem(new SecurityRequirement().addList("accessToken")).info(info);
 	}
 
 	@Bean
 	public GroupedOpenApi userApi() {
 		return GroupedOpenApi.builder().group("triplog-user").pathsToMatch("/user/**").build();
 	}
+
 	@Bean
 	public GroupedOpenApi planApi() {
 		return GroupedOpenApi.builder().group("triplog-plan").pathsToMatch("/plan/**").build();
