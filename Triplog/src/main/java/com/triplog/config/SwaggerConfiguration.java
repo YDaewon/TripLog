@@ -24,21 +24,38 @@ public class SwaggerConfiguration {
 				.version("v1").contact(new io.swagger.v3.oas.models.info.Contact().name("ssafy")
 						.email("qkqh9860@naver.com").url("http://edu.ssafy.com"));
 
-		return new OpenAPI()
-				.components(new Components().addSecuritySchemes("accessToken",
-						new SecurityScheme().type(SecurityScheme.Type.APIKEY).in(SecurityScheme.In.HEADER)
-								.name("accessToken")))
-				.addSecurityItem(new SecurityRequirement().addList("accessToken")).info(info);
+		return new OpenAPI().components(new Components()
+                .addSecuritySchemes("accessToken",
+                        new SecurityScheme().type(SecurityScheme.Type.APIKEY)
+                                .in(SecurityScheme.In.HEADER)
+                                .name("accessToken")))
+        .addSecurityItem(new SecurityRequirement().addList("accessToken")).info(info);
 	}
 
 	@Bean
 	public GroupedOpenApi userApi() {
-		return GroupedOpenApi.builder().group("triplog-user").pathsToMatch("/user/**").build();
+		return GroupedOpenApi.builder().group("user").pathsToMatch("/user/**").build();
 	}
 
 	@Bean
 	public GroupedOpenApi planApi() {
-		return GroupedOpenApi.builder().group("triplog-plan").pathsToMatch("/plan/**").build();
+		return GroupedOpenApi.builder().group("plan").pathsToMatch("/plan/**").build();
+	}
+	
+	@Bean
+	public GroupedOpenApi attractionApi() {
+		return GroupedOpenApi.builder().group("attraction").pathsToMatch("/attraction/**").build();
+	}
+	
+	@Bean
+	public GroupedOpenApi articleApi() {
+		return GroupedOpenApi.builder().group("article").pathsToMatch("/article/**").build();
 	}
 
+/*
+ * {
+  "userId": "ssafy",
+  "userPwd": "ssafy"
+}
+ */
 }

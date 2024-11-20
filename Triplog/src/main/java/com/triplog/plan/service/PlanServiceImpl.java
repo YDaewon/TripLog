@@ -21,7 +21,6 @@ public class PlanServiceImpl implements PlanService {
 
 	@Override
 	public int createPlan(PlanDto planDto) {
-		System.out.println(planDto.toString());
 		return planMapper.createPlan(planDto);
 	}
 
@@ -73,4 +72,5 @@ public class PlanServiceImpl implements PlanService {
 			System.out.println(e.toString());
 		}
 	}
+
 }
