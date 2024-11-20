@@ -26,5 +26,6 @@ public class UserDto {
 	@Schema(description = "삭제 시간", example = "2024-11-19 16:30:48")
 	private String deletedAt;
 	private String token;
+	private int role;
 	
 }

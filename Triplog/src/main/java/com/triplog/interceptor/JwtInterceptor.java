@@ -1,5 +1,7 @@
 package com.triplog.interceptor;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -31,11 +33,14 @@ public class JwtInterceptor implements HandlerInterceptor {
             if (!jwtUtil.checkToken(token)) {
                 throw new UnAuthorizedException();
             }
-
-            String userId = jwtUtil.getUserId(token);
+            Map<String, Object> value = jwtUtil.getUserInfo(token);
+            String userId = (String) value.get("userId");
+            int userNo = (Integer) value.get("userNo");
+            int role = (Integer) value.get("role");
             // 사용자 정보를 요청에 저장
             request.setAttribute("userId", userId);
-
+            request.setAttribute("userNo", userNo);
+            request.setAttribute("role", role);
         } catch (UnAuthorizedException e) {
             response.sendRedirect(request.getContextPath() + "/user/login");
             return false;
