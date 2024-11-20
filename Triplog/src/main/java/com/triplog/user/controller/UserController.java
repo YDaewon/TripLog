@@ -81,8 +81,8 @@ public class UserController {
 			UserDto loginUser = UserService.loginUser(loginInfo);
 			if (loginUser != null) {
 				System.out.println(loginUser.getNickname());
-				String accessToken = jwtUtil.createAccessToken(loginUser.getUserId());
-				String refreshToken = jwtUtil.createRefreshToken(loginUser.getUserId());
+				String accessToken = jwtUtil.createAccessToken(loginUser.getUserId(), loginUser.getUserNo(), loginUser.getRole());
+				String refreshToken = jwtUtil.createRefreshToken(loginUser.getUserId(), loginUser.getUserNo(), loginUser.getRole());
 				log.debug("access token : {}", accessToken);
 				log.debug("refresh token : {}", refreshToken);
 				
