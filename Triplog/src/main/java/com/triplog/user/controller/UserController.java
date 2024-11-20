@@ -166,6 +166,7 @@ public class UserController {
 			log.info("사용 가능한 토큰!!!");
 			try {
 //				로그인 사용자 정보.
+				UserDto.setUserId(userId);
 				UserService.updateUser(UserDto);
 				resultMap.put("message", "회원 정보 수정 성공");
 				status = HttpStatus.OK;

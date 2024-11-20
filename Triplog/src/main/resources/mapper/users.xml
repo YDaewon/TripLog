@@ -77,9 +77,9 @@
 		where user_id = #{userId}
 	</update>
 	
-	<delete id="deleteUser" parameterType="string">
+	<update id="deleteUser" parameterType="string">
 		UPDATE users set deleted_at = CURRENT_TIMESTAMP where user_id= #{userId}
-	</delete>
+	</update>
 	
 	<!-- ADMIN -->
 	<select id="listUser" resultMap="userAll">

@@ -50,6 +50,7 @@
 		<where>
 			attraction_no = #{attractionNo}
 		</where>
+		
 	</select>
 	
 	<insert id="UpdateHitLog">
