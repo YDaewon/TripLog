@@ -15,8 +15,43 @@
 		<result column="stars" property="stars"/>
 		<result column="hit_count" property="hitCount"/>
 	</resultMap>
+	
+	<select id="getTotalCount" parameterType="map" resultType="int">
+	    SELECT 
+	        COUNT(*) 
+	    FROM 
+	        articles a
+	    LEFT JOIN
+	        users u ON a.user_no = u.user_no
+	    WHERE 
+	        a.deleted_at IS NULL
+	        <if test="key != null and key != '' and word != null and word != ''">
+	            AND ${key} LIKE CONCAT('%', #{word}, '%')
+	        </if>
+	</select>
 
 	<select id="listAll" parameterType="map" resultMap="article">
+		    SELECT 
+		        a.article_no AS article_no,
+		        a.title AS title,
+		        u.nickname AS author,
+		        (SELECT count(*) FROM article_stars s WHERE a.article_no = s.article_no) AS stars,
+		        hit_count AS hitCount,
+		        a.created_at AS created_at
+		    FROM 
+		        articles a
+		    LEFT JOIN
+		        users u ON a.user_no = u.user_no
+		    WHERE 
+		        a.deleted_at IS NULL
+		        <if test="key != null and !key.isEmpty() and word != null and !word.isEmpty()">
+		            AND ${key} LIKE CONCAT('%', #{word}, '%')
+		        </if>
+		    ORDER BY a.created_at DESC
+		    LIMIT ${pgno}, ${spp}
+	</select>
+	
+	<select id="mylist" parameterType="map" resultMap="article">
 		SELECT 
 		    a.article_no AS article_no,
 		    a.title AS title,
@@ -29,8 +64,8 @@
 		  LEFT JOIN
 		    users u ON a.user_no = u.user_no
 		  WHERE 
-		    a.deleted_at IS NULL
-		  ORDER BY a.created_at DESC
+		    a.deleted_at IS NULL AND a.user_no = #{userNo}
+		  ORDER BY a.created_at DESC;
 	</select>
 	
 	<select id="getArticle" parameterType="int" resultMap="article">

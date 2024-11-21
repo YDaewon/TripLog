@@ -18,11 +18,20 @@ public class ArticleServiceImpl implements ArticleService {
 		this.articleMapper = articleMapper;
 	}
 
+    public int getTotalCount(Map<String, String> map) {
+        return articleMapper.getTotalCount(map); // 전체 게시글 수 계산
+    }
+    
 	@Override
 	public List<ArticleDto> listAll(Map<String, String> map) {
 		return articleMapper.listAll(map);
 	}
 
+	@Override
+	public List<ArticleDto> mylist(Map<String, String> map) {
+		return articleMapper.mylist(map);
+	}
+	
 	@Override
 	public ArticleDto getArticle(int articleNo) {
 		// TODO Auto-generated method stub
@@ -69,4 +78,6 @@ public class ArticleServiceImpl implements ArticleService {
 	public void deleteStar(int articleNo, int userNo) {
 		articleMapper.deleteStar(articleNo, userNo);
 	}
+
+
 }

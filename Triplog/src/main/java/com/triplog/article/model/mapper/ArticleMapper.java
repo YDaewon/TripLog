@@ -11,6 +11,7 @@ import com.triplog.article.model.ArticleDto;
 public interface ArticleMapper {
 	// List Article
 	List<ArticleDto> listAll(Map<String, String> map);
+	List<ArticleDto> mylist(Map<String, String> map);
 	
 	// Detail Article
 	ArticleDto getArticle(int articleNo);
@@ -32,4 +33,6 @@ public interface ArticleMapper {
 	void createStar(int articleNo, int userNo);
 
 	void deleteStar(int articleNo, int userNo);
+	int getTotalCount(Map<String, String> map);
+
 }

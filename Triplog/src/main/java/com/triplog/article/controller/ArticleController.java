@@ -1,5 +1,6 @@
 package com.triplog.article.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.triplog.article.model.ArticleDto;
 import com.triplog.article.service.ArticleService;
+import com.triplog.util.PageNavigation;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,15 +31,29 @@ public class ArticleController {
 		this.articleService = articleService;
 	}
 	
-	@PostMapping("")
+	@GetMapping("")
 	@Operation(summary = "게시글 목록", description = "게시글 목록을 불러옴")
     public ResponseEntity<?> articleAll(
-			@Parameter(description = "검색 조건") @RequestBody Map<String, String> map) {
+			@Parameter(description = "검색 조건") @RequestParam Map<String, String> map) {
         try {
-        	System.out.println(map);
+            int pgno = Integer.parseInt(map.getOrDefault("pgno", "1"));
+            int spp = Integer.parseInt(map.getOrDefault("spp", "20"));
+            int totalCount = articleService.getTotalCount(map);
+            PageNavigation pageNavigation = new PageNavigation();
+            pageNavigation.setCurrentPage(pgno);
+            pageNavigation.setCountPerPage(spp);
+            pageNavigation.setTotalCount(totalCount);
+            pageNavigation.setNaviSize(5);
+            pageNavigation.makeNavigator();
+            System.out.println("totalCount: " + totalCount);
+            System.out.println(map.toString());
+            Map<String, Object> result = new HashMap<>();
             List<ArticleDto> lists = articleService.listAll(map);
             if (lists != null) {
-                return ResponseEntity.ok(lists);
+            	result.put("articles", lists); // 게시글 목록
+                result.put("currentPage", pgno);
+                result.put("totalPageCount", pageNavigation.getTotalPageCount());
+                return ResponseEntity.ok(result);
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("리스트가 비어있어요");
             }
@@ -45,6 +61,25 @@ public class ArticleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("로드 중 문제 발생");
         }
     }
+	
+//	@GetMapping("/my/{userNo}")
+//	@Operation(summary = "내 게시글 목록", description = "내 게시글 목록을 불러옴")
+//    public ResponseEntity<?> myarticle(
+//			@Parameter(description = "검색 조건")
+//			@PathVariable("userNo") int userNo, @RequestParam Map<String, Object> map) {
+//        try {
+//        	System.out.println(map);
+//        	map.put("userNo", userNo);
+//            List<ArticleDto> lists = articleService.mylist(map);
+//            if (lists != null) {
+//                return ResponseEntity.ok(lists);
+//            } else {
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("리스트가 비어있어요");
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("로드 중 문제 발생");
+//        }
+//    }
 	
 	@GetMapping("{articleNo}")
 	@Operation(summary = "게시글 정보", description = "articleNo에 해당하는 게시글 정보를 반환")

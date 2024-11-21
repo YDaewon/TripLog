@@ -1,9 +1,13 @@
 package com.triplog.user.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(title = "UserDto (회원정보)", description = "회원 정보를 가진 Domain Class")
 public class UserDto {
 	@Schema(description = "회원번호", requiredMode = Schema.RequiredMode.REQUIRED)
