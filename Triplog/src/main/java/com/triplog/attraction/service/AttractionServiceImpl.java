@@ -40,4 +40,19 @@ public class AttractionServiceImpl implements AttractionService{
 		return attractionMapper.getDetailAttraction(attractionNo);
 	}
 
+	@Override
+	public List<Map<String, String>> getSidos() {
+		return attractionMapper.getSidos();
+	}
+
+	@Override
+	public List<Map<String, String>> getGuguns(int sidoCode) {
+		return attractionMapper.getGuguns(sidoCode);
+	}
+
+	@Override
+	public List<Map<String, String>> getContentTypes() {
+		return attractionMapper.getContentTypes();
+	}
+
 }

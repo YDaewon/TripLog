@@ -57,4 +57,38 @@ public class AttractionController {
 		return ResponseEntity.ok(Dto);
 	}
 	
+	@GetMapping("/sido")
+	@Operation(summary = "시도 목록", description = "DB에 등록된 시/도 목록을 불러옵니다")
+	public ResponseEntity<?> getSidos() {
+		List<Map<String, String>> sidos = attractionService.getSidos();
+		if(sidos!=null) {
+			return new ResponseEntity<>(sidos, HttpStatus.OK);
+		}else {
+	        return new ResponseEntity<>("시/도 목록을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@GetMapping("/gugun/{sidoCode}")
+	@Operation(summary = "구군 목록", description = "선택된 시/도 코드에 맞는 구/군을 불러옵니다")
+	public ResponseEntity<?> getGuguns(
+			@RequestBody(description = "시도 코드")@PathVariable("sidoCode") int sidoCode) {
+		List<Map<String, String>> guguns = attractionService.getGuguns(sidoCode);
+		if(guguns!=null) {
+			return new ResponseEntity<>(guguns, HttpStatus.OK);
+		}else {
+	        return new ResponseEntity<>("구/군 목록을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@GetMapping("/content")
+	@Operation(summary = "콘텐츠 유형 목록", description = "DB에 저장된 콘텐츠 유형 목록을 불러옵니다")
+	public ResponseEntity<?> getContentTypes() {
+		List<Map<String, String>> contenttypes = attractionService.getContentTypes();
+		if(contenttypes!=null) {
+			return new ResponseEntity<>(contenttypes, HttpStatus.OK);
+		}else {
+	        return new ResponseEntity<>("구/군 목록을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+		}
+	}
+	
 }
