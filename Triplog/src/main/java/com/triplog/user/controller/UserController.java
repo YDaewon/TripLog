@@ -59,6 +59,7 @@ public class UserController {
 	@Operation(summary = "회원가입", description = "유저 테이블에 데이터를 Insert")
 	public ResponseEntity<String> join(
 			@Parameter(description = "회원가입 정보", required = true) @RequestBody UserDto UserDto) {
+		System.out.println(UserDto.toString());
 		try {
 			UserService.joinUser(UserDto);
 			return ResponseEntity.status(HttpStatus.CREATED).body("회원 가입 성공");
@@ -127,18 +128,18 @@ public class UserController {
 
 	// 마이 페이지 조회
 	@Operation(summary = "마이페이지", description = "유저의 상세정보를 반환")
-	@GetMapping("/info/{userId}")
+	@GetMapping("/info")
 	public ResponseEntity<Map<String, Object>> getInfo(
-			@Parameter(in = ParameterIn.PATH, description = "인증할 회원의 아이디.") @PathVariable("userId") String userId,
 			HttpServletRequest request) {
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.ACCEPTED;
 		String tokenId = (String) request.getAttribute("userId");
-		if (userId.equals(tokenId)) {
+		if (tokenId != null) {
 			log.info("사용 가능한 토큰!!!");
 			try {
 //				로그인 사용자 정보.
-				UserDto userDto = UserService.getUser(userId);
+				UserDto userDto = UserService.getUser(tokenId);
+				System.out.println(userDto.toString());
 				resultMap.put("userInfo", userDto);
 				status = HttpStatus.OK;
 			} catch (Exception e) {
@@ -167,6 +168,7 @@ public class UserController {
 			try {
 //				로그인 사용자 정보.
 				UserDto.setUserId(userId);
+				System.out.println(UserDto.toString());
 				UserService.updateUser(UserDto);
 				resultMap.put("message", "회원 정보 수정 성공");
 				status = HttpStatus.OK;
@@ -210,5 +212,26 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 	
+	@Operation(summary = "Access Token 재발급", description = "만료된 access token 을 재발급 받는다.")
+	@PostMapping("/refresh")
+	public ResponseEntity<?> refreshToken(@RequestBody UserDto userDto, @RequestHeader("refreshToken") String token)
+			throws Exception {
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		log.debug("token : {}, memberDto : {}", token, userDto);
+		if (jwtUtil.checkToken(token)) {
+			if (token.equals(UserService.getRefreshToken(userDto.getUserId()))) {
+				String accessToken = jwtUtil.createAccessToken(userDto.getUserId(), userDto.getUserNo(), userDto.getRole());
+				log.debug("token : {}", accessToken);
+				log.debug("정상적으로 access token 재발급!!!");
+				resultMap.put("access-token", accessToken);
+				status = HttpStatus.CREATED;
+			}
+		} else {
+			log.debug("refresh token 도 사용 불가!!!!!!!");
+			status = HttpStatus.UNAUTHORIZED;
+		}
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
 
 }
