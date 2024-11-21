@@ -13,5 +13,7 @@ public interface AttractionMapper {
 	AttractionDto getDetailAttraction(int attractionNo);
 	void UpdateHitLog(int attractionNo, String userId);
 	void UpdateHitCount(int attractionNo);
-
+	List<Map<String, String>> getSidos();
+	List<Map<String, String>> getGuguns(int sidoCode);
+	List<Map<String, String>> getContentTypes();
 }
