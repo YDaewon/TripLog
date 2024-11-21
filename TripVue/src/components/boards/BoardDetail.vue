@@ -2,6 +2,8 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { detailArticle, deleteArticle } from "@/api/board";
+import { storeToRefs } from "pinia"
+import { useMemberStore } from "@/stores/member"
 
 const route = useRoute();
 const router = useRouter();
@@ -9,7 +11,11 @@ const router = useRouter();
 // const articleno = ref(route.params.articleno);
 const { articleno } = route.params;
 
+const memberStore = useMemberStore()
+const { userInfo } = storeToRefs(memberStore)
 const article = ref({});
+
+
 
 onMounted(() => {
   getArticle();
@@ -20,6 +26,7 @@ const getArticle = () => {
     articleno,
     ({ data }) => {
       article.value = data;
+      //console.log(article.value)
     },
     (error) => {
       console.error(error);
@@ -32,12 +39,20 @@ function moveList() {
 }
 
 function moveModify() {
-  router.push({ name: "article-modify", params: { articleno } });
+  //console.log(article.value.userNo + ", " + userInfo.value.userNo)
+  if(article.value.userNo != userInfo.value.userNo){
+    alert("작성자 외 수정 금지!")
+  }
+  else router.push({ name: "article-modify", params: { articleno } });
 }
 
 function onDeleteArticle() {
-  deleteArticle(
-    articleno,
+  if(article.value.userNo != userInfo.value.userNo){
+    alert("작성자 외 삭제 금지!")
+  }
+  else{
+    deleteArticle(
+      articleno,
     (response) => {
       if (response.status == 200) moveList();
     },
@@ -45,6 +60,7 @@ function onDeleteArticle() {
       console.error(error);
     }
   );
+  }
 }
 </script>
 
@@ -58,7 +74,7 @@ function onDeleteArticle() {
       </div>
       <div class="col-lg-10 text-start">
         <div class="row my-2">
-          <h2 class="text-secondary px-5">{{ article.articleNo }}. {{ article.subject }}</h2>
+          <h2 class="text-secondary px-5">{{ article.articleNo }}. {{ article.title }}</h2>
         </div>
         <div class="row">
           <div class="col-md-8">
@@ -68,14 +84,14 @@ function onDeleteArticle() {
                 src="https://raw.githubusercontent.com/twbs/icons/main/icons/person-fill.svg"
               />
               <p>
-                <span class="fw-bold">안효인</span> <br />
+                <span class="fw-bold">{{ article.author }}</span> <br />
                 <span class="text-secondary fw-light">
-                  {{ article.registerTime }}1 조회 : {{ article.hit }}
+                  {{ article.createdAt }}
                 </span>
               </p>
             </div>
           </div>
-          <div class="col-md-4 align-self-center text-end">댓글 : 17</div>
+          <div class="col-md-4 align-self-center text-end">조회수: {{ article.hitCount }}</div>
           <div class="divider mb-3"></div>
           <div class="text-secondary">
             {{ article.content }}

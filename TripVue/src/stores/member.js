@@ -1,7 +1,7 @@
 import { ref } from "vue"
 import { useRouter } from "vue-router"
 import { defineStore } from "pinia"
-import { jwtDecode } from "jwt-decode"
+
 
 import { userRegister, userConfirm, userModify, userRemove, findById, tokenRegeneration, logout } from "@/api/user"
 import { httpStatusCode } from "@/util/http-status"

@@ -1,48 +1,40 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { listArticle } from "@/api/board.js";
 
 import VSelect from "@/components/common/VSelect.vue";
 import BoardListItem from "@/components/boards/item/BoardListItem.vue";
 import VPageNavigation from "@/components/common/VPageNavigation.vue";
 
-const router = useRouter();
+const props = defineProps({
+  fetchArticles: Function, // 게시글 데이터를 가져오는 함수
+  initialParam: Object,    // 초기 `param` 값
+  selectOptions: Array,    // 검색 옵션
+  subtitle: String,
+});
 
-const selectOption = ref([
-  { text: "검색조건", value: "" },
-  { text: "글번호", value: "article_no" },
-  { text: "제목", value: "subject" },
-  { text: "작성자아이디", value: "user_id" },
-]);
+const router = useRouter();
 
 const articles = ref([]);
 const currentPage = ref(1);
-const totalPage = ref(0);
-const { VITE_ARTICLE_LIST_SIZE } = import.meta.env;
-const param = ref({
-  pgno: currentPage.value,
-  spp: VITE_ARTICLE_LIST_SIZE,
-  key: "",
-  word: "",
-});
+const totalPage = ref(1);
 
-onMounted(() => {
-  getArticleList();
-});
+const param = ref({ ...props.initialParam }); // 초기값 복사
 
+// 검색 키 변경
 const changeKey = (val) => {
   param.value.key = val;
 };
 
-const getArticleList = () => {
-  listArticle(
+// 게시글 데이터 가져오기
+const getArticles = () => {
+  props.fetchArticles(
     param.value,
     ({ data }) => {
       articles.value = data.articles;
-      console.log(articles.value)
       currentPage.value = data.currentPage;
       totalPage.value = data.totalPageCount;
+      console.log(articles.value)
     },
     (error) => {
       console.error(error);
@@ -50,15 +42,27 @@ const getArticleList = () => {
   );
 };
 
+// 페이지 변경 처리
 const onPageChange = (val) => {
   currentPage.value = val;
   param.value.pgno = val;
-  getArticleList();
+  getArticles();
 };
 
+// 글쓰기 페이지로 이동
 const moveWrite = () => {
   router.push({ name: "article-write" });
 };
+
+onMounted(() => {
+  getArticles();
+});
+
+// `initialParam`이 변경될 경우 데이터 다시 로드
+watch(() => props.initialParam, (newParam) => {
+  Object.assign(param.value, newParam);
+  getArticles();
+}, { deep: true });
 </script>
 
 <template>
@@ -66,7 +70,7 @@ const moveWrite = () => {
     <div class="row justify-content-center">
       <div class="col-lg-10">
         <h2 class="my-3 py-3 shadow-sm bg-light text-center">
-          <mark class="sky">글목록</mark>
+          <mark class="sky">{{ subtitle }}</mark>
         </h2>
       </div>
       <div class="col-lg-10">
@@ -78,7 +82,7 @@ const moveWrite = () => {
           </div>
           <div class="col-md-5 offset-5">
             <form class="d-flex">
-              <VSelect :selectOption="selectOption" @onKeySelect="changeKey" />
+              <VSelect :selectOption="selectOptions" @onKeySelect="changeKey" />
               <div class="input-group input-group-sm ms-1">
                 <input
                   type="text"
@@ -86,7 +90,7 @@ const moveWrite = () => {
                   v-model="param.word"
                   placeholder="검색어..."
                 />
-                <button class="btn btn-dark" type="button" @click="getArticleList">검색</button>
+                <button class="btn btn-dark" type="button" @click="getArticles">검색</button>
               </div>
             </form>
           </div>

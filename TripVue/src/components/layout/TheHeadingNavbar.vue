@@ -73,9 +73,9 @@ const logout = () => {
             <ul class="dropdown-menu">
               <li><router-link :to="{ name: 'board' }" class="dropdown-item">전체 게시판</router-link></li>
               <li><hr class="dropdown-divider" /></li>
-              <li><a class="dropdown-item" href="#">즐겨찾기</a></li>
+              <li><router-link :to="{ name: 'star-article-list' }" class="dropdown-item">즐겨찾기</router-link></li>
               <li><hr class="dropdown-divider" /></li>
-              <li><a class="dropdown-item" href="#">내 게시글</a></li>
+              <li><router-link :to="{ name: 'my-article-list' }" class="dropdown-item">내 게시글</router-link></li>
             </ul>
           </li>
         </ul>

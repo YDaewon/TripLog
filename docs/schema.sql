@@ -278,10 +278,18 @@ SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
+use triplog;
+
+select * from attractions;
+select * from hit_attractions;
+
 select * from articles;
-select * from article_stars;
 select * from hit_articles;
-select * from users;
+select * from article_stars;
+
+insert into article_stars(user_no, article_no) values (3, 5);
+
+update 
 
 		SELECT 
 		    a.article_no AS articleNo,

@@ -6,8 +6,8 @@ function listArticle(param, success, fail) {
   local.get(`/article`, { params: param }).then(success).catch(fail);
 }
 
-function listMyArticle(userNo, param, success, fail) {
-  local.get(`/article/my/${userNo}`, { params: param }).then(success).catch(fail);
+function listMyArticle(param, success, fail) {
+  local.get(`/article/my`, { params: param }).then(success).catch(fail);
 }
 
 function detailArticle(articleno, success, fail) {
@@ -20,7 +20,7 @@ function registArticle(article, success, fail) {
 }
 
 function getModifyArticle(articleno, success, fail) {
-  local.get(`/article/modify/${articleno}`).then(success).catch(fail);
+  local.get(`/article/${articleno}`).then(success).catch(fail);
 }
 
 function modifyArticle(article, success, fail) {
