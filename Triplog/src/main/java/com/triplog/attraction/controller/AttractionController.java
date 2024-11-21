@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.triplog.attraction.model.AttractionDto;
 import com.triplog.attraction.service.AttractionService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,10 +36,11 @@ public class AttractionController {
 		this.attractionService = attractionService;
 	}
 
-	@PostMapping("")
+	@GetMapping("")
 	@Operation(summary = "관광지 목록 검색", description = "조건에 맞는 관광지 리스트를 불러옴")
 	public ResponseEntity<?> getAttractionList(
-			@RequestBody(description = "검색 조건") @org.springframework.web.bind.annotation.RequestBody Map<String, String> map) {
+			@Parameter(description = "검색 조건") @RequestParam Map<String, String> map) {
+		System.out.println(map.toString());
 		List<AttractionDto> list = attractionService.getAttractions(map);
 		return ResponseEntity.ok(list);
 	}
@@ -68,10 +71,10 @@ public class AttractionController {
 		}
 	}
 	
-	@GetMapping("/gugun/{sidoCode}")
+	@GetMapping("/gugun")
 	@Operation(summary = "구군 목록", description = "선택된 시/도 코드에 맞는 구/군을 불러옵니다")
 	public ResponseEntity<?> getGuguns(
-			@RequestBody(description = "시도 코드")@PathVariable("sidoCode") int sidoCode) {
+			@Parameter(description = "시도 코드") int sidoCode) {
 		List<Map<String, String>> guguns = attractionService.getGuguns(sidoCode);
 		if(guguns!=null) {
 			return new ResponseEntity<>(guguns, HttpStatus.OK);
