@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref } from "vue"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useMemberStore } from "@/stores/member"
@@ -117,4 +117,3 @@ const remove = async () => {
   </div>
 </template>
 
-<style scoped></style>

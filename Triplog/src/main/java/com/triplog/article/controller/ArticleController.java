@@ -36,23 +36,18 @@ public class ArticleController {
     public ResponseEntity<?> articleAll(
 			@Parameter(description = "검색 조건") @RequestParam Map<String, String> map) {
         try {
-            int pgno = Integer.parseInt(map.getOrDefault("pgno", "1"));
-            int spp = Integer.parseInt(map.getOrDefault("spp", "20"));
+            int pgno = Integer.parseInt(map.getOrDefault("pgno", "1")) - 1;
+            int spp = Integer.parseInt(map.getOrDefault("spp", "10"));
             int totalCount = articleService.getTotalCount(map);
-            PageNavigation pageNavigation = new PageNavigation();
-            pageNavigation.setCurrentPage(pgno);
-            pageNavigation.setCountPerPage(spp);
-            pageNavigation.setTotalCount(totalCount);
-            pageNavigation.setNaviSize(5);
-            pageNavigation.makeNavigator();
             System.out.println("totalCount: " + totalCount);
+            map.put("curpgno", String.valueOf(pgno));
             System.out.println(map.toString());
             Map<String, Object> result = new HashMap<>();
             List<ArticleDto> lists = articleService.listAll(map);
             if (lists != null) {
             	result.put("articles", lists); // 게시글 목록
-                result.put("currentPage", pgno);
-                result.put("totalPageCount", pageNavigation.getTotalPageCount());
+                result.put("currentPage", pgno+1);
+                result.put("totalPageCount", (totalCount / spp + 1));
                 return ResponseEntity.ok(result);
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("리스트가 비어있어요");
@@ -61,26 +56,7 @@ public class ArticleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("로드 중 문제 발생");
         }
     }
-	
-//	@GetMapping("/my/{userNo}")
-//	@Operation(summary = "내 게시글 목록", description = "내 게시글 목록을 불러옴")
-//    public ResponseEntity<?> myarticle(
-//			@Parameter(description = "검색 조건")
-//			@PathVariable("userNo") int userNo, @RequestParam Map<String, Object> map) {
-//        try {
-//        	System.out.println(map);
-//        	map.put("userNo", userNo);
-//            List<ArticleDto> lists = articleService.mylist(map);
-//            if (lists != null) {
-//                return ResponseEntity.ok(lists);
-//            } else {
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("리스트가 비어있어요");
-//            }
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("로드 중 문제 발생");
-//        }
-//    }
-	
+
 	@GetMapping("{articleNo}")
 	@Operation(summary = "게시글 정보", description = "articleNo에 해당하는 게시글 정보를 반환")
     public ResponseEntity<?> getinfo(
@@ -88,10 +64,10 @@ public class ArticleController {
     		@PathVariable("articleNo") int articleNo, HttpServletRequest request) {
 		String userId = (String) request.getAttribute("userId");
         try {
+        	articleService.UpdateHitLog(articleNo, userId);
+        	articleService.UpdateHitCount(articleNo);
             ArticleDto articleDto = articleService.getArticle(articleNo);
             if (articleDto != null) {
-            	articleService.UpdateHitLog(articleNo, userId);
-            	articleService.UpdateHitCount(articleNo);
                 return ResponseEntity.ok(articleDto); // 로그인 성공 시 사용자 정보 반환
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("해당 개시글 정보가 없음");
@@ -101,14 +77,14 @@ public class ArticleController {
         }
     }
 	
-	@PostMapping("/create")
+	@PostMapping("")
 	@Operation(summary = "게시글 등록", description = "게시글 등록을 담당")
 	public ResponseEntity<String> create(
 			 @Parameter(description = "게시글 정보", required = true)
 			 @RequestBody ArticleDto ArticleDto, HttpServletRequest request) {
 		//log.debug("Received ArticleDto: {}", articleDto); // 디버깅 로그
 		int userNo = (Integer) request.getAttribute("userNo");
-		ArticleDto.setUserNo(userNo);
+		//ArticleDto.setUserNo(userNo);
 		System.out.println(ArticleDto);
         try {
     	    articleService.createArticle(ArticleDto);
@@ -138,22 +114,18 @@ public class ArticleController {
         }
     }
 	
-	@DeleteMapping("")
+	@DeleteMapping("{articleNo}")
 	@Operation(summary = "게시글 삭제", description = "articleNo에 해당하는 게시글 정보를 삭제")
     public ResponseEntity<String> delete(
     		@Parameter(description = "게시글 번호", required = true)
-    		@RequestBody ArticleDto articleDto, HttpServletRequest request) {
+    		@PathVariable("articleNo") int articleNo,
+            HttpServletRequest request) {
 		int tokenNo = (Integer) request.getAttribute("userNo");
 		int role = (Integer) request.getAttribute("role");
         try {
-        	if(role == 1 || tokenNo == articleDto.getUserNo()) {
-                articleService.deleteArticle(articleDto.getArticleNo());
-                articleService.deleteStar(articleDto.getArticleNo(), tokenNo);
-                return ResponseEntity.ok("게시글 삭제 성공");
-        	}
-        	else {
-        		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("작성자 외 삭제 금지");
-        	}
+        	articleService.deleteStar(articleNo, tokenNo);
+            articleService.deleteArticle(articleNo);
+          return ResponseEntity.ok("게시글 삭제 성공");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("삭제 중 문제 발생");
         }

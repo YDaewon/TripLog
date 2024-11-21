@@ -17,7 +17,6 @@ const onlyAuthUser = (to, from, next) => {
     getUserInfo(token);
   }
   console.log("isValidToken: " + isValidToken.value)
-  console.log(userInfo.value.userName)
   if (!isValidToken.value || userInfo.value === null) {
     next({ name: "user-login" });
   } else {
@@ -70,15 +69,22 @@ const router = createRouter({
           path: "list",
           name: "article-list",
           beforeEnter: onlyAuthUser,
-          component: () => import("@/components/boards/BoardList.vue"),
+          component: () => import("@/components/boards/AllBoard.vue"),
         },
         {
-          path: "mylist",
+          path: "my",
           name: "my-article-list",
-          component: () => import("@/components/boards/MyBoardList.vue"),
+          beforeEnter: onlyAuthUser,
+          component: () => import("@/components/boards/MyBoard.vue"),
         },
         {
-          path: "view/:articleno",
+          path: "star",
+          name: "star-article-list",
+          beforeEnter: onlyAuthUser,
+          component: () => import("@/components/boards/StarBoard.vue"),
+        },
+        {
+          path: ":articleno",
           name: "article-view",
           beforeEnter: onlyAuthUser,
           component: () => import("@/components/boards/BoardDetail.vue"),
