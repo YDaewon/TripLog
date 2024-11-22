@@ -1,9 +1,10 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { onMounted, ref, watch} from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { detailArticle, deleteArticle } from "@/api/board";
+import { deleteArticle } from "@/api/board";
 import { storeToRefs } from "pinia"
 import { useMemberStore } from "@/stores/member"
+import { useArticleStore} from "@/stores/article"
 
 
 const route = useRoute();
@@ -15,23 +16,35 @@ const { articleno } = route.params;
 
 const memberStore = useMemberStore()
 const { userInfo } = storeToRefs(memberStore)
-const article = ref({});
+const articleStore = useArticleStore()
+const { articleInfo } = storeToRefs(articleStore)
+const { getArticle } = articleStore;
 
-onMounted(() => {
-  getArticle();
+const isLoad = ref(false);
+
+const article = ref({
+  articleNo: 0,
+  author: "",
+  content: "",
+  createdAt: "",
+  deletedAt: null,
+  hitCount: 0,
+  planNo: 0,
+  stars: 0,
+  title: "",
+  userNo: 0,
 });
 
-const getArticle = () => {
-  detailArticle(
-    articleno,
-    ({ data }) => {
-      article.value = data;
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
-};
+onMounted(async () => {
+  await getArticle(articleno);
+  isLoad.value = true; // 로드 완료 표시
+});
+
+watch(articleInfo, (newArticleInfo) => {
+  if (newArticleInfo) {
+    article.value = { ...newArticleInfo }; // articleInfo 값을 article로 갱신
+  }
+});
 
 function moveList() {
   router.push({ name: "article-list" });
@@ -64,7 +77,7 @@ function onDeleteArticle() {
 </script>
 
 <template>
-  <div class="container">
+  <div v-if="isLoad" class="container">
     <div class="row justify-content-center">
       <div class="col-lg-10">
         <h2 class="my-3 py-3 shadow-sm bg-light text-center">

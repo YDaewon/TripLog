@@ -1,42 +1,35 @@
 <script setup>
 import { ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia"
 import { useMemberStore } from "@/stores/member"
-import { registArticle, getModifyArticle, modifyArticle } from "@/api/board";
+import { useArticleStore } from "@/stores/article"
+import { registArticle, modifyArticle } from "@/api/board";
 import ArticleEditor from "@/components/boards/item/ArticleEditor.vue";
 
 
 const router = useRouter();
-const route = useRoute();
 
 const props = defineProps({ type: String });
 
 const memberStore = useMemberStore()
 
 const { userInfo } = storeToRefs(memberStore)
-const isUseId = ref(false);
+
+const articleStore = useArticleStore()
+const { articleInfo } = storeToRefs(articleStore)
 
 const article = ref({
-  articleNo: 0,
-  title: "",
-  content: "",
+  articleNo: articleInfo.value.articleNo,
+  title: articleInfo.value.title,
+  content: articleInfo.value.content,
   userNo: userInfo.value.userNo,
 });
 
-if (props.type === "modify") {
-  let { articleno } = route.params;
-  getModifyArticle(
-    articleno,
-    ({ data }) => {
-      article.value = data;
-      isUseId.value = true;
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
-  isUseId.value = true;
+if(props.type !== 'modify'){
+    article.value.title = "";
+    article.value.content = "";
+    articleInfo.value.content = "";
 }
 
 const titleErrMsg = ref("");
@@ -123,8 +116,8 @@ function moveList() {
 				<div class="editor-container__editor">
 					<div ref="editorElement">
 						<ArticleEditor
-            :userInfo= "userInfo"
-            :article="article"
+            :userInfo = "userInfo"
+            :article = "article"
             />
 					</div>
 				</div>

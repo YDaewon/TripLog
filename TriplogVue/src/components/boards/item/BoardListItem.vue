@@ -1,5 +1,7 @@
 <script setup>
 defineProps({ article: Object });
+
+
 </script>
 
 <template>
