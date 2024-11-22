@@ -4,7 +4,7 @@ import TheHeadingNavbar from "@/components/layout/TheHeadingNavbar.vue";
 </script>
 
 <template>
-  <div style="height: 100vh">
+  <div>
     <TheHeadingNavbar></TheHeadingNavbar>
     <router-view></router-view>
   </div>

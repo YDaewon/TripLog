@@ -7,16 +7,18 @@ import { storeToRefs } from "pinia";
 
 import { useMemberStore } from "@/stores/member";
 
-const onlyAuthUser = async (to, from, next) => {
+const onlyAuthUser = (to, from, next) => {
   const memberStore = useMemberStore();
   const { userInfo, isValidToken } = storeToRefs(memberStore);
   const { getUserInfo } = memberStore;
 
   let token = sessionStorage.getItem("accessToken");
-
-  if (userInfo.value != null && token) {
-    await getUserInfo(token);
+  if (token && userInfo.value != null) {
+    getUserInfo(token);
   }
+  console.log("isValidToken: " + isValidToken.value)
+  console.log("token: " + token)
+  //console.log(userInfo)
   if (!isValidToken.value || userInfo.value === null) {
     next({ name: "user-login" });
   } else {
@@ -52,12 +54,7 @@ const router = createRouter({
           name: "user-mypage",
           beforeEnter: onlyAuthUser,
           component: () => import("@/components/users/UserMyPage.vue"),
-        },
-        // {
-        //   path: "modify/:userid",
-        //   name: "user-modify",
-        //   component: () => import("@/components/users/UserModify.vue"),
-        // },
+        }
       ],
     },
     {
@@ -73,10 +70,23 @@ const router = createRouter({
         {
           path: "list",
           name: "article-list",
-          component: () => import("@/components/boards/BoardList.vue"),
+          beforeEnter: onlyAuthUser,
+          component: () => import("@/components/boards/AllBoard.vue"),
         },
         {
-          path: "view/:articleno",
+          path: "my",
+          name: "my-article-list",
+          beforeEnter: onlyAuthUser,
+          component: () => import("@/components/boards/MyBoard.vue"),
+        },
+        {
+          path: "star",
+          name: "star-article-list",
+          beforeEnter: onlyAuthUser,
+          component: () => import("@/components/boards/StarBoard.vue"),
+        },
+        {
+          path: ":articleno",
           name: "article-view",
           beforeEnter: onlyAuthUser,
           component: () => import("@/components/boards/BoardDetail.vue"),

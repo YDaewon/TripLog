@@ -21,10 +21,10 @@ const loginUser = ref({
 const login = async () => {
   await userLogin(loginUser.value)
   let token = sessionStorage.getItem("accessToken")
-  console.log(token)
-  console.log("isLogin: " + isLogin.value)
+  console.log("Access-Token: " + token)
+  //console.log("isLogin: " + isLogin.value)
   if (isLogin.value) {
-    getUserInfo(token)
+    getUserInfo()
     changeMenuState()
     router.replace("/")
   }

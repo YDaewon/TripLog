@@ -2,6 +2,7 @@ import { localAxios } from "@/util/http-commons";
 
 const local = localAxios();
 
+
 // function listSido(success, fail) {
 //   local.get(`/attraction/sido`).then(success).catch(fail);
 // }
@@ -43,3 +44,4 @@ function listContentType(success, fail) {
 }
 
 export { listSido, listGugun, listContentType };
+
