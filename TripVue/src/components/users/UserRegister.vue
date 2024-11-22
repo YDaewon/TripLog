@@ -21,11 +21,6 @@ const RegisterUser = ref({
   emailDomain:"dog"
 })
 
-const onFileChange = (event) => {
-  RegisterUser.value.userImage = event.target.files[0]; // 선택된 파일을 userImage에 저장
-  //console.log(RegisterUser.value.userImage)
-};
-
 const register = async () => {
   if(RegisterUser.value.userPwd !== RegisterUser.value.pwdCheck){
     alert("비밀번호가 불일치 합니다.")
