@@ -12,15 +12,19 @@ const { isRegister, isRegisterError } = storeToRefs(memberStore)
 const { userRegist } = memberStore
 
 const RegisterUser = ref({
-  userId: "",
-  userPwd: "",
-  userName: "",
-  pwdCheck: "",
-  nickname: "",
-  emailId: "",
-  emailDomain: "",
-  userImage: "img/defaultImage.png"
+  userId: "dog",
+  userPwd: "dog",
+  userName:"dog",
+  pwdCheck: "dog",
+  nickname: "dog",
+  emailId: "dog",
+  emailDomain:"dog"
 })
+
+const onFileChange = (event) => {
+  RegisterUser.value.userImage = event.target.files[0]; // 선택된 파일을 userImage에 저장
+  //console.log(RegisterUser.value.userImage)
+};
 
 const register = async () => {
   if(RegisterUser.value.userPwd !== RegisterUser.value.pwdCheck){

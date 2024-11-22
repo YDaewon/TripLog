@@ -1,13 +1,18 @@
 <script setup>
-import { ref } from "vue"
+import { ref} from "vue"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useMemberStore } from "@/stores/member"
+import { useFileStore } from "@/stores/file"
 import { useMenuStore } from "@/stores/menu"
 
 const router = useRouter()
 const { changeMenuState } = useMenuStore()
 const memberStore = useMemberStore()
+
+const fileStore = useFileStore()
+const { isUp, isDown, imgurl } = storeToRefs(fileStore)
+const { Upload, Download } = fileStore;
 
 const { userInfo, isModify, isDelete } = storeToRefs(memberStore)
 const { userUpdate, userDelete, userLogout, getUserInfo } = memberStore;
@@ -18,6 +23,7 @@ const userData = ref({
       userPwd: userInfo.value.userPwd,
       emailId: userInfo.value.emailId,
       emailDomain: userInfo.value.emailDomain,
+      userImage: userInfo.value.userImage,
     });
 const pwdCheck = ref(userInfo.value.userPwd);
 
@@ -46,6 +52,16 @@ const remove = async () => {
   }
 }
 
+const onFileChange = async (event) => {
+    if(event.target.files[0] != null) {
+      await Upload(userInfo.value.userId, event.target.files[0])
+      if(isUp.value){
+        userData.value.userImage = imgurl.value
+        console.log("현재 url: " + userData.value.userImage)
+      }
+    }
+}
+
 </script>
 
 <template>
@@ -60,11 +76,17 @@ const remove = async () => {
         <div class="card mt-3 m-auto" style="max-width: 700px">
           <div class="row g-0">
             <div class="col-md-4">
-              <img
-                src="https://source.unsplash.com/random/250x250/?food"
-                class="img-fluid rounded-start"
-                alt="..."
-              />
+              
+              <div class="mb-3">
+                <img 
+                  v-if="userData.userImage != null" 
+                  :src="userData.userImage" 
+                  :key="userData.userImage" 
+                  class="img-fluid rounded-start" 
+                  alt="..."
+                />
+                <input type="file" @change="onFileChange" class="form-control" id="profileImage" />
+              </div>
             </div>
             <div class="col-md-8">
               <div class="card-body text-start">

@@ -1,25 +1,34 @@
 package com.triplog.user.controller;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.triplog.user.service.UserService;
 import com.triplog.util.JWTUtil;
 import com.triplog.user.model.UserDto;
 
+import io.jsonwebtoken.io.IOException;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -58,16 +67,33 @@ public class UserController {
 	@PostMapping("/join")
 	@Operation(summary = "회원가입", description = "유저 테이블에 데이터를 Insert")
 	public ResponseEntity<String> join(
-			@Parameter(description = "회원가입 정보", required = true) @RequestBody UserDto UserDto) {
-		System.out.println(UserDto.toString());
+			@Parameter(description = "회원가입 정보", required = true) @RequestBody UserDto userDto) {
 		try {
-			UserService.joinUser(UserDto);
+
+			// userDto, userImage 확인
+	        System.out.println("Received userDto: " + userDto);
+			
+//	        // 이미지 저장 경로
+//	        String uploadPath = "src/main/resources/static/assets/img/profile";
+//	        if (!userImage.isEmpty()) {
+//	            // 파일 이름 생성 및 저장
+//	            String fileName = UUID.randomUUID().toString() + "_" + userImage.getOriginalFilename();
+//	            File saveFile = new File(uploadPath, fileName);
+//	            userImage.transferTo(saveFile);
+//
+//	            // 저장된 파일 이름을 DTO에 설정
+//	            userDto.setUserImage(fileName);
+//	        }
+	        
+	        
+			UserService.joinUser(userDto);
 			return ResponseEntity.status(HttpStatus.CREATED).body("회원 가입 성공");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 가입 중 문제 발생");
 		}
 	}
+	
 
 	// 로그인
 	@PostMapping("/login")
