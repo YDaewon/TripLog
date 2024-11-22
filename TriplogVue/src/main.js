@@ -13,7 +13,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
 
 const app = createApp(App);
-createApp(App).use(CkeditorPlugin)
 const pinia = createPinia();
 
 pinia.use(piniaPluginPersistedstate);
