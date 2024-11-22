@@ -1,9 +1,9 @@
 import { ref } from "vue"
 import { useRouter } from "vue-router"
 import { defineStore } from "pinia"
-import { jwtDecode } from "jwt-decode"
 
-import { userConfirm, findById, tokenRegeneration, logout } from "@/api/user"
+
+import { userRegister, userConfirm, userModify, userRemove, findById, tokenRegeneration, logout } from "@/api/user"
 import { httpStatusCode } from "@/util/http-status"
 
 export const useMemberStore = defineStore("memberStore", () => {
@@ -11,8 +11,33 @@ export const useMemberStore = defineStore("memberStore", () => {
 
   const isLogin = ref(false)
   const isLoginError = ref(false)
+  const isRegister = ref(false)
+  const isRegisterError = ref(false)
+  const isModify = ref(false)
+  const isModifyError = ref(false)
+  const isDelete = ref(false)
+  const isDeleteError = ref(false)
   const userInfo = ref(null)
   const isValidToken = ref(false)
+
+  const userRegist = async (RegisterUser) => {
+    await userRegister(
+      RegisterUser,
+      (response) => {
+        if (response.status === httpStatusCode.CREATE) {
+          console.log("회원가입 성공!!!!")
+          isRegister.value = true
+          isRegisterError.value = false
+        }
+      },
+      (error) => {
+        console.log("회원가입 실패!!!!")
+        isRegister.value = false
+        isRegisterError.value = true
+        console.error(error)
+      }
+    )
+  }
 
   const userLogin = async (loginUser) => {
     await userConfirm(
@@ -40,11 +65,59 @@ export const useMemberStore = defineStore("memberStore", () => {
     )
   }
 
-  const getUserInfo = async (token) => {
-    let decodeToken = jwtDecode(token)
-    console.log(decodeToken)
+  const userUpdate = async (userData) => {
+    await userModify(
+      userInfo.value.userId,
+      userData,
+      (response) => {
+        if (response.status === httpStatusCode.OK) {
+          console.log("회원 정보 수정 성공!!!!")
+          isModify.value = true
+          isModifyError.value = false
+        }
+        else{
+          isModify.value = false
+          isModifyError.value = false
+        }
+      },
+      (error) => {
+        console.log("회원 정보 수정 실패!!!!")
+        console.error(error)
+        isModify.value = false
+        isModifyError.value = true
+      }
+    )
+  }
+
+  const userDelete = async () => {
+    await userRemove(
+      userInfo.value.userId,
+      (response) => {
+        if (response.status === httpStatusCode.OK) {
+          console.log("회원 정보 삭제 성공!!!!")
+          isDelete.value = true
+          isDeleteError.value = false
+          isLogin.value = false
+          isValidToken.value = false
+          sessionStorage.removeItem("accessToken")
+          sessionStorage.removeItem("refreshToken")
+        }
+        else{
+          isDelete.value = false
+          isDeleteError.value = false
+        }
+      },
+      (error) => {
+        console.log("회원 정보 삭제 실패!!!!")
+        console.error(error)
+        isDelete.value = false
+        isDeleteError.value = true
+      }
+    )
+  }
+
+  const getUserInfo = async () => {
     await findById(
-      decodeToken.userId,
       (response) => {
         if (response.status === httpStatusCode.OK) {
           userInfo.value = response.data.userInfo
@@ -105,15 +178,13 @@ export const useMemberStore = defineStore("memberStore", () => {
   }
 
   const userLogout = async () => {
-    console.log("로그아웃 아이디 : " + userInfo.value.userId)
     await logout(
-      userInfo.value.userId,
       (response) => {
         if (response.status === httpStatusCode.OK) {
           isLogin.value = false
           userInfo.value = null
           isValidToken.value = false
-
+          console.log("로그아웃 완료!!!")
           sessionStorage.removeItem("accessToken")
           sessionStorage.removeItem("refreshToken")
         } else {
@@ -129,11 +200,21 @@ export const useMemberStore = defineStore("memberStore", () => {
   return {
     isLogin,
     isLoginError,
+    isRegister,
+    isRegisterError,
+    isModify,
+    isModifyError,
+    isDelete,
+    isDeleteError,
     userInfo,
     isValidToken,
+    userRegist,
     userLogin,
+    userUpdate,
+    userDelete,
     getUserInfo,
     tokenRegenerate,
     userLogout,
   }
-})
+},
+{persist: { storage: localStorage }})

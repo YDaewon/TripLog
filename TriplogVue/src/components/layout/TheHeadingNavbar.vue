@@ -23,11 +23,7 @@ const logout = () => {
   <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
     <div class="container-fluid">
       <router-link :to="{ name: 'main' }" class="navbar-brand">
-        <img
-          src="@/assets/ssafy_logo.png"
-          class="rounded mx-auto d-block"
-          alt="..."
-        />
+        <img src="@/assets/ssafy_logo.png" class="rounded mx-auto d-block" alt="..." />
       </router-link>
       <button
         class="navbar-toggler"
@@ -45,6 +41,9 @@ const logout = () => {
           class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
           style="--bs-scroll-height: 100px"
         >
+          <li class="nav-item">
+            <a class="nav-link" href="#">여행지 검색</a>
+          </li>
           <li class="nav-item dropdown">
             <a
               class="nav-link dropdown-toggle"
@@ -104,21 +103,16 @@ const logout = () => {
             <template v-if="menu.show">
               <template v-if="menu.routeName === 'user-logout'">
                 <li class="nav-item">
-                  <router-link
-                    to="/"
-                    @click.prevent="logout"
-                    class="nav-link"
-                    >{{ menu.name }}</router-link
-                  >
+                  <router-link to="/" @click.prevent="logout" class="nav-link">{{
+                    menu.name
+                  }}</router-link>
                 </li>
               </template>
               <template v-else>
                 <li class="nav-item">
-                  <router-link
-                    :to="{ name: menu.routeName }"
-                    class="nav-link"
-                    >{{ menu.name }}</router-link
-                  >
+                  <router-link :to="{ name: menu.routeName }" class="nav-link">{{
+                    menu.name
+                  }}</router-link>
                 </li>
               </template>
             </template>
