@@ -1,5 +1,7 @@
 import { localAxios } from "@/util/http-commons";
 
+const local = localAxios();
+
 local.defaults.headers["accessToken"] = sessionStorage.getItem("accessToken");
 function listArticle(param, success, fail) {
   local.get(`/article`, { params: param }).then(success).catch(fail);

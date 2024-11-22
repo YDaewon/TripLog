@@ -41,9 +41,6 @@ const logout = () => {
           class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
           style="--bs-scroll-height: 100px"
         >
-          <li class="nav-item">
-            <a class="nav-link" href="#">여행지 검색</a>
-          </li>
           <li class="nav-item dropdown">
             <a
               class="nav-link dropdown-toggle"
@@ -75,10 +72,23 @@ const logout = () => {
               <!-- <li><hr class="dropdown-divider" /></li> -->
             </ul>
           </li>
-          <li class="nav-item">
-            <router-link :to="{ name: 'board' }" class="nav-link">
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
               게시판
-            </router-link>
+            </a>
+            <ul class="dropdown-menu">
+              <li><router-link :to="{ name: 'board' }" class="dropdown-item">전체 게시판</router-link></li>
+              <li><hr class="dropdown-divider" /></li>
+              <li><router-link :to="{ name: 'star-article-list' }" class="dropdown-item">즐겨찾기</router-link></li>
+              <li><hr class="dropdown-divider" /></li>
+              <li><router-link :to="{ name: 'my-article-list' }" class="dropdown-item">내 게시글</router-link></li>
+            </ul>
           </li>
           <li class="nav-item">
             <router-link :to="{ name: 'attractions' }" class="nav-link">
