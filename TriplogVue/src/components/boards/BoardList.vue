@@ -6,6 +6,7 @@ import VSelect from "@/components/common/VSelect.vue";
 import BoardListItem from "@/components/boards/item/BoardListItem.vue";
 import VPageNavigation from "@/components/common/VPageNavigation.vue";
 
+
 const props = defineProps({
   fetchArticles: Function, // 게시글 데이터를 가져오는 함수
   initialParam: Object,    // 초기 `param` 값
@@ -22,25 +23,31 @@ const totalPage = ref(1);
 const param = ref({ ...props.initialParam }); // 초기값 복사
 
 // 검색 키 변경
+
 const changeKey = (val) => {
   param.value.key = val;
 };
 
+
 // 게시글 데이터 가져오기
 const getArticles = () => {
   props.fetchArticles(
+
     param.value,
     ({ data }) => {
       articles.value = data.articles;
       currentPage.value = data.currentPage;
       totalPage.value = data.totalPageCount;
+
       console.log(articles.value)
+
     },
     (error) => {
       console.error(error);
     }
   );
 };
+
 
 // 페이지 변경 처리
 const onPageChange = (val) => {
@@ -71,6 +78,7 @@ watch(() => props.initialParam, (newParam) => {
       <div class="col-lg-10">
         <h2 class="my-3 py-3 shadow-sm bg-light text-center">
           <mark class="sky">{{ subtitle }}</mark>
+
         </h2>
       </div>
       <div class="col-lg-10">
@@ -82,7 +90,9 @@ watch(() => props.initialParam, (newParam) => {
           </div>
           <div class="col-md-5 offset-5">
             <form class="d-flex">
+
               <VSelect :selectOption="selectOptions" @onKeySelect="changeKey" />
+
               <div class="input-group input-group-sm ms-1">
                 <input
                   type="text"
@@ -90,7 +100,9 @@ watch(() => props.initialParam, (newParam) => {
                   v-model="param.word"
                   placeholder="검색어..."
                 />
+
                 <button class="btn btn-dark" type="button" @click="getArticles">검색</button>
+
               </div>
             </form>
           </div>
@@ -125,3 +137,4 @@ watch(() => props.initialParam, (newParam) => {
 </template>
 
 <style scoped></style>
+

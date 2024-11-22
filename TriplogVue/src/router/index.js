@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import TheMainView from "../views/TheMainView.vue";
-import TheElectricChargingStationView from "@/views/TheElectricChargingStationView.vue";
+import TheAttractionView from "@/views/TheAttractionView.vue";
 // import TheBoardView from "../views/TheBoardView.vue";
 
 import { storeToRefs } from "pinia";
@@ -106,16 +106,26 @@ const router = createRouter({
       ],
     },
     {
-      path: "/estations",
-      name: "estations",
-      component: TheElectricChargingStationView,
+      path: "/attraction",
+      name: "attractions",
+      component: TheAttractionView,
     },
     {
       path: "/todos",
       name: "todos",
       beforeEnter: onlyAuthUser,
       component: () => import("@/views/TheTodoView.vue"),
-    }
+    },
+    {
+      path: "/plan",
+      name: "plan",
+      component: () => import("@/views/ThePlanView.vue"),
+    },
+    {
+      path: "/planDetail/:plan",
+      name: "planDetail",
+      component: () => import("@/views/ThePlanDetailView.vue"),
+    },
   ],
 });
 

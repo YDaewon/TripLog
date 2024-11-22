@@ -2,13 +2,14 @@ import axios from "axios";
 import { httpStatusCode } from "./http-status";
 
 const { VITE_VUE_API_URL, VITE_ELECTRIC_CHARGING_STATION_URL } = import.meta.env;
+const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhY2Nlc3MtdG9rZW4iLCJpYXQiOjE3MzIxNTQ1MDksImV4cCI6MTczMjE5MDUwOSwidXNlcklkIjoic3NhZnkiLCJ1c2VyTm8iOjEsInJvbGUiOjB9.3VhwlRiFx_Ed8NKRvEubzx4jtprJOx8P2tFO_-_wKkc";
 
 // station vue api axios instance
-function stationAxios() {
+function attractionAxios() {
   const instance = axios.create({
-    baseURL: VITE_ELECTRIC_CHARGING_STATION_URL,
+    baseURL: "http://localhost/attraction",
     headers: {
-      "Content-Type": "application/json;charset=utf-8",
+      'accessToken': `Bearer ${token}`
     },
   });
   return instance;
@@ -34,6 +35,7 @@ function localAxios() {
   //   // accessToken의 값이 유효하지 않은 경우,
   //   // refreshToken을 이용해 재발급 처리.
   //   // https://maruzzing.github.io/study/rnative/axios-interceptors%EB%A1%9C-%ED%86%A0%ED%81%B0-%EB%A6%AC%ED%94%84%EB%A0%88%EC%8B%9C-%ED%95%98%EA%B8%B0/
+
 
     let isTokenRefreshing = false;
 
@@ -83,3 +85,4 @@ function localAxios() {
 }
 
 export { localAxios, stationAxios };
+

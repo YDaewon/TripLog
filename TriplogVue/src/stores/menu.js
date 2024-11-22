@@ -19,3 +19,4 @@ export const useMenuStore = defineStore("menuStore", () => {
   };
 },
 {persist: { storage: localStorage }});
+

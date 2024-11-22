@@ -6,6 +6,7 @@ import { useMemberStore } from "@/stores/member"
 import { registArticle, getModifyArticle, modifyArticle } from "@/api/board";
 import ArticleEditor from "@/components/boards/item/ArticleEditor.vue";
 
+
 const router = useRouter();
 const route = useRoute();
 

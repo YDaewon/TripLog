@@ -52,31 +52,38 @@ const logout = () => {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              플랜
+              여행계획
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">전체 플랜</a></li>
-              <li><hr class="dropdown-divider" /></li>
-              <li><a class="dropdown-item" href="#">내 플랜</a></li>
+              <li>
+                <a class="dropdown-item">
+                  <router-link :to="{ name: 'plan' }" class="nav-link">
+                    내 여행계획
+                  </router-link>
+                </a>
+              </li>
+              <a class="dropdown-item">
+                <router-link :to="{ name: 'plan' }" class="nav-link">
+                  여행계획 목록
+                </router-link>
+              </a>
+              <a class="dropdown-item">
+                <router-link :to="{ name: 'board' }" class="nav-link">
+                  여행계획 즐겨찾기
+                </router-link>
+              </a>
+              <!-- <li><hr class="dropdown-divider" /></li> -->
             </ul>
           </li>
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
+          <li class="nav-item">
+            <router-link :to="{ name: 'board' }" class="nav-link">
               게시판
-            </a>
-            <ul class="dropdown-menu">
-              <li><router-link :to="{ name: 'board' }" class="dropdown-item">전체 게시판</router-link></li>
-              <li><hr class="dropdown-divider" /></li>
-              <li><router-link :to="{ name: 'star-article-list' }" class="dropdown-item">즐겨찾기</router-link></li>
-              <li><hr class="dropdown-divider" /></li>
-              <li><router-link :to="{ name: 'my-article-list' }" class="dropdown-item">내 게시글</router-link></li>
-            </ul>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link :to="{ name: 'attractions' }" class="nav-link">
+              여행지 검색
+            </router-link>
           </li>
         </ul>
         <!-- <form class="d-flex" role="search">
