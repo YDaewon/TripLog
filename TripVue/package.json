@@ -10,6 +10,7 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
+    "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "jwt-decode": "^4.0.0",

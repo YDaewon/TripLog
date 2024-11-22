@@ -23,11 +23,6 @@ function localAxios() {
     //   "Content-Type": "application/json;charset=utf-8",
     // },
   });
-  // Request 발생 시 적용할 내용.
-  instance.defaults.headers.common["accessToken"] = sessionStorage.getItem("accessToken");
-  instance.defaults.headers.post["Content-Type"] = "application/json";
-  instance.defaults.headers.put["Content-Type"] = "application/json";
-
   //   // Request, Response 시 설정한 내용을 적용.
   //   instance.interceptors.request.use((config) => {
   //     return config;
@@ -68,7 +63,7 @@ function localAxios() {
             return await instance.post("/user/refresh").then((response) => {
               const newAccessToken = response.data.Authorization;
 
-              instance.defaults.headers.common["Authorization"] = newAccessToken;
+              instance.defaults.headers.common["accessToken"] = newAccessToken;
               originalRequest.headers.Authorization = newAccessToken;
 
               isTokenRefreshing = false;

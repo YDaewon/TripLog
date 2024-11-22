@@ -15,29 +15,41 @@ const memberStore = useMemberStore()
 const { userInfo } = storeToRefs(memberStore)
 const isUseId = ref(false);
 
-// toolbar: [
-//             ["bold", "italic", "underline", "strike"], // <strong>, <em>, <u>, <s>
-//             ["blockquote", "code-block"], // <blockquote>, <pre class="ql-syntax" spellcheck="false">
-//             [{ header: 1 }, { header: 2 }], // <h1>, <h2>
-//             [{ list: "ordered" }, { list: "bullet" }],
-//             [{ script: "sub" }, { script: "super" }], // <sub>, <sup>
-//             [{ indent: "-1" }, { indent: "+1" }], // class제어
-//             [{ direction: "rtl" }], //class 제어
-//             [{ size: ["small", false, "large", "huge"] }], //class 제어 - html로 되도록 확인
-//             [{ header: [1, 2, 3, 4, 5, 6, false] }], // <h1>, <h2>, <h3>, <h4>, <h5>, <h6>, normal
-//             [{ font: [] }], // 글꼴 class로 제어
-//             [{ color: [] }, { background: [] }], //style="color: rgb(230, 0, 0);", style="background-color: rgb(230, 0, 0);"
-//             [{ align: [] }], // class
-//             // ["clean"],
-//             ["link", "image", "video"],
-//           ],
-
 const article = ref({
   articleNo: 0,
   title: "",
   content: "",
   userNo: userInfo.value.userNo,
 });
+
+// const quillnote = reactive({
+//       content: '',
+//       _content: '',
+//       editorOption: {
+//         placeholder: '내용을 입력해주세요...', // placeholder 설정
+//         modules: {
+//           toolbar: [
+//             ['bold', 'italic', 'underline', 'strike'],
+//             ['blockquote', 'code-block'],
+//             [{ header: 1 }, { header: 2 }],
+//             [{ list: 'ordered' }, { list: 'bullet' }],
+//             [{ script: 'sub' }, { script: 'super' }],
+//             [{ indent: '-1' }, { indent: '+1' }],
+//             [{ direction: 'rtl' }],
+//             [{ size: ['small', false, 'large', 'huge'] }],
+//             [{ header: [1, 2, 3, 4, 5, 6, false] }],
+//             [{ color: [] }, { background: [] }],
+//             [{ font: [] }],
+//             [{ align: [] }],
+//             ['clean'],
+//             ['link', 'image', 'video']
+//           ]
+//         }
+//         // more options
+//       },
+//       disabled: false
+//     })
+
 
 if (props.type === "modify") {
   let { articleno } = route.params;
@@ -70,7 +82,7 @@ watch(
   () => article.value.content,
   (value) => {
     let len = value.length;
-    if (len == 0 || len > 30000000) {
+    if (len == 0 || len > 3000) {
       contentErrMsg.value = "내용을 확인해 주세요!!!";
     } else contentErrMsg.value = "";
   },
@@ -81,7 +93,6 @@ function onSubmit() {
   if (titleErrMsg.value) {
     alert(titleErrMsg.value);
   } else if (contentErrMsg.value) {
-    console.log(article.value.content)
     alert(contentErrMsg.value);
   } else {
     props.type === "regist" ? writeArticle() : updateArticle();
@@ -90,57 +101,38 @@ function onSubmit() {
 
 function writeArticle() {
   console.log("글등록하자!!", article.value);
-  console.log(article.value)
-  // registArticle(
-  //   article.value,
-  //   (response) => {
-  //     let msg = "글등록 처리시 문제 발생했습니다.";
-  //     if (response.status == 201) msg = "글등록이 완료되었습니다.";
-  //     alert(msg);
-  //     moveList();
-  //   },
-  //   (error) => console.error(error)
-  // );
+  registArticle(
+    article.value,
+    (response) => {
+      let msg = "글등록 처리시 문제 발생했습니다.";
+      if (response.status == 201) msg = "글등록이 완료되었습니다.";
+      alert(msg);
+      moveList();
+    },
+    (error) => console.error(error)
+  );
 }
 
 function updateArticle() {
   console.log(article.value.articleNo + "번글 수정하자!!", article.value);
-  console.log(article.value)
-  // modifyArticle(
-  //   article.value,
-  //   (response) => {
-  //     let msg = "글수정 처리시 문제 발생했습니다.";
-  //     if (response.status == 200) msg = "글정보 수정이 완료되었습니다.";
-  //     alert(msg);
-  //     moveList();
-  //     // router.push({ name: "article-view" });
-  //     // router.push(`/board/view/${article.value.articleNo}`);
-  //   },
-  //   (error) => console.log(error)
-  // );
+  modifyArticle(
+    article.value,
+    (response) => {
+      let msg = "글수정 처리시 문제 발생했습니다.";
+      if (response.status == 200) msg = "글정보 수정이 완료되었습니다.";
+      alert(msg);
+      moveList();
+      // router.push({ name: "article-view" });
+      // router.push(`/board/view/${article.value.articleNo}`);
+    },
+    (error) => console.log(error)
+  );
 }
 
 function moveList() {
   router.push({ name: "article-list" });
 }
 </script>
-
-
-<style scoped>
-.ql-toolbar {
-  width: 800px !important;
-}
-.ql-container {
-  width: 800px !important;
-  height: 500px;
-}
-.ql-editor {
-  height: 2000px;
-  overflow: scroll;
-  overflow-x: hidden;
-}
-</style>
-
 
 <template>
   <form @submit.prevent="onSubmit">
@@ -150,7 +142,7 @@ function moveList() {
     </div>
     <div class="mb-3">
       <label for="content" class="form-label">내용 : </label>
-      <QuillEditor v-model:value="article.content" theme="snow" />
+      <textarea class="form-control" v-model="article.content" rows="10"></textarea>
     </div>
     <div class="col-auto text-center">
       <button type="submit" class="btn btn-outline-primary mb-3" v-if="type === 'regist'">
@@ -164,3 +156,6 @@ function moveList() {
   </form>
 </template>
 
+<style scoped>
+
+</style>
