@@ -5,17 +5,17 @@ import { detailArticle, deleteArticle } from "@/api/board";
 import { storeToRefs } from "pinia"
 import { useMemberStore } from "@/stores/member"
 
+
 const route = useRoute();
 const router = useRouter();
 
 // const articleno = ref(route.params.articleno);
 const { articleno } = route.params;
 
+
 const memberStore = useMemberStore()
 const { userInfo } = storeToRefs(memberStore)
 const article = ref({});
-
-
 
 onMounted(() => {
   getArticle();
@@ -26,7 +26,6 @@ const getArticle = () => {
     articleno,
     ({ data }) => {
       article.value = data;
-      //console.log(article.value)
     },
     (error) => {
       console.error(error);
