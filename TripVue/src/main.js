@@ -4,21 +4,21 @@ import { createApp } from "vue";
 import { createPinia } from "pinia";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 
-import App from "./App.vue";
+import './style.css';
+import App from './App.vue';
+import { CkeditorPlugin } from '@ckeditor/ckeditor5-vue';
 import router from "./router";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
-import { QuillEditor } from '@vueup/vue-quill'
-import '@vueup/vue-quill/dist/vue-quill.bubble.css';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 const app = createApp(App);
-app.component('QuillEditor', QuillEditor)
+createApp(App).use(CkeditorPlugin)
 const pinia = createPinia();
 
 pinia.use(piniaPluginPersistedstate);
 
+app.use(CkeditorPlugin)
 app.use(pinia);
 // app.use(createPinia().use(piniaPluginPersistedstate));
 app.use(router);

@@ -1,5 +1,5 @@
 import axios from "axios";
-// import { httpStatusCode } from "./http-status";
+import { httpStatusCode } from "./http-status";
 
 const { VITE_VUE_API_URL, VITE_ELECTRIC_CHARGING_STATION_URL } = import.meta.env;
 
@@ -18,18 +18,18 @@ function stationAxios() {
 function localAxios() {
   const instance = axios.create({
     baseURL: VITE_VUE_API_URL,
-    // withCredentials: true,
-    // headers: {
-    //   "Content-Type": "application/json;charset=utf-8",
-    // },
+   // withCredentials: true,
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+    },
   });
-  //   // Request, Response 시 설정한 내용을 적용.
-  //   instance.interceptors.request.use((config) => {
-  //     return config;
-  //   }),
-  //     (error) => {
-  //       return Promise.reject(error);
-  //     };
+    // Request, Response 시 설정한 내용을 적용.
+    // instance.interceptors.request.use((config) => {
+    //   return config;
+    // }),
+    //   (error) => {
+    //     return Promise.reject(error);
+    //   };
 
   //   // accessToken의 값이 유효하지 않은 경우,
   //   // refreshToken을 이용해 재발급 처리.
