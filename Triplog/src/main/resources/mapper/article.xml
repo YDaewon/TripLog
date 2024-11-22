@@ -13,24 +13,48 @@
 		<result column="created_at" property="createdAt"/>
 		<result column="deleted_at" property="deletedAt"/>
 		<result column="stars" property="stars"/>
-		<result column="hit_count" property="hitCount"/>
+		<result column="hitCount" property="hitCount"/>
 	</resultMap>
+	
+	<select id="getTotalCount" parameterType="map" resultType="int">
+	    SELECT 
+	        COUNT(*) 
+	    FROM 
+	        articles a
+	    LEFT JOIN
+	        users u ON a.user_no = u.user_no
+	    WHERE 
+	        a.deleted_at IS NULL
+	        <if test="key != null and key != '' and word != null and word != ''">
+	            AND ${key} LIKE CONCAT('%', #{word}, '%')
+	        </if>
+	</select>
 
 	<select id="listAll" parameterType="map" resultMap="article">
-		SELECT 
-		    a.article_no AS article_no,
-		    a.title AS title,
-		    u.nickname AS author,
-		    (SELECT count(*) from article_stars s where a.article_no = s.article_no) AS stars,
-		    hit_count AS hitCount,
-		    a.created_at AS create_at
-		  FROM 
-		    articles a
-		  LEFT JOIN
-		    users u ON a.user_no = u.user_no
-		  WHERE 
-		    a.deleted_at IS NULL
-		  ORDER BY a.created_at DESC
+		    SELECT 
+		        a.article_no AS article_no,
+		        a.title AS title,
+		        u.nickname AS author,
+		        (SELECT count(*) FROM article_stars s WHERE a.article_no = s.article_no) AS stars,
+		        a.hit_count AS hitCount,
+		        a.created_at AS created_at
+		    FROM 
+		        articles a
+		    LEFT JOIN
+		        users u ON a.user_no = u.user_no
+		    WHERE 
+		        a.deleted_at IS NULL
+		        <if test="key != null and !key.isEmpty() and word != null and !word.isEmpty()">
+		            AND ${key} LIKE CONCAT('%', #{word}, '%')
+		        </if>
+		        <if test="userNo != null">
+		            AND a.user_no = ${userNo}
+		        </if>
+		        <if test="star != null">
+		            AND a.article_no IN (SELECT s.article_no FROM article_stars s WHERE ${userNo} = s.user_no)
+		        </if>
+		    ORDER BY a.created_at DESC
+		    LIMIT ${curpgno}, ${spp}
 	</select>
 	
 	<select id="getArticle" parameterType="int" resultMap="article">
@@ -42,7 +66,7 @@
 		    u.nickname AS author,
 		    a.content AS content,
 		    (SELECT count(*) from article_stars s where a.article_no = s.article_no) AS stars,
-		    a.hit_count AS hit_count,
+		    a.hit_count AS hitCount,
 		    a.created_at AS created_at,
 		    a.deleted_at AS deleted_at
 		  FROM 

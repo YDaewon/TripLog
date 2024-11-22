@@ -22,6 +22,11 @@ public class JwtInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		String token = request.getHeader("accessToken");
+		System.out.println("token: " + token);
+	    if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
+	        response.setStatus(HttpServletResponse.SC_OK); // OPTIONS 요청에 200 OK 반환
+	        return false; // 이후 로직 실행하지 않음
+	    }
 		// JWT 토큰이 없거나 형식이 올바르지 않으면 로그인 페이지로 리다이렉트
 		if (token == null || token.isEmpty()) {
 			response.sendRedirect(request.getContextPath() + "/user/login");
