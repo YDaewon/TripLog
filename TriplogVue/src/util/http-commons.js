@@ -1,15 +1,12 @@
 import axios from "axios";
 import { httpStatusCode } from "./http-status";
 
-const { VITE_VUE_API_URL, VITE_ELECTRIC_CHARGING_STATION_URL } = import.meta.env;
-const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhY2Nlc3MtdG9rZW4iLCJpYXQiOjE3MzIxNTQ1MDksImV4cCI6MTczMjE5MDUwOSwidXNlcklkIjoic3NhZnkiLCJ1c2VyTm8iOjEsInJvbGUiOjB9.3VhwlRiFx_Ed8NKRvEubzx4jtprJOx8P2tFO_-_wKkc";
-
+const { VITE_VUE_API_URL } = import.meta.env;
 // station vue api axios instance
 function attractionAxios() {
   const instance = axios.create({
     baseURL: "http://localhost/attraction",
     headers: {
-      'accessToken': `Bearer ${token}`
     },
   });
   return instance;
@@ -21,7 +18,7 @@ function localAxios() {
     baseURL: VITE_VUE_API_URL,
    // withCredentials: true,
     headers: {
-      "Content-Type": "application/json;charset=utf-8",
+      //"Content-Type": "application/json;charset=utf-8",
     },
   });
     // Request, Response 시 설정한 내용을 적용.
@@ -84,5 +81,5 @@ function localAxios() {
   return instance;
 }
 
-export { localAxios, stationAxios };
+export { localAxios, attractionAxios };
 

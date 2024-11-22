@@ -19,14 +19,7 @@ function updatePlan(plan, success, fail) {
 }
 
 function deletePlan(planNo, success, fail) {
-  local.delete(`/plan/${articleno}`).then(success).catch(fail);
+  local.delete(`/plan/${planNo}`).then(success).catch(fail);
 }
 
-export {
-  listArticle,
-  detailArticle,
-  registArticle,
-  getModifyArticle,
-  modifyArticle,
-  deleteArticle,
-};
+export { getPlans, getPlan, createPlan, updatePlan, deletePlan };

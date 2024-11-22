@@ -6,7 +6,6 @@ async function userConfirm(param, success, fail) {
   await local.post(`/user/login`, param).then(success).catch(fail);
 }
 
-
 async function userRegister(param, success, fail) {
   await local.post(`/user/join`, param).then(success).catch(fail);
 }
