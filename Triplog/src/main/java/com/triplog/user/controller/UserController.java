@@ -1,25 +1,34 @@
 package com.triplog.user.controller;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.triplog.user.service.UserService;
 import com.triplog.util.JWTUtil;
 import com.triplog.user.model.UserDto;
 
+import io.jsonwebtoken.io.IOException;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -58,15 +67,33 @@ public class UserController {
 	@PostMapping("/join")
 	@Operation(summary = "회원가입", description = "유저 테이블에 데이터를 Insert")
 	public ResponseEntity<String> join(
-			@Parameter(description = "회원가입 정보", required = true) @RequestBody UserDto UserDto) {
+			@Parameter(description = "회원가입 정보", required = true) @RequestBody UserDto userDto) {
 		try {
-			UserService.joinUser(UserDto);
+
+			// userDto, userImage 확인
+	        System.out.println("Received userDto: " + userDto);
+			
+//	        // 이미지 저장 경로
+//	        String uploadPath = "src/main/resources/static/assets/img/profile";
+//	        if (!userImage.isEmpty()) {
+//	            // 파일 이름 생성 및 저장
+//	            String fileName = UUID.randomUUID().toString() + "_" + userImage.getOriginalFilename();
+//	            File saveFile = new File(uploadPath, fileName);
+//	            userImage.transferTo(saveFile);
+//
+//	            // 저장된 파일 이름을 DTO에 설정
+//	            userDto.setUserImage(fileName);
+//	        }
+	        
+	        
+			UserService.joinUser(userDto);
 			return ResponseEntity.status(HttpStatus.CREATED).body("회원 가입 성공");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 가입 중 문제 발생");
 		}
 	}
+	
 
 	// 로그인
 	@PostMapping("/login")
@@ -127,18 +154,18 @@ public class UserController {
 
 	// 마이 페이지 조회
 	@Operation(summary = "마이페이지", description = "유저의 상세정보를 반환")
-	@GetMapping("/info/{userId}")
+	@GetMapping("/info")
 	public ResponseEntity<Map<String, Object>> getInfo(
-			@Parameter(in = ParameterIn.PATH, description = "인증할 회원의 아이디.") @PathVariable("userId") String userId,
 			HttpServletRequest request) {
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.ACCEPTED;
 		String tokenId = (String) request.getAttribute("userId");
-		if (userId.equals(tokenId)) {
+		if (tokenId != null) {
 			log.info("사용 가능한 토큰!!!");
 			try {
 //				로그인 사용자 정보.
-				UserDto userDto = UserService.getUser(userId);
+				UserDto userDto = UserService.getUser(tokenId);
+				System.out.println(userDto.toString());
 				resultMap.put("userInfo", userDto);
 				status = HttpStatus.OK;
 			} catch (Exception e) {
@@ -167,6 +194,7 @@ public class UserController {
 			try {
 //				로그인 사용자 정보.
 				UserDto.setUserId(userId);
+				System.out.println(UserDto.toString());
 				UserService.updateUser(UserDto);
 				resultMap.put("message", "회원 정보 수정 성공");
 				status = HttpStatus.OK;
@@ -210,5 +238,26 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 	
+	@Operation(summary = "Access Token 재발급", description = "만료된 access token 을 재발급 받는다.")
+	@PostMapping("/refresh")
+	public ResponseEntity<?> refreshToken(@RequestBody UserDto userDto, @RequestHeader("refreshToken") String token)
+			throws Exception {
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		log.debug("token : {}, memberDto : {}", token, userDto);
+		if (jwtUtil.checkToken(token)) {
+			if (token.equals(UserService.getRefreshToken(userDto.getUserId()))) {
+				String accessToken = jwtUtil.createAccessToken(userDto.getUserId(), userDto.getUserNo(), userDto.getRole());
+				log.debug("token : {}", accessToken);
+				log.debug("정상적으로 access token 재발급!!!");
+				resultMap.put("access-token", accessToken);
+				status = HttpStatus.CREATED;
+			}
+		} else {
+			log.debug("refresh token 도 사용 불가!!!!!!!");
+			status = HttpStatus.UNAUTHORIZED;
+		}
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
 
 }

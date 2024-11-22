@@ -8,6 +8,7 @@ import com.triplog.article.model.ArticleDto;
 public interface ArticleService {
 	// List Article
 	List<ArticleDto> listAll(Map<String, String> map);
+    public int getTotalCount(Map<String, String> map);
 	
 	// Detail Article
 	ArticleDto getArticle(int articleNo);
@@ -28,5 +29,7 @@ public interface ArticleService {
 
 	void createStar(int articleNo, int userNo);
 	void deleteStar(int articleNo, int userNo);
+
+	List<ArticleDto> mylist(Map<String, String> map);
 
 }
