@@ -5,7 +5,7 @@ import { deleteArticle } from "@/api/board";
 import { storeToRefs } from "pinia"
 import { useMemberStore } from "@/stores/member"
 import { useArticleStore} from "@/stores/article"
-
+import ArticleEditor from "@/components/boards/item/ArticleEditor.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -105,9 +105,7 @@ function onDeleteArticle() {
           </div>
           <div class="col-md-4 align-self-center text-end">조회수: {{ article.hitCount }}</div>
           <div class="divider mb-3"></div>
-          <div class="text-secondary">
-            {{ article.content }}
-          </div>
+          <div v-html="articleInfo.content"></div>
           <div class="divider mt-3 mb-3"></div>
           <div class="d-flex justify-content-end">
             <button type="button" class="btn btn-outline-primary mb-3" @click="moveList">

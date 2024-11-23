@@ -20,6 +20,7 @@ export const useMemberStore = defineStore("memberStore", () => {
   const userInfo = ref(null)
   const isValidToken = ref(false)
 
+
   const userRegist = async (RegisterUser) => {
     await userRegister(
       RegisterUser,

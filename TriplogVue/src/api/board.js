@@ -16,15 +16,14 @@ function detailArticle(articleno, success, fail) {
 }
 
 function registArticle(article, success, fail) {
-  console.log("boardjs article", article);
+  console.log("boardjs article", article.content);
+  local.defaults.headers.post["Content-Type"] = "application/json";
   local.post(`/article`, JSON.stringify(article)).then(success).catch(fail);
 }
 
-function getModifyArticle(articleno, success, fail) {
-  local.get(`/article/${articleno}`).then(success).catch(fail);
-}
-
 function modifyArticle(article, success, fail) {
+  console.log("boardjs article", article.content);
+  local.defaults.headers.put["Content-Type"] = "application/json";
   local.put(`/article`, JSON.stringify(article)).then(success).catch(fail);
 }
 
@@ -37,7 +36,6 @@ export {
   listMyArticle,
   detailArticle,
   registArticle,
-  getModifyArticle,
   modifyArticle,
   deleteArticle,
 };
