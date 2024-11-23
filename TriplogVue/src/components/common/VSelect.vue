@@ -13,12 +13,8 @@ const onSelect = () => {
 
 <template>
   <select v-model="key" class="form-select form-select-sm w-50" @change="onSelect">
-    <option
-      v-for="option in selectOption"
-      :key="option.value"
-      :value="option.value"
-      :disabled="option.value === '' ? true : false"
-    >
+    <option v-for="option in selectOption" :key="option.value" :value="option.value"
+      :disabled="option.value === '' ? true : false">
       {{ option.text }}
     </option>
   </select>

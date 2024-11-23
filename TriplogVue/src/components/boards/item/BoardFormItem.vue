@@ -26,10 +26,10 @@ const article = ref({
   userNo: userInfo.value.userNo,
 });
 
-if(props.type !== 'modify'){
-    article.value.title = "";
-    article.value.content = "";
-    articleInfo.value.content = "";
+if (props.type !== 'modify') {
+  article.value.title = "";
+  article.value.content = "";
+  articleInfo.value.content = "";
 }
 
 const titleErrMsg = ref("");
@@ -114,13 +114,14 @@ function moveList() {
     </div>
     <div class="mb-3">
       <label for="content" class="form-label">내용 : </label>
-      <div class="editor-container editor-container_classic-editor editor-container_include-block-toolbar" ref="editorContainerElement">
-				<div class="editor-container__editor">
-					<div ref="editorElement">
-						<ArticleEditor/>
-					</div>
-				</div>
-			</div>
+      <div class="editor-container editor-container_classic-editor editor-container_include-block-toolbar"
+        ref="editorContainerElement">
+        <div class="editor-container__editor">
+          <div ref="editorElement">
+            <ArticleEditor />
+          </div>
+        </div>
+      </div>
     </div>
     <div class="col-auto text-center">
       <button type="submit" class="btn btn-outline-primary mb-3" v-if="type === 'regist'">
@@ -133,4 +134,3 @@ function moveList() {
     </div>
   </form>
 </template>
-

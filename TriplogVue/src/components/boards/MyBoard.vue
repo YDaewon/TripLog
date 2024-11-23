@@ -29,10 +29,6 @@ const selectOptions = [
 </script>
 
 <template>
-  <BoardList
-    :fetch-articles="listArticle"
-    :initial-param="initialParam"
-    :select-options="selectOptions"
-    :subtitle="subtitle"
-  />
+  <BoardList :fetch-articles="listArticle" :initial-param="initialParam" :select-options="selectOptions"
+    :subtitle="subtitle" />
 </template>

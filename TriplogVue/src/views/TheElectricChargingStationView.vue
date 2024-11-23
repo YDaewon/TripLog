@@ -88,7 +88,9 @@ const viewStation = (station) => {
       <div class="col d-flex flex-row-reverse">
         <VSelect :selectOption="sidoList" @onKeySelect="onChangeSido" />
       </div>
-      <div class="col"><VSelect :selectOption="gugunList" @onKeySelect="onChangeGugun" /></div>
+      <div class="col">
+        <VSelect :selectOption="gugunList" @onKeySelect="onChangeGugun" />
+      </div>
     </div>
     <VKakaoMap :stations="chargingStations" :selectStation="selectStation" />
     <table class="table table-hover">
@@ -103,12 +105,8 @@ const viewStation = (station) => {
         </tr>
       </thead>
       <tbody>
-        <tr
-          class="text-center"
-          v-for="station in chargingStations"
-          :key="station.statId + station.chgerId"
-          @click="viewStation(station)"
-        >
+        <tr class="text-center" v-for="station in chargingStations" :key="station.statId + station.chgerId"
+          @click="viewStation(station)">
           <th>{{ station.statNm }}</th>
           <td>{{ station.statId }}</td>
           <td>{{ station.stat }}</td>
