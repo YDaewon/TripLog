@@ -1,4 +1,5 @@
 <script setup>
+import { onMounted } from "vue";
 import { useMenuStore } from "@/stores/menu";
 import { useMemberStore } from "@/stores/member";
 import { storeToRefs } from "pinia";
@@ -6,16 +7,30 @@ import { storeToRefs } from "pinia";
 const menuStore = useMenuStore();
 const memberStore = useMemberStore();
 
+
+
 // 반응형을 유지하면서 스토어에서 속성을 추출하려면, storeToRefs()를 사용
 // https://pinia.vuejs.kr/core-concepts/
 const { menuList } = storeToRefs(menuStore);
 const { changeMenuState } = menuStore;
 
+const { isValidToken, userInfo } = storeToRefs(memberStore);
 const { userLogout } = memberStore;
+
+onMounted(()=>{
+    let token = sessionStorage.getItem("accessToken");
+    if(token == null){
+      isValidToken.value = false;
+      userInfo.value = null;
+      changeMenuState(false);
+      console.log("메뉴바 초기화")
+    }
+
+  })
 
 const logout = () => {
   userLogout();
-  changeMenuState();
+  changeMenuState(false);
 };
 </script>
 

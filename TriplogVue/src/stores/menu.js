@@ -10,8 +10,23 @@ export const useMenuStore = defineStore("menuStore", () => {
     { name: "로그아웃", show: false, routeName: "user-logout" }
   ]);
 
-  const changeMenuState = () => {
-    menuList.value = menuList.value.map((item) => ({ ...item, show: !item.show }));
+
+  const changeMenuState = (value) => {
+    if(value){
+      menuList.value[0].show = false;
+      menuList.value[1].show = false;
+      menuList.value[2].show = true;
+      menuList.value[3].show = true;
+      menuList.value[4].show = true;
+    }
+    else{
+      menuList.value[0].show = true;
+      menuList.value[1].show = true;
+      menuList.value[2].show = false;
+      menuList.value[3].show = false;
+      menuList.value[4].show = false;
+    }
+    //menuList.value = menuList.value.map((item) => ({ ...item, show: !item.show }));
   };
   return {
     menuList,

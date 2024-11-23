@@ -4,7 +4,7 @@
 			<div class="editor-container editor-container_classic-editor" ref="editorContainerElement">
 				<div class="editor-container__editor">
 					<div ref="editorElement">
-						<ckeditor v-if="isLayoutReady" v-model="content" :editor="editor" :config="config" />
+						<ckeditor v-if="isLayoutReady" v-model="articleInfo.content" :editor="editor" :config="config"/>
 					</div>
 				</div>
 			</div>
@@ -12,9 +12,17 @@
 	</div>
 </template>
 
-<style scoped>
-.ck-content { height:500px; }
+<style>
+.main-container {
+  width: 100%;
+}
 
+.editor-container_include-block-toolbar{
+  margin: 0;
+}
+.editor-container_classic-editor .editor-container__editor {
+    min-width: 100%;
+}
 </style>
 
 <script setup>
@@ -77,36 +85,34 @@ const { VITE_VUE_API_URL } = import.meta.env;
 const isLayoutReady = ref(false);
 const editor = ref(ClassicEditor);
 const config = ref(null);
-const content = ref("");
-content.value = articleInfo.value.content
 
 config.value = {
 	toolbar: {
-		items: [
-			'undo',
-			'redo',
-			'|',
-			'heading',
-			'|',
-			'bold',
-			'italic',
-			'underline',
-			'|',
-			'link',
-			'insertImage',
-			'insertTable',
-			'blockQuote',
-			'|',
-			'bulletedList',
-			'numberedList',
-			'todoList',
-			'outdent',
-			'indent',
+    items: [
+      'undo',
+      'redo',
       '|',
-      'ckfinder'
-		],
-		shouldNotGroupWhenFull: false
-	},
+      'heading',
+      '|',
+      'bold',
+      'italic',
+      'underline',
+      '|',
+      'link',
+      'insertImage',
+      'insertTable',
+      'blockQuote',
+      '|',
+      'bulletedList',
+      'numberedList',
+      'todoList',
+      'outdent',
+      'indent',
+      '|',
+      'ckfinder',
+    ],
+    shouldNotGroupWhenFull: false,
+  },
 	plugins: [
 		AccessibilityHelp,
 		Autoformat,
@@ -177,7 +183,7 @@ config.value = {
 	},
 	simpleUpload: {
 		// The URL that the images are uploaded to.
-		uploadUrl: VITE_VUE_API_URL + "/file/article/" + articleInfo.value.articleNo,
+		uploadUrl: VITE_VUE_API_URL + "/file/article",
 	},
 	link: {
 		addTargetToExternalLinks: true,
@@ -202,9 +208,15 @@ config.value = {
 	placeholder: 'Type or paste your content here!',
 	table: {
 		contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
-	}
+	},
 };
 
 isLayoutReady.value = true;
+
+
+console.log(editor);
+
+
+
 </script>
 

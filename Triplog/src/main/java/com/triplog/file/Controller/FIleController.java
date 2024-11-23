@@ -90,15 +90,15 @@ public class FIleController {
 		return ResponseEntity.status(HttpStatus.OK).body(imgurl);
 	}
 	
-	@PostMapping("article/{articleNo}")
+	@PostMapping("article")
 	@Operation(summary = "에디터 이미지 파일 업로드", description = "에디터 이미지 파일을 업로드 합니다.")
 	public ResponseEntity<FileResponse> articleupload(
-			@Parameter(description = "파일 정보", required = true) MultipartRequest request,
-			@PathVariable("articleNo") String articleNo) throws IOException, IllegalStateException, java.io.IOException {
+			@Parameter(description = "파일 정보", required = true) MultipartRequest request
+			) throws IOException, IllegalStateException, java.io.IOException {
 		MultipartFile file = request.getFile("upload");
 		return new ResponseEntity<>(FileResponse.builder().
                 uploaded(true).
-                url(fileUploadService.upload(articleNo, file)).
+                url(fileUploadService.upload("article", file)).
                 build(), HttpStatus.OK);
 	}
 	

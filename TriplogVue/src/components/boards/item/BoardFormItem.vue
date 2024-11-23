@@ -40,17 +40,23 @@ watch(
     let len = value.length;
     if (len == 0 || len > 50) {
       titleErrMsg.value = "제목을 확인해 주세요!!!";
-    } else titleErrMsg.value = "";
+    } else {
+      articleInfo.value.title = value;
+      titleErrMsg.value = "";
+    }
   },
   { immediate: true }
 );
 watch(
-  () => article.value.content,
+  () => articleInfo.value.content,
   (value) => {
     let len = value.length;
     if (len == 0 || len > 30000000) {
       contentErrMsg.value = "내용을 확인해 주세요!!!";
-    } else contentErrMsg.value = "";
+    } else {
+      article.value.content = value;
+      contentErrMsg.value = "";
+    }
   },
   { immediate: true }
 );
@@ -67,8 +73,6 @@ function onSubmit() {
 }
 
 function writeArticle() {
-  console.log("글등록하자!!", article.value);
-  console.log(article.value)
   registArticle(
     article.value,
     (response) => {
@@ -82,8 +86,6 @@ function writeArticle() {
 }
 
 function updateArticle() {
-  console.log(article.value.articleNo + "번글 수정하자!!", article.value);
-  console.log(article.value)
   modifyArticle(
     article.value,
     (response) => {
@@ -115,10 +117,7 @@ function moveList() {
       <div class="editor-container editor-container_classic-editor editor-container_include-block-toolbar" ref="editorContainerElement">
 				<div class="editor-container__editor">
 					<div ref="editorElement">
-						<ArticleEditor
-            :userInfo = "userInfo"
-            :article = "article"
-            />
+						<ArticleEditor/>
 					</div>
 				</div>
 			</div>

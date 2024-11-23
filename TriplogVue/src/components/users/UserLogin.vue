@@ -25,7 +25,7 @@ const login = async () => {
   //console.log("isLogin: " + isLogin.value)
   if (isLogin.value) {
     getUserInfo()
-    changeMenuState()
+    changeMenuState(true)
     router.replace("/")
   }
 }
