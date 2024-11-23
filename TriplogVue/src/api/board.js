@@ -31,6 +31,18 @@ function deleteArticle(articleno, success, fail) {
   local.delete(`/article/${articleno}`).then(success).catch(fail);
 }
 
+function IsStar(articleno, success, fail) {
+  local.get(`/article/star/${articleno}`).then(success).catch(fail);
+}
+
+function createStarArticle(articleno, success, fail) {
+  local.post(`/article/star/${articleno}`).then(success).catch(fail);
+}
+
+function deleteStarArticle(articleno, success, fail) {
+  local.delete(`/article/star/${articleno}`).then(success).catch(fail);
+}
+
 export {
   listArticle,
   listMyArticle,
@@ -38,4 +50,7 @@ export {
   registArticle,
   modifyArticle,
   deleteArticle,
+  IsStar,
+  createStarArticle,
+  deleteStarArticle,
 };
