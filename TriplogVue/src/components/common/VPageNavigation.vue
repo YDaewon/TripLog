@@ -39,10 +39,7 @@ function onPageChange(pg) {
   <div class="row">
     <ul class="pagination justify-content-center">
       <li class="page-item">
-        <a class="page-link" @click="onPageChange(1)">최신</a>
-      </li>
-      <li class="page-item">
-        <a class="page-link" @click="onPageChange(startPage == 1 ? 1 : startPage - 1)">이전</a>
+        <a class="page-link" @click="onPageChange(startPage == 1 ? 1 : startPage - 1)">Previous</a>
       </li>
       <template v-for="pg in range(startPage, endPage)" :key="pg">
         <li :class="currentPage === pg ? 'page-item active' : 'page-item'">
@@ -50,9 +47,8 @@ function onPageChange(pg) {
         </li>
       </template>
       <li class="page-item">
-        <a class="page-link" @click="onPageChange(endRange ? totalPage : endPage + 1)">다음</a>
+        <a class="page-link" @click="onPageChange(endRange ? totalPage : endPage + 1)">Next</a>
       </li>
-      <li class="page-item"><a class="page-link" @click="onPageChange(totalPage)">마지막</a></li>
     </ul>
   </div>
 </template>
@@ -61,4 +57,27 @@ function onPageChange(pg) {
 a {
   cursor: pointer;
 }
+
+.page-link {
+    border: 0px;
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 8px 16px 10px;
+    margin-left:20px;
+    margin-right:20px;
+    color: rgb(140, 179, 252);
+}
+.page-link:hover {
+  z-index: 2;
+  text-decoration: none;
+}
+.page-item.active .page-link {
+  z-index: 3;
+  background-color: transparent;
+  color: rgb(7, 4, 39);
+}
+
 </style>

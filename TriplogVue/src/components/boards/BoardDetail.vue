@@ -1,11 +1,10 @@
 <script setup>
 import { onMounted, ref, watch} from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { deleteArticle } from "@/api/board";
+import { deleteArticle, createStarArticle, IsStar, deleteStarArticle } from "@/api/board";
 import { storeToRefs } from "pinia"
 import { useMemberStore } from "@/stores/member"
 import { useArticleStore} from "@/stores/article"
-import ArticleEditor from "@/components/boards/item/ArticleEditor.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -19,7 +18,7 @@ const { userInfo } = storeToRefs(memberStore)
 const articleStore = useArticleStore()
 const { articleInfo } = storeToRefs(articleStore)
 const { getArticle } = articleStore;
-
+const isStar = ref(false);
 const isLoad = ref(false);
 
 const article = ref({
@@ -37,6 +36,21 @@ const article = ref({
 
 onMounted(async () => {
   await getArticle(articleno);
+  await IsStar(
+      articleno,
+    (response) => {
+      if (response.data != 0) {
+        isStar.value = true;
+        console.log("현재 게시글 즐겨찾기 되어있음")
+      }
+      else{
+        isStar.value = false;
+      }
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
   isLoad.value = true; // 로드 완료 표시
 });
 
@@ -56,6 +70,36 @@ function moveModify() {
     alert("작성자 외 수정 금지!")
   }
   else router.push({ name: "article-modify", params: { articleno } });
+}
+
+function createStar() {
+  createStarArticle(
+      articleno,
+    (response) => {
+      if (response.status == 200) {
+        console.log("즐겨찾기 추가 완료")
+        isStar.value = true;
+      }
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
+}
+
+function deleteStar() {
+  deleteStarArticle(
+      articleno,
+    (response) => {
+      if (response.status == 200) {
+        console.log("즐겨찾기 삭제 완료")
+        isStar.value = false;
+      }
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
 }
 
 function onDeleteArticle() {
@@ -80,20 +124,24 @@ function onDeleteArticle() {
   <div v-if="isLoad" class="container">
     <div class="row justify-content-center">
       <div class="col-lg-10">
-        <h2 class="my-3 py-3 shadow-sm bg-light text-center">
-          <mark class="sky">글보기</mark>
-        </h2>
       </div>
       <div class="col-lg-10 text-start">
         <div class="row my-2">
-          <h2 class="text-secondary px-5">{{ article.articleNo }}. {{ article.title }}</h2>
+          <h2 class="text-secondary">{{ article.title }}</h2>
         </div>
         <div class="row">
           <div class="col-md-8">
             <div class="clearfix align-content-center">
               <img
                 class="avatar me-2 float-md-start bg-light p-2"
-                src="https://raw.githubusercontent.com/twbs/icons/main/icons/person-fill.svg"
+                :src="userInfo.userImage"
+                style="
+                 width: 50px;
+                 height: 50px;
+                 object-fit: cover;
+                 object-position: center;
+                 border-radius: 50%;
+                "
               />
               <p>
                 <span class="fw-bold">{{ article.author }}</span> <br />
@@ -108,6 +156,12 @@ function onDeleteArticle() {
           <div v-html="articleInfo.content"></div>
           <div class="divider mt-3 mb-3"></div>
           <div class="d-flex justify-content-end">
+            <button type="button" v-if="!isStar" class="btn btn-outline-warning mb-3" @click="createStar">
+              즐겨찾기 추가
+            </button>
+            <button type="button" v-if="isStar" class="btn btn-outline-warning mb-3" @click="deleteStar">
+              즐겨찾기 삭제
+            </button>
             <button type="button" class="btn btn-outline-primary mb-3" @click="moveList">
               글목록
             </button>

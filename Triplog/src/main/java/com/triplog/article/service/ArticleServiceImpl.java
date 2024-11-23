@@ -79,5 +79,10 @@ public class ArticleServiceImpl implements ArticleService {
 		articleMapper.deleteStar(articleNo, userNo);
 	}
 
+	@Override
+	public int isStar(int articleNo, int userNo) {
+		return articleMapper.isStar(articleNo, userNo);
+	}
+
 
 }
