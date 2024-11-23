@@ -12,14 +12,14 @@ export const useMenuStore = defineStore("menuStore", () => {
 
 
   const changeMenuState = (value) => {
-    if(value){
+    if (value) {
       menuList.value[0].show = false;
       menuList.value[1].show = false;
       menuList.value[2].show = true;
       menuList.value[3].show = true;
       menuList.value[4].show = true;
     }
-    else{
+    else {
       menuList.value[0].show = true;
       menuList.value[1].show = true;
       menuList.value[2].show = false;
@@ -33,5 +33,5 @@ export const useMenuStore = defineStore("menuStore", () => {
     changeMenuState,
   };
 },
-{persist: { storage: localStorage }});
+  { persist: { storage: localStorage } });
 

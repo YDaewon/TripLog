@@ -1,6 +1,6 @@
 import { ref } from "vue"
 import { defineStore } from "pinia"
-import { detailArticle} from "@/api/board"
+import { detailArticle } from "@/api/board"
 import { httpStatusCode } from "@/util/http-status"
 
 export const useArticleStore = defineStore("articleStore", () => {
@@ -28,4 +28,4 @@ export const useArticleStore = defineStore("articleStore", () => {
     getArticle,
   }
 },
-{persist: { storage: localStorage }})
+  { persist: { storage: localStorage } })

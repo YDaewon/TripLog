@@ -38,9 +38,6 @@ const getArticles = () => {
       articles.value = data.articles;
       currentPage.value = data.currentPage;
       totalPage.value = data.totalPageCount;
-
-      console.log(articles.value)
-
     },
     (error) => {
       console.error(error);
@@ -93,12 +90,7 @@ watch(() => props.initialParam, (newParam) => {
               <VSelect :selectOption="selectOptions" @onKeySelect="changeKey" />
 
               <div class="input-group input-group-sm ms-1">
-                <input
-                  type="text"
-                  class="form-control"
-                  v-model="param.word"
-                  placeholder="검색어..."
-                />
+                <input type="text" class="form-control" v-model="param.word" placeholder="검색어..." />
 
                 <button class="btn btn-dark" type="button" @click="getArticles">검색</button>
 
@@ -118,22 +110,13 @@ watch(() => props.initialParam, (newParam) => {
             </tr>
           </thead>
           <tbody>
-            <BoardListItem
-              v-for="article in articles"
-              :key="article.articleNo"
-              :article="article"
-            ></BoardListItem>
+            <BoardListItem v-for="article in articles" :key="article.articleNo" :article="article"></BoardListItem>
           </tbody>
         </table>
       </div>
-      <VPageNavigation
-        :current-page="currentPage"
-        :total-page="totalPage"
-        @pageChange="onPageChange"
-      ></VPageNavigation>
+      <VPageNavigation :current-page="currentPage" :total-page="totalPage" @pageChange="onPageChange"></VPageNavigation>
     </div>
   </div>
 </template>
 
 <style scoped></style>
-

@@ -59,25 +59,26 @@ a {
 }
 
 .page-link {
-    border: 0px;
-    position: relative;
-    display: inline-block;
-    text-decoration: none;
-    font-size: 1.2rem;
-    font-weight: bold;
-    padding: 8px 16px 10px;
-    margin-left:20px;
-    margin-right:20px;
-    color: rgb(140, 179, 252);
+  border: 0px;
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 8px 16px 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+  color: rgb(140, 179, 252);
 }
+
 .page-link:hover {
   z-index: 2;
   text-decoration: none;
 }
+
 .page-item.active .page-link {
   z-index: 3;
   background-color: transparent;
   color: rgb(7, 4, 39);
 }
-
 </style>

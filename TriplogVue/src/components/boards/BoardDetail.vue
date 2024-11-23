@@ -1,10 +1,10 @@
 <script setup>
-import { onMounted, ref, watch} from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { deleteArticle, createStarArticle, IsStar, deleteStarArticle } from "@/api/board";
 import { storeToRefs } from "pinia"
 import { useMemberStore } from "@/stores/member"
-import { useArticleStore} from "@/stores/article"
+import { useArticleStore } from "@/stores/article"
 
 const route = useRoute();
 const router = useRouter();
@@ -37,13 +37,13 @@ const article = ref({
 onMounted(async () => {
   await getArticle(articleno);
   await IsStar(
-      articleno,
+    articleno,
     (response) => {
       if (response.data != 0) {
         isStar.value = true;
-        console.log("현재 게시글 즐겨찾기 되어있음")
+        //console.log("현재 게시글 즐겨찾기 되어있음")
       }
-      else{
+      else {
         isStar.value = false;
       }
     },
@@ -61,12 +61,13 @@ watch(articleInfo, (newArticleInfo) => {
 });
 
 function moveList() {
-  router.push({ name: "article-list" });
+  router.go(-1);
+  //router.push({ name: "article-list" });
 }
 
 function moveModify() {
   //console.log(article.value.userNo + ", " + userInfo.value.userNo)
-  if(article.value.userNo != userInfo.value.userNo){
+  if (article.value.userNo != userInfo.value.userNo) {
     alert("작성자 외 수정 금지!")
   }
   else router.push({ name: "article-modify", params: { articleno } });
@@ -74,7 +75,7 @@ function moveModify() {
 
 function createStar() {
   createStarArticle(
-      articleno,
+    articleno,
     (response) => {
       if (response.status == 200) {
         console.log("즐겨찾기 추가 완료")
@@ -89,7 +90,7 @@ function createStar() {
 
 function deleteStar() {
   deleteStarArticle(
-      articleno,
+    articleno,
     (response) => {
       if (response.status == 200) {
         console.log("즐겨찾기 삭제 완료")
@@ -103,19 +104,19 @@ function deleteStar() {
 }
 
 function onDeleteArticle() {
-  if(article.value.userNo != userInfo.value.userNo){
+  if (article.value.userNo != userInfo.value.userNo) {
     alert("작성자 외 삭제 금지!")
   }
-  else{
+  else {
     deleteArticle(
       articleno,
-    (response) => {
-      if (response.status == 200) moveList();
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
+      (response) => {
+        if (response.status == 200) moveList();
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   }
 }
 </script>
@@ -132,17 +133,13 @@ function onDeleteArticle() {
         <div class="row">
           <div class="col-md-8">
             <div class="clearfix align-content-center">
-              <img
-                class="avatar me-2 float-md-start bg-light p-2"
-                :src="userInfo.userImage"
-                style="
+              <img class="avatar me-2 float-md-start bg-light p-2" :src="userInfo.userImage" style="
                  width: 50px;
                  height: 50px;
                  object-fit: cover;
                  object-position: center;
                  border-radius: 50%;
-                "
-              />
+                " />
               <p>
                 <span class="fw-bold">{{ article.author }}</span> <br />
                 <span class="text-secondary fw-light">
