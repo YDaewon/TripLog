@@ -43,7 +43,7 @@ const register = async () => {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   </head>
 
-  <body class="bg-light">
+  <body >
     <div class="container">
       <div style="text-align: left;" class="row justify-content-center align-items-center min-vh-80">
         <div class="col-md-6">
