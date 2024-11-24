@@ -2,8 +2,6 @@
   <div class="search-container">
     <SearchPanel
       class="search-header"
-      :attractions="attractions"
-      :showAttractionDetail="showAttractionDetail"
       @updateShowAttractionDetail="onUpdateShowAttractionDetail"
       @updateAttractions="$emit('updateAttractions', $event)"
     />
@@ -12,10 +10,10 @@
       class="search-results"
       v-show="!showAttractionDetail"
       :attractions="attractions"
-      :selectAttraction="selectAttraction"
+      :isPlan="isPlan"
+      @selectDestination="$emit('selectDestination', $event)"
       @updateSelectAttraction="$emit('updateSelectAttraction', $event)"
     />
-
     <AttractionDetail :selectAttraction="selectAttraction" />
   </div>
 </template>
@@ -29,12 +27,11 @@ import AttractionDetail from "./AttractionDetail.vue";
 const props = defineProps({
   attractions: {
     type: Array,
-    required: true,
   },
   selectAttraction: {
     type: Object,
-    required: true,
   },
+  isPlan: Boolean,
 });
 const showAttractionDetail = ref(false);
 const emit = defineEmits();

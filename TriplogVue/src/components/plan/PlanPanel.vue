@@ -1,7 +1,8 @@
 <script setup>
+import { watch } from "vue";
 import PlanBody from "./PlanBody.vue";
 import PlanHeader from "./PlanHeader.vue";
-defineProps({
+const props = defineProps({
   plan: {
     type: Object,
     required: true,
@@ -9,6 +10,7 @@ defineProps({
   destinations: Array,
   isEditMode: Boolean,
 });
+
 const emit = defineEmits();
 </script>
 <template>
@@ -28,6 +30,7 @@ const emit = defineEmits();
       :plan="plan"
       :isEditMode="isEditMode"
       @updatePlan="$emit('updatePlan', $event)"
+      @createDestination="$emit('createDestination', $event)"
     />
   </div>
 </template>

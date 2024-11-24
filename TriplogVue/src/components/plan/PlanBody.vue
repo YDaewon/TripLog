@@ -1,6 +1,6 @@
 <script setup>
 import DestinationPanel from "./destination/DestinationPanel.vue";
-import { computed, watch } from "vue";
+import { computed, onMounted, watch } from "vue";
 const props = defineProps({
   plan: Object,
   destinations: Array,
@@ -40,8 +40,9 @@ const groupedDestinations = computed(() => {
     <DestinationPanel
       v-for="groupDestinations in groupedDestinations"
       :groupDestinations="groupDestinations"
-      :startAt="plan.startAt"
+      :plan="plan"
       :isEditMode="isEditMode"
+      @createDestination="$emit('createDestination', $event)"
     ></DestinationPanel>
   </div>
 </template>
