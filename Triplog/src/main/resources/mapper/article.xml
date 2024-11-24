@@ -99,14 +99,22 @@
 	</update>
 	
 	<insert id="createArticle" parameterType="ArticleDto">
-		insert into articles (user_no, title, content) 
-		values (#{userNo}, #{title}, #{content})
+		insert into articles (user_no, title, content, plan_no) 
+		values (#{userNo}, #{title}, #{content}, 
+		<if test="planNo != 0">
+		  #{planNo}
+		</if>
+		<if test="planNo == 0">
+		  null
+		</if>
+		)
 	</insert>
 
 	<update id="modifyArticle" parameterType="ArticleDto">
 		update articles set
 			title = #{title},
-			content = #{content}
+			content = #{content},
+			plan_no = ${planNo != 0 ? planNo : 'null'}
 		where article_no = #{articleNo}
 	</update>
 	

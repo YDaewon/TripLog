@@ -5,6 +5,7 @@ import { deleteArticle, createStarArticle, IsStar, deleteStarArticle } from "@/a
 import { storeToRefs } from "pinia"
 import { useMemberStore } from "@/stores/member"
 import { useArticleStore } from "@/stores/article"
+import ThePlanView from "@/views/ThePlanView.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -152,6 +153,12 @@ function onDeleteArticle() {
           <div class="divider mb-3"></div>
           <div v-html="articleInfo.content"></div>
           <div class="divider mt-3 mb-3"></div>
+          <div v-show="article.planNo != 0">
+            <ThePlanView
+              type="viewarticle"
+              @plan-selected="usePlanNo"
+            />
+          </div>
           <div class="d-flex justify-content-end">
             <button type="button" v-if="!isStar" class="btn btn-outline-warning mb-3" @click="createStar">
               즐겨찾기 추가
@@ -173,6 +180,7 @@ function onDeleteArticle() {
       </div>
     </div>
   </div>
+
 </template>
 
 <style scoped></style>
