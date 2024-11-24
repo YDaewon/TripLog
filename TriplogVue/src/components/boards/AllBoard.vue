@@ -16,17 +16,13 @@ const subtitle = "전체 게시판";
 const selectOptions = [
   { text: "검색조건", value: "" },
   { text: "글번호", value: "article_no" },
-  { text: "제목", value: "subject" },
-  { text: "작성자아이디", value: "user_id" },
+  { text: "제목", value: "title" },
+  { text: "작성자", value: "nickname" },
 ];
 
 </script>
 
 <template>
-  <BoardList
-    :fetch-articles="listArticle"
-    :initial-param="initialParam"
-    :select-options="selectOptions"
-    :subtitle="subtitle"
-  />
+  <BoardList :fetch-articles="listArticle" :initial-param="initialParam" :select-options="selectOptions"
+    :subtitle="subtitle" />
 </template>

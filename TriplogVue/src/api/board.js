@@ -16,15 +16,12 @@ function detailArticle(articleno, success, fail) {
 }
 
 function registArticle(article, success, fail) {
-  console.log("boardjs article", article);
+  local.defaults.headers.post["Content-Type"] = "application/json";
   local.post(`/article`, JSON.stringify(article)).then(success).catch(fail);
 }
 
-function getModifyArticle(articleno, success, fail) {
-  local.get(`/article/${articleno}`).then(success).catch(fail);
-}
-
 function modifyArticle(article, success, fail) {
+  local.defaults.headers.put["Content-Type"] = "application/json";
   local.put(`/article`, JSON.stringify(article)).then(success).catch(fail);
 }
 
@@ -32,12 +29,26 @@ function deleteArticle(articleno, success, fail) {
   local.delete(`/article/${articleno}`).then(success).catch(fail);
 }
 
+function IsStar(articleno, success, fail) {
+  local.get(`/article/star/${articleno}`).then(success).catch(fail);
+}
+
+function createStarArticle(articleno, success, fail) {
+  local.post(`/article/star/${articleno}`).then(success).catch(fail);
+}
+
+function deleteStarArticle(articleno, success, fail) {
+  local.delete(`/article/star/${articleno}`).then(success).catch(fail);
+}
+
 export {
   listArticle,
   listMyArticle,
   detailArticle,
   registArticle,
-  getModifyArticle,
   modifyArticle,
   deleteArticle,
+  IsStar,
+  createStarArticle,
+  deleteStarArticle,
 };

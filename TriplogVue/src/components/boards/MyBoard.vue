@@ -23,16 +23,12 @@ const subtitle = "내 게시글";
 const selectOptions = [
   { text: "검색조건", value: "" },
   { text: "글번호", value: "article_no" },
-  { text: "제목", value: "subject" },
+  { text: "제목", value: "title" },
 ];
 
 </script>
 
 <template>
-  <BoardList
-    :fetch-articles="listArticle"
-    :initial-param="initialParam"
-    :select-options="selectOptions"
-    :subtitle="subtitle"
-  />
+  <BoardList :fetch-articles="listArticle" :initial-param="initialParam" :select-options="selectOptions"
+    :subtitle="subtitle" />
 </template>

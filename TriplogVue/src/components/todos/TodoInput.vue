@@ -18,13 +18,7 @@ const addTodo = () => {
   <div class="container text-center">
     <div class="row">
       <div class="input-group mb-3">
-        <input
-          type="text"
-          class="form-control"
-          v-model="title"
-          @keypress.enter="addTodo"
-          placeholder="할일 추가 ..."
-        />
+        <input type="text" class="form-control" v-model="title" @keypress.enter="addTodo" placeholder="할일 추가 ..." />
         <button class="btn btn-outline-secondary" type="button" @click="addTodo">추가</button>
       </div>
     </div>

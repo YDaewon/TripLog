@@ -31,5 +31,6 @@ public interface ArticleService {
 	void deleteStar(int articleNo, int userNo);
 
 	List<ArticleDto> mylist(Map<String, String> map);
+	int isStar(int articleNo, int userNo);
 
 }

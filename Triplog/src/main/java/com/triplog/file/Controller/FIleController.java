@@ -18,12 +18,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartRequest;
+
+import com.triplog.file.model.FileResponse;
+import com.triplog.file.service.FileUploadService;
+
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 
-
-
+import io.jsonwebtoken.io.IOException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,9 +38,18 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/file")
 public class FIleController {
-	
-    @Value("${file.path}")
+	@Value("${file.path}")
     private String uploadPath;
+	
+	
+	private final FileUploadService fileUploadService;
+	
+	
+    public FIleController(FileUploadService fileUploadService) {
+		super();
+		this.fileUploadService = fileUploadService;
+	}
+
 	
     @GetMapping("{fileName}")
 	@Operation(summary = "파일 다운로드", description = "파일을 다운로드 합니다.")
@@ -64,27 +77,29 @@ public class FIleController {
 
 	@PostMapping("{userId}")
 	@Operation(summary = "파일 업로드", description = "파일을 업로드 합니다.")
-	public ResponseEntity<String> join(
+	public ResponseEntity<String> upload(
 			@Parameter(description = "파일 정보", required = true) @RequestPart MultipartFile userImage,
 			@PathVariable("userId") String userId) {
 		String imgurl = "";
 		try {
-            // 디렉토리 존재 여부 확인 후 없으면 생성
-            File directory = new File(uploadPath);
-            if (!directory.exists()) {
-                directory.mkdirs();  // 디렉토리 생성
-            }
-	        if (!userImage.isEmpty()) {
-	            // 파일 이름 생성 및 저장
-	            String fileName = userId + "_" + userImage.getOriginalFilename();
-	            File saveFile = new File(uploadPath, fileName);
-	            userImage.transferTo(saveFile);
-	            imgurl = "http://localhost:80/file/" + fileName;
-	        }
-			return ResponseEntity.status(HttpStatus.OK).body(imgurl);
+			imgurl = fileUploadService.upload(userId, userImage);
 		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 업로드 중 문제 발생");
-		}
+		} 
+		return ResponseEntity.status(HttpStatus.OK).body(imgurl);
 	}
+	
+	@PostMapping("article")
+	@Operation(summary = "에디터 이미지 파일 업로드", description = "에디터 이미지 파일을 업로드 합니다.")
+	public ResponseEntity<FileResponse> articleupload(
+			@Parameter(description = "파일 정보", required = true) MultipartRequest request
+			) throws IOException, IllegalStateException, java.io.IOException {
+		MultipartFile file = request.getFile("upload");
+		return new ResponseEntity<>(FileResponse.builder().
+                uploaded(true).
+                url(fileUploadService.upload("article", file)).
+                build(), HttpStatus.OK);
+	}
+	
 }

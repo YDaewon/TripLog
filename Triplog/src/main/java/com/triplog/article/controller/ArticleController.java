@@ -40,7 +40,7 @@ public class ArticleController {
             int spp = Integer.parseInt(map.getOrDefault("spp", "10"));
             int totalCount = articleService.getTotalCount(map);
             System.out.println("totalCount: " + totalCount);
-            map.put("curpgno", String.valueOf(pgno));
+            map.put("curpgno", String.valueOf(pgno * spp));
             System.out.println(map.toString());
             Map<String, Object> result = new HashMap<>();
             List<ArticleDto> lists = articleService.listAll(map);
@@ -72,6 +72,20 @@ public class ArticleController {
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("해당 개시글 정보가 없음");
             }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("로드 중 문제 발생");
+        }
+    }
+	
+	@GetMapping("/star/{articleNo}")
+	@Operation(summary = "즐겨찾기 정보", description = "articleNo에 해당하는 게시글이 즐겨찾기 중인지를 반환")
+    public ResponseEntity<?> isStar(
+    		@Parameter(description = "게시글 번호", required = true)
+    		@PathVariable("articleNo") int articleNo, HttpServletRequest request) {
+		int userNo = (Integer) request.getAttribute("userNo");
+        try {
+            int star = articleService.isStar(articleNo, userNo);
+            return ResponseEntity.ok(star); // 로그인 성공 시 사용자 정보 반환
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("로드 중 문제 발생");
         }
