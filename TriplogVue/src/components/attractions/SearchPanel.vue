@@ -26,13 +26,6 @@
           검색
         </button>
       </div>
-      <!-- <button
-        type="button"
-        class="btn btn-outline-secondary col-3"
-        @click="toggleAttractionDetail"
-      >
-        {{ showAttractionDetail ? "접기" : "상세보기" }}
-      </button> -->
     </form>
   </div>
 </template>
@@ -42,16 +35,6 @@ import { listAttractions } from "@/api/attraction";
 import { listSido, listGugun, listContentType } from "@/api/map";
 import VSelect from "../common/VSelect.vue";
 
-const props = defineProps({
-  attractions: {
-    type: Array,
-    required: true,
-  },
-  // showAttractionDetail: {
-  //   type: Boolean,
-  //   required: true,
-  // },
-});
 const emit = defineEmits();
 
 const sidoList = ref([]);
@@ -70,10 +53,6 @@ onMounted(() => {
   getSidoList();
   getContentTypeList();
 });
-
-// const toggleAttractionDetail = () => {
-//   emit("updateShowAttractionDetail", !props.showAttractionDetail);
-// };
 
 const getSidoList = () => {
   listSido(

@@ -11,9 +11,21 @@
         <h5 class="card-title">{{ attraction.title }}</h5>
       </div>
       <div class="card-footer text-muted">
-        <small>{{ attraction.addr1 }}</small
-        ><br />
-        <small class="text-info">{{ attraction.contentTypeName }}</small>
+        <div class="d-flex justify-content-between">
+          <div>
+            <small>{{ attraction.addr1 }}</small
+            ><br />
+            <small class="text-info">{{ attraction.contentTypeName }}</small>
+          </div>
+          <div>
+            <button
+              class="btn btn-primary h-100"
+              @click="$emit('selectDestination', attraction)"
+            >
+              추가
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -25,6 +37,7 @@ defineProps({
     type: Object,
     required: true,
   },
+  isPlan: Boolean,
 });
 </script>
 

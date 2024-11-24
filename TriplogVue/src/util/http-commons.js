@@ -20,18 +20,6 @@ function localAxios() {
       //"Content-Type": "application/json;charset=utf-8",
     },
   });
-  // Request, Response 시 설정한 내용을 적용.
-  // instance.interceptors.request.use((config) => {
-  //   return config;
-  // }),
-  //   (error) => {
-  //     return Promise.reject(error);
-  //   };
-
-  //   // accessToken의 값이 유효하지 않은 경우,
-  //   // refreshToken을 이용해 재발급 처리.
-  //   // https://maruzzing.github.io/study/rnative/axios-interceptors%EB%A1%9C-%ED%86%A0%ED%81%B0-%EB%A6%AC%ED%94%84%EB%A0%88%EC%8B%9C-%ED%95%98%EA%B8%B0/
-
 
   let isTokenRefreshing = false;
   instance.interceptors.response.use(

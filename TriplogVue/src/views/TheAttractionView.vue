@@ -19,7 +19,6 @@ const onUpdateSelectAttractions = (newValue) => {
 <template>
   <div class="map-container">
     <AttractionPanel
-      :attractions="attractions"
       :selectAttraction="selectAttraction"
       @updateAttractions="onUpdateAttractions"
       @updateSelectAttraction="onUpdateSelectAttractions"

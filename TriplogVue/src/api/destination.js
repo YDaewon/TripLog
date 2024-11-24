@@ -8,7 +8,9 @@ function getDestinations(planNo, success, fail) {
 }
 function createDestination(destination, success, fail) {
   local
-    .post(`/plan/dest`, JSON.stringify(destination))
+    .post(`/plan/dest`, JSON.stringify(destination), {
+      headers: { "Content-Type": "application/json" },
+    })
     .then(success)
     .catch(fail);
 }
@@ -16,7 +18,12 @@ function deleteDestination(destNo, success, fail) {
   local.delete(`/plan/dest/${destNo}`).then(success).catch(fail);
 }
 function updateDestination(plan, success, fail) {
-  local.put(`/plan/dest`, JSON.stringify(plan)).then(success).catch(fail);
+  local
+    .put(`/plan/dest`, JSON.stringify(plan), {
+      headers: { "Content-Type": "application/json" },
+    })
+    .then(success)
+    .catch(fail);
 }
 export {
   getDestinations,

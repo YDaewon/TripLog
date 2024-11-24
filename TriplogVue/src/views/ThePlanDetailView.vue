@@ -1,6 +1,7 @@
 <script setup>
 import { deletePlan, getPlan, updatePlan } from "@/api/plan";
 import {
+  createDestination,
   deleteDestination,
   getDestinations,
   updateDestination,
@@ -50,6 +51,7 @@ onMounted(() => {
     console.log("planNo가 전달되지 않음");
   }
 });
+
 const onUpdatePlan = (newValue) => {
   plan.value = newValue;
   destinations.value = adjustDates(plan.value, destinations.value);
@@ -249,6 +251,28 @@ const updateAttractions = () => {
     }
   );
 };
+
+const onCreateDestination = (newDest) => {
+  createDestination(
+    newDest,
+    () => {
+      console.log("목적지 추가 완료");
+      getDestinations(
+        planNo,
+        ({ data }) => {
+          destinations.value = data;
+          console.log("Raw destinations: ", destinations);
+        },
+        (err) => {
+          console.log("err: ", err);
+        }
+      );
+    },
+    (err) => {
+      console.log("목적지 추가 실패");
+    }
+  );
+};
 </script>
 
 <template>
@@ -267,6 +291,7 @@ const updateAttractions = () => {
         @savePlan="onSavePlan"
         @deletePlan="onDeletePlan"
         @updateEditMode="onUpdateEditMode"
+        @createDestination="onCreateDestination"
       />
     </div>
   </div>

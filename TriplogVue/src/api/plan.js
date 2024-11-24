@@ -13,11 +13,21 @@ function getPlan(planNo, success, fail) {
 }
 
 function createPlan(plan, success, fail) {
-  local.post(`/plan`, JSON.stringify(plan)).then(success).catch(fail);
+  local
+    .post(`/plan`, JSON.stringify(plan), {
+      headers: { "Content-Type": "application/json" },
+    })
+    .then(success)
+    .catch(fail);
 }
 
 function updatePlan(plan, success, fail) {
-  local.put(`/plan`, JSON.stringify(plan)).then(success).catch(fail);
+  local
+    .put(`/plan`, JSON.stringify(plan), {
+      headers: { "Content-Type": "application/json" },
+    })
+    .then(success)
+    .catch(fail);
 }
 
 function deletePlan(planNo, success, fail) {
