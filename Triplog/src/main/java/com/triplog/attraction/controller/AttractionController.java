@@ -3,6 +3,7 @@ package com.triplog.attraction.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,6 +70,17 @@ public class AttractionController {
 		}else {
 	        return new ResponseEntity<>("시/도 목록을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 		}
+	}
+	
+	@GetMapping("/sido-counts")
+	@Operation(summary = "시도별 여행지 수", description = "시도별 여행지 수를 반환합니다.")
+	public ResponseEntity<?> getSidoCounts() {
+	    List<Map<String, Object>> counts = attractionService.getSidoCounts();
+	    if (counts != null && !counts.isEmpty()) {
+	        return new ResponseEntity<>(counts, HttpStatus.OK);
+	    } else {
+	        return new ResponseEntity<>("데이터를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+	    }
 	}
 	
 	@GetMapping("/gugun")
