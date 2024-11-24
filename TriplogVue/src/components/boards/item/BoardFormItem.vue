@@ -1,42 +1,35 @@
 <script setup>
 import { ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia"
 import { useMemberStore } from "@/stores/member"
-import { registArticle, getModifyArticle, modifyArticle } from "@/api/board";
+import { useArticleStore } from "@/stores/article"
+import { registArticle, modifyArticle } from "@/api/board";
 import ArticleEditor from "@/components/boards/item/ArticleEditor.vue";
 
 
 const router = useRouter();
-const route = useRoute();
 
 const props = defineProps({ type: String });
 
 const memberStore = useMemberStore()
 
 const { userInfo } = storeToRefs(memberStore)
-const isUseId = ref(false);
+
+const articleStore = useArticleStore()
+const { articleInfo } = storeToRefs(articleStore)
 
 const article = ref({
-  articleNo: 0,
-  title: "",
-  content: "",
+  articleNo: articleInfo.value.articleNo,
+  title: articleInfo.value.title,
+  content: articleInfo.value.content,
   userNo: userInfo.value.userNo,
 });
 
-if (props.type === "modify") {
-  let { articleno } = route.params;
-  getModifyArticle(
-    articleno,
-    ({ data }) => {
-      article.value = data;
-      isUseId.value = true;
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
-  isUseId.value = true;
+if (props.type !== 'modify') {
+  article.value.title = "";
+  article.value.content = "";
+  articleInfo.value.content = "";
 }
 
 const titleErrMsg = ref("");
@@ -47,17 +40,23 @@ watch(
     let len = value.length;
     if (len == 0 || len > 50) {
       titleErrMsg.value = "제목을 확인해 주세요!!!";
-    } else titleErrMsg.value = "";
+    } else {
+      articleInfo.value.title = value;
+      titleErrMsg.value = "";
+    }
   },
   { immediate: true }
 );
 watch(
-  () => article.value.content,
+  () => articleInfo.value.content,
   (value) => {
     let len = value.length;
     if (len == 0 || len > 30000000) {
       contentErrMsg.value = "내용을 확인해 주세요!!!";
-    } else contentErrMsg.value = "";
+    } else {
+      article.value.content = value;
+      contentErrMsg.value = "";
+    }
   },
   { immediate: true }
 );
@@ -74,8 +73,6 @@ function onSubmit() {
 }
 
 function writeArticle() {
-  console.log("글등록하자!!", article.value);
-  console.log(article.value)
   registArticle(
     article.value,
     (response) => {
@@ -89,8 +86,6 @@ function writeArticle() {
 }
 
 function updateArticle() {
-  console.log(article.value.articleNo + "번글 수정하자!!", article.value);
-  console.log(article.value)
   modifyArticle(
     article.value,
     (response) => {
@@ -119,16 +114,14 @@ function moveList() {
     </div>
     <div class="mb-3">
       <label for="content" class="form-label">내용 : </label>
-      <div class="editor-container editor-container_classic-editor editor-container_include-block-toolbar" ref="editorContainerElement">
-				<div class="editor-container__editor">
-					<div ref="editorElement">
-						<ArticleEditor
-            :userInfo= "userInfo"
-            :article="article"
-            />
-					</div>
-				</div>
-			</div>
+      <div class="editor-container editor-container_classic-editor editor-container_include-block-toolbar"
+        ref="editorContainerElement">
+        <div class="editor-container__editor">
+          <div ref="editorElement">
+            <ArticleEditor />
+          </div>
+        </div>
+      </div>
     </div>
     <div class="col-auto text-center">
       <button type="submit" class="btn btn-outline-primary mb-3" v-if="type === 'regist'">
@@ -141,4 +134,3 @@ function moveList() {
     </div>
   </form>
 </template>
-

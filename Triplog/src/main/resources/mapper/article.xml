@@ -16,6 +16,11 @@
 		<result column="hitCount" property="hitCount"/>
 	</resultMap>
 	
+	<select id="isStar" resultType="int">
+	    SELECT count(*) FROM article_stars s 
+	    WHERE ${userNo} = s.user_no AND ${articleNo} = s.article_no
+	</select>
+	
 	<select id="getTotalCount" parameterType="map" resultType="int">
 	    SELECT 
 	        COUNT(*) 
@@ -28,6 +33,12 @@
 	        <if test="key != null and key != '' and word != null and word != ''">
 	            AND ${key} LIKE CONCAT('%', #{word}, '%')
 	        </if>
+	        <if test="userNo != null">
+		        AND a.user_no = ${userNo}
+		    </if>
+		    <if test="star != null">
+		        AND a.article_no IN (SELECT s.article_no FROM article_stars s WHERE ${userNo} = s.user_no)
+		    </if>
 	</select>
 
 	<select id="listAll" parameterType="map" resultMap="article">
@@ -47,7 +58,7 @@
 		        <if test="key != null and !key.isEmpty() and word != null and !word.isEmpty()">
 		            AND ${key} LIKE CONCAT('%', #{word}, '%')
 		        </if>
-		        <if test="userNo != null">
+		        <if test="userNo != null and star == null">
 		            AND a.user_no = ${userNo}
 		        </if>
 		        <if test="star != null">

@@ -39,6 +39,7 @@ const onUpdateSelectAttractions = (newValue) => {
   width: 100%;
   height: 100vh;
 }
+
 .map {
   height: 100vh;
 }

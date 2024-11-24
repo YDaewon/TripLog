@@ -15,8 +15,23 @@ function attractionAxios() {
 function localAxios() {
   const instance = axios.create({
     baseURL: VITE_VUE_API_URL,
-    headers: { "Content-Type": "application/json" },
+    // withCredentials: true,
+    headers: {
+      //"Content-Type": "application/json;charset=utf-8",
+    },
   });
+  // Request, Response 시 설정한 내용을 적용.
+  // instance.interceptors.request.use((config) => {
+  //   return config;
+  // }),
+  //   (error) => {
+  //     return Promise.reject(error);
+  //   };
+
+  //   // accessToken의 값이 유효하지 않은 경우,
+  //   // refreshToken을 이용해 재발급 처리.
+  //   // https://maruzzing.github.io/study/rnative/axios-interceptors%EB%A1%9C-%ED%86%A0%ED%81%B0-%EB%A6%AC%ED%94%84%EB%A0%88%EC%8B%9C-%ED%95%98%EA%B8%B0/
+
 
   let isTokenRefreshing = false;
   instance.interceptors.response.use(
@@ -29,12 +44,14 @@ function localAxios() {
         response: { status },
       } = error;
 
-      // accessToken이 유효하지 않으면
+      // 페이지가 새로고침되어 저장된 accessToken이 없어진 경우.
+      // 토큰 자체가 만료되어 더 이상 진행할 수 없는 경우.
       if (status == httpStatusCode.UNAUTHORIZED) {
         // 요청 상태 저장
         const originalRequest = config;
 
         // Token을 재발급하는 동안 다른 요청이 발생하는 경우 대기.
+        // 다른 요청을 진행하면, 새로 발급 받은 Token이 유효하지 않게 됨.
         if (!isTokenRefreshing) {
           isTokenRefreshing = true;
 
@@ -42,7 +59,6 @@ function localAxios() {
           // 반드시 return을 붙여주어야한다.
           return await instance.post("/user/refresh").then((response) => {
             const newAccessToken = response.data.Authorization;
-            sessionStorage.setItem("accessToken", newAccessToken);
             instance.defaults.headers.common["accessToken"] = newAccessToken;
             originalRequest.headers.Authorization = newAccessToken;
 

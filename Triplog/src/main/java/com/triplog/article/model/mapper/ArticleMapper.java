@@ -34,5 +34,6 @@ public interface ArticleMapper {
 
 	void deleteStar(int articleNo, int userNo);
 	int getTotalCount(Map<String, String> map);
+	int isStar(int articleNo, int userNo);
 
 }

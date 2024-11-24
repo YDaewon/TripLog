@@ -16,10 +16,9 @@ const onlyAuthUser = (to, from, next) => {
   if (token && userInfo.value != null) {
     getUserInfo(token);
   }
-  console.log("isValidToken: " + isValidToken.value);
-  console.log("token: " + token);
-  //console.log(userInfo)
-  if (!isValidToken.value || userInfo.value === null) {
+  //console.log("isValidToken: " + isValidToken.value)
+  //console.log("token: " + token)
+  if (!isValidToken.value || userInfo.value === null || token === null) {
     next({ name: "user-login" });
   } else {
     next();

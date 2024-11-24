@@ -20,18 +20,19 @@ export const useMemberStore = defineStore("memberStore", () => {
   const userInfo = ref(null)
   const isValidToken = ref(false)
 
+
   const userRegist = async (RegisterUser) => {
     await userRegister(
       RegisterUser,
       (response) => {
         if (response.status === httpStatusCode.CREATE) {
-          console.log("회원가입 성공!!!!")
+          //console.log("회원가입 성공!!!!")
           isRegister.value = true
           isRegisterError.value = false
         }
       },
       (error) => {
-        console.log("회원가입 실패!!!!")
+        //console.log("회원가입 실패!!!!")
         isRegister.value = false
         isRegisterError.value = true
         console.error(error)
@@ -44,7 +45,7 @@ export const useMemberStore = defineStore("memberStore", () => {
       loginUser,
       (response) => {
         if (response.status === httpStatusCode.CREATE) {
-          console.log("로그인 성공!!!!")
+          //console.log("로그인 성공!!!!")
           let { data } = response
           let accessToken = data["access-token"]
           let refreshToken = data["refresh-token"]
@@ -56,7 +57,7 @@ export const useMemberStore = defineStore("memberStore", () => {
         }
       },
       (error) => {
-        console.log("로그인 실패!!!!")
+        //console.log("로그인 실패!!!!")
         isLogin.value = false
         isLoginError.value = true
         isValidToken.value = false
@@ -71,17 +72,17 @@ export const useMemberStore = defineStore("memberStore", () => {
       userData,
       (response) => {
         if (response.status === httpStatusCode.OK) {
-          console.log("회원 정보 수정 성공!!!!")
+          //console.log("회원 정보 수정 성공!!!!")
           isModify.value = true
           isModifyError.value = false
         }
-        else{
+        else {
           isModify.value = false
           isModifyError.value = false
         }
       },
       (error) => {
-        console.log("회원 정보 수정 실패!!!!")
+        //console.log("회원 정보 수정 실패!!!!")
         console.error(error)
         isModify.value = false
         isModifyError.value = true
@@ -94,7 +95,7 @@ export const useMemberStore = defineStore("memberStore", () => {
       userInfo.value.userId,
       (response) => {
         if (response.status === httpStatusCode.OK) {
-          console.log("회원 정보 삭제 성공!!!!")
+          //console.log("회원 정보 삭제 성공!!!!")
           isDelete.value = true
           isDeleteError.value = false
           isLogin.value = false
@@ -102,13 +103,13 @@ export const useMemberStore = defineStore("memberStore", () => {
           sessionStorage.removeItem("accessToken")
           sessionStorage.removeItem("refreshToken")
         }
-        else{
+        else {
           isDelete.value = false
           isDeleteError.value = false
         }
       },
       (error) => {
-        console.log("회원 정보 삭제 실패!!!!")
+        //console.log("회원 정보 삭제 실패!!!!")
         console.error(error)
         isDelete.value = false
         isDeleteError.value = true
@@ -122,7 +123,7 @@ export const useMemberStore = defineStore("memberStore", () => {
         if (response.status === httpStatusCode.OK) {
           userInfo.value = response.data.userInfo
         } else {
-          console.log("유저 정보 없음!!!!")
+          //console.log("유저 정보 없음!!!!")
         }
       },
       async (error) => {
@@ -184,11 +185,11 @@ export const useMemberStore = defineStore("memberStore", () => {
           isLogin.value = false
           userInfo.value = null
           isValidToken.value = false
-          console.log("로그아웃 완료!!!")
+          //console.log("로그아웃 완료!!!")
           sessionStorage.removeItem("accessToken")
           sessionStorage.removeItem("refreshToken")
         } else {
-          console.error("유저 정보 없음!!!!")
+          //console.error("유저 정보 없음!!!!")
         }
       },
       (error) => {
@@ -217,4 +218,4 @@ export const useMemberStore = defineStore("memberStore", () => {
     userLogout,
   }
 },
-{persist: { storage: localStorage }})
+  { persist: { storage: localStorage } })
