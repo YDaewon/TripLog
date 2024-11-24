@@ -16,8 +16,8 @@ const onlyAuthUser = (to, from, next) => {
   if (token && userInfo.value != null) {
     getUserInfo(token);
   }
-  console.log("isValidToken: " + isValidToken.value)
-  console.log("token: " + token)
+  console.log("isValidToken: " + isValidToken.value);
+  console.log("token: " + token);
   //console.log(userInfo)
   if (!isValidToken.value || userInfo.value === null) {
     next({ name: "user-login" });
@@ -54,7 +54,7 @@ const router = createRouter({
           name: "user-mypage",
           beforeEnter: onlyAuthUser,
           component: () => import("@/components/users/UserMyPage.vue"),
-        }
+        },
       ],
     },
     {
@@ -119,11 +119,13 @@ const router = createRouter({
     {
       path: "/plan",
       name: "plan",
+      beforeEnter: onlyAuthUser,
       component: () => import("@/views/ThePlanView.vue"),
     },
     {
-      path: "/planDetail/:plan",
+      path: "/planDetail/:planNo/:isEditMode",
       name: "planDetail",
+      beforeEnter: onlyAuthUser,
       component: () => import("@/views/ThePlanDetailView.vue"),
     },
   ],

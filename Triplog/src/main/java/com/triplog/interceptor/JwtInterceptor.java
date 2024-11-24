@@ -22,7 +22,17 @@ public class JwtInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		String token = request.getHeader("accessToken");
-		System.out.println("token: " + token);
+		// 요청 정보 출력
+        System.out.println("\u001B[36m" + "=== Incoming Request ===");
+        System.out.println("\u001B[32m" + "Method: " + "\u001B[0m" + request.getMethod());
+        System.out.println("\u001B[32m" + "URI: " + "\u001B[0m" + request.getRequestURI());
+        System.out.println("\u001B[32m" + "Query String: " + "\u001B[0m" + request.getQueryString());
+        System.out.println("\u001B[36m" + "========================"+ "\u001B[0m");
+        System.out.println("=== Headers ===");
+        request.getHeaderNames().asIterator().forEachRemaining(header -> 
+            System.out.println(header + ": " + request.getHeader(header))
+        );
+        System.out.println("token: " + token);
 	    if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
 	        response.setStatus(HttpServletResponse.SC_OK); // OPTIONS 요청에 200 OK 반환
 	        return false; // 이후 로직 실행하지 않음

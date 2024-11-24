@@ -1,12 +1,12 @@
 <template>
   <div class="col-12 mb-2">
     <div class="card h-100">
-      <!-- <img
+      <img
         :src="attraction.firstImage1 || attraction.firstImage2"
         class="card-img-top"
         :alt="attraction.title"
         style="height: 200px; object-fit: cover"
-      /> -->
+      />
       <div class="card-body">
         <h5 class="card-title">{{ attraction.title }}</h5>
       </div>
