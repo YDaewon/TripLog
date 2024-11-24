@@ -1,28 +1,25 @@
 <template>
+  <div>
     <div>
-        <div>
-            <AttractionCard
-            v-for="attraction in attractions"
-            :key="attraction.attraction_no"
-            :attraction="attraction"
-            @click="viewAttraction(attraction)"
-            />
-        </div>
-
+      <AttractionCard
+        v-for="attraction in attractions"
+        :key="attraction.attraction_no"
+        :attraction="attraction"
+        :isPlan="isPlan"
+        @selectDestination="$emit('selectDestination', $event)"
+        @click="viewAttraction(attraction)"
+      />
     </div>
+  </div>
 </template>
 <script setup>
-import AttractionCard from './AttractionCard.vue';
+import AttractionCard from "./AttractionCard.vue";
 
 defineProps({
   attractions: {
     type: Array,
-    required: true,
   },
-  selectAttraction:{
-    type: Object,
-    required: true,
-  },
+  isPlan: Boolean,
 });
 const emit = defineEmits();
 
