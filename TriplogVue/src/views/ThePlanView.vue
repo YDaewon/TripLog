@@ -100,7 +100,7 @@ function handlePlanClick(plan) {
         :key="plan.planNo"
         :plan="plan"
         :is-selected="plan.planNo === selectedPlanNo"
-        @click= "handlePlanClick(plan)"
+        @click= "type !== 'mkarticle' && type !== 'viewarticle' ? $router.push({name: 'planDetail', params: { planNo: plan.planNo, isEditMode: false },}) : handlePlanClick(plan)"
       />
     </div>
   </div>

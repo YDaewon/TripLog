@@ -54,5 +54,10 @@ public class AttractionServiceImpl implements AttractionService{
 	public List<Map<String, String>> getContentTypes() {
 		return attractionMapper.getContentTypes();
 	}
+	
+	@Override
+	public List<Map<String, Object>> getSidoCounts() {
+	    return attractionMapper.getSidoCounts();
+	}
 
 }
