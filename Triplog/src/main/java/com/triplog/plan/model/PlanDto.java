@@ -20,4 +20,8 @@ public class PlanDto {
 	private String deletedAt;
 	@Schema(description = "계획 복사 횟수", defaultValue = "0",example = "15")
 	private String forkCount;
+	@Schema(description = "시작 날짜", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024-11-24")
+	private String startAt;
+	@Schema(description = "종료 날짜", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024-11-24")
+	private String endAt;
 }

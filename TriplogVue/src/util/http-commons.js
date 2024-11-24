@@ -2,12 +2,11 @@ import axios from "axios";
 import { httpStatusCode } from "./http-status";
 
 const { VITE_VUE_API_URL } = import.meta.env;
-// station vue api axios instance
+
 function attractionAxios() {
   const instance = axios.create({
-    baseURL: "http://localhost/attraction",
-    headers: {
-    },
+    baseURL: VITE_VUE_API_URL,
+    headers: { "Content-Type": "application/json" },
   });
   return instance;
 }
@@ -35,7 +34,6 @@ function localAxios() {
 
 
   let isTokenRefreshing = false;
-
   instance.interceptors.response.use(
     (response) => {
       return response;
@@ -61,7 +59,6 @@ function localAxios() {
           // 반드시 return을 붙여주어야한다.
           return await instance.post("/user/refresh").then((response) => {
             const newAccessToken = response.data.Authorization;
-
             instance.defaults.headers.common["accessToken"] = newAccessToken;
             originalRequest.headers.Authorization = newAccessToken;
 
@@ -82,4 +79,3 @@ function localAxios() {
 }
 
 export { localAxios, attractionAxios };
-

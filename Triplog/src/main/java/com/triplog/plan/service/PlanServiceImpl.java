@@ -21,7 +21,8 @@ public class PlanServiceImpl implements PlanService {
 
 	@Override
 	public int createPlan(PlanDto planDto) {
-		return planMapper.createPlan(planDto);
+		planMapper.createPlan(planDto);
+		return planMapper.getLastCreatedPlanNo(planDto.getUserNo());
 	}
 
 	@Override

@@ -42,7 +42,7 @@ public class PlanController {
 		this.planService = planService;
 	}
 
-	@PostMapping("/")
+	@PostMapping("")
 	@Operation(summary = "여행 계획 생성", description = "새 여행계획을 추가합니다.")
 	public ResponseEntity<String> createPlan(
 			@Parameter(description = "여행 계획 기본정보", required = true) @RequestBody PlanDto planDto,
@@ -50,8 +50,8 @@ public class PlanController {
 		try {
 			int tokenNo = (Integer) request.getAttribute("userNo");
 			planDto.setUserNo(tokenNo);
-			planService.createPlan(planDto);
-			return ResponseEntity.status(HttpStatus.CREATED).body("여행 계획 생성 성공");
+			int planNo = planService.createPlan(planDto);
+			return ResponseEntity.status(HttpStatus.CREATED).body(Integer.toString(planNo));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 계획 생성 중 문제 발생");
 		}
@@ -71,7 +71,7 @@ public class PlanController {
 		}
 	}
 
-	@GetMapping("/")
+	@GetMapping("")
 	@Operation(summary = "여행 계획 조회", description = "여행 계획 정보를 조회합니다.")
 	public ResponseEntity<?> getPlans(HttpServletRequest request) {
 		try {
@@ -83,7 +83,7 @@ public class PlanController {
 		}
 	}
 
-	@PutMapping("/")
+	@PutMapping("")
 	@Operation(summary = "여행 계획 수정", description = "여행 계획 기본정보를 수정합니다.")
 	public ResponseEntity<String> updatePlan(
 			@Parameter(description = "수정할 여행 계획 정보", required = true) @RequestBody PlanDto planDto,
@@ -101,15 +101,16 @@ public class PlanController {
 		}
 	}
 
-	@DeleteMapping("/")
+	@DeleteMapping("/{planNo}")
 	@Operation(summary = "여행 계획 삭제", description = "여행 계획을 삭제합니다.")
 	public ResponseEntity<String> deletePlan(
-			@Parameter(description = "여행 계획 번호", required = true) @RequestBody PlanDto planDto,
+			@Parameter(description = "삭제할 여행 계획 정보", required = true) @PathVariable int planNo,
 			HttpServletRequest request) {
 		int tokenNo = (Integer) request.getAttribute("userNo");
-		if (planDto.getUserNo() == tokenNo) {
+		
+		if (planService.getPlan(planNo).getUserNo() == tokenNo) {
 			try {
-				int res = planService.deletePlan(planDto.getPlanNo());
+				int res = planService.deletePlan(planNo);
 				if (res == 1) {
 					return ResponseEntity.status(HttpStatus.NO_CONTENT).body("여행 계획 삭제 성공");
 				} else {
@@ -125,15 +126,12 @@ public class PlanController {
 	// 여행계획 CRUD ↑ ----------------------------------------------------
 	// 목적지 CRUD ↓ ------------------------------------------------------
 	
-	@GetMapping("/dest")
+	@GetMapping("/dest/{planNo}")
 	@Operation(summary = "여행 목적지 조회", description = "여행 목적지 정보들을 조회합니다.")
 	public ResponseEntity<?> getDestinations(
-			@Parameter(description = "소속된 여행계획 번호", required = true) @RequestParam("planNo") int planNo) {
+			@Parameter(description = "소속된 여행계획 번호", required = true) @PathVariable("planNo") int planNo) {
 		try {
 			List<DestinationDto> results = planService.getDestinations(planNo);
-			for(DestinationDto d : results) {
-				System.out.println(d.toString());
-			}
 			return new ResponseEntity<>(results, HttpStatus.OK);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 목적지 조회 중 문제 발생");
@@ -179,6 +177,7 @@ public class PlanController {
 	public ResponseEntity<?> updateDestination(
 			@Parameter(description = "변경할 목적지 정보", required = true) @RequestBody DestinationDto destinationDto) {
 	    try {
+	    	System.out.println("updateDestination: " + destinationDto.toString());
 	        planService.updateDestination(destinationDto);
 	        return new ResponseEntity<>("여행 목적지 수정 성공", HttpStatus.OK);
 	    } catch (Exception e) {
