@@ -11,6 +11,8 @@
 	    <result column="created_at" property="createdAt" />
 	    <result column="deleted_at" property="deletedAt" />
 	    <result column="fork_count" property="forkCount" />
+	    <result column="start_at" property="startAt" />
+	    <result column="end_at" property="endAt" />
 	</resultMap>
 
 	<resultMap type="DestinationDto" id="destination">	
@@ -30,9 +32,15 @@
 
 	<!-- plans -->
 	<insert id="createPlan" parameterType="PlanDto">
-		INSERT INTO plans (user_no, title, description) VALUES(#{userNo}, #{title},
-		#{description});
+		INSERT INTO plans (user_no, title, description, start_at, end_at) 
+		VALUES(#{userNo}, #{title}, #{description}, #{startAt}, #{endAt});
 	</insert>
+	<select id="getLastCreatedPlanNo" parameterType="int" resultType="int">
+		SELECT plan_no FROM plans
+		WHERE user_no = #{userNo} 
+		ORDER BY plan_no DESC 
+		LIMIT 1;
+	</select>
 
 	<update id="deletePlan" parameterType="int">
 		UPDATE plans
@@ -41,14 +49,14 @@
 	</update>
 
 	<select id="getPlan" parameterType="int" resultMap="plan">
-		SELECT p.plan_no, p.user_no, p.title, p.description, p.created_at, p.deleted_at, p.fork_count
+		SELECT *
 		FROM plans p
 		WHERE p.plan_no = #{planNo}
 		AND p.deleted_at IS NULL;
 	</select>
 	
 	<select id="getPlans" parameterType="int" resultMap="plan">
-		SELECT p.plan_no, p.user_no, p.title, p.description, p.created_at, p.deleted_at, p.fork_count
+		SELECT *
 		FROM plans p
 		JOIN users u ON u.user_no = p.user_no
 		AND u.user_no = #{userNo}
@@ -60,6 +68,8 @@
 		<trim prefix="SET" suffixOverrides=",">
 			<if test="title != null">title = #{title},</if>
 			<if test="description != null">description = #{description},</if>
+			<if test="startAt != null">start_at = #{startAt},</if>
+			<if test="endAt != null">end_at = #{endAt},</if>
 		</trim>
 		WHERE plan_no = #{planNo}
 		AND deleted_at IS NULL;

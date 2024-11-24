@@ -1,36 +1,40 @@
 <template>
-    <div class="search-header">
-        <form>
-        <div class="select-group">
-            <VSelect :selectOption="sidoList" @onKeySelect="onChangeSido" />
-            <VSelect :selectOption="gugunList" @onKeySelect="onChangeGugun" />
-            <VSelect
-            :selectOption="contentList"
-            @onKeySelect="onChangeContentType"
-            />
-        </div>
+  <div class="search-header">
+    <form>
+      <div class="select-group">
+        <VSelect :selectOption="sidoList" @onKeySelect="onChangeSido" />
+        <VSelect :selectOption="gugunList" @onKeySelect="onChangeGugun" />
+        <VSelect
+          :selectOption="contentList"
+          @onKeySelect="onChangeContentType"
+        />
+      </div>
+      <div class="d-flex align-items-center">
         <input
-            class="form-control mb-1"
-            type="search"
-            placeholder="이름으로 검색..."
-            aria-label="Search"
+          class="form-control mb-1 me-3"
+          type="search"
+          placeholder="이름으로 검색..."
+          aria-label="Search"
+          v-model="searchParam.title"
         />
         <button
-            type="button"
-            class="btn btn-primary col-9"
-            @click="getAttractions"
+          type="button"
+          class="btn btn-outline-primary mb-1"
+          style="white-space: nowrap; height: 100%; width: 20%"
+          @click="getAttractions"
         >
-            검색
+          검색
         </button>
-        <button
-            type="button"
-            class="btn btn-outline-secondary col-3"
-            @click="toggleAttractionDetail"
-        >
-            {{ showAttractionDetail?'접기':'상세보기' }}
-        </button>
-        </form>
-    </div>
+      </div>
+      <!-- <button
+        type="button"
+        class="btn btn-outline-secondary col-3"
+        @click="toggleAttractionDetail"
+      >
+        {{ showAttractionDetail ? "접기" : "상세보기" }}
+      </button> -->
+    </form>
+  </div>
 </template>
 <script setup>
 import { ref, onMounted, defineProps } from "vue";
@@ -43,10 +47,10 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-  showAttractionDetail:{
-    type: Boolean,
-    required: true,
-  },
+  // showAttractionDetail: {
+  //   type: Boolean,
+  //   required: true,
+  // },
 });
 const emit = defineEmits();
 
@@ -67,9 +71,9 @@ onMounted(() => {
   getContentTypeList();
 });
 
-const toggleAttractionDetail = () =>{
-    emit("updateShowAttractionDetail", !props.showAttractionDetail);
-}
+// const toggleAttractionDetail = () => {
+//   emit("updateShowAttractionDetail", !props.showAttractionDetail);
+// };
 
 const getSidoList = () => {
   listSido(

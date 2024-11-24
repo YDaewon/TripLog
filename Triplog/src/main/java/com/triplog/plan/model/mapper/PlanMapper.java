@@ -16,6 +16,7 @@ public interface PlanMapper {
 	int updatePlan(PlanDto planDto);
 	int deletePlan(int planNo);
 	int deletePlanAdmin(Map<String, Integer> map);
+	int getLastCreatedPlanNo(int userNo);
 	
 	List<DestinationDto> getDestinations(int planNo);
 	void addDestinations(DestinationDto destinationDto);

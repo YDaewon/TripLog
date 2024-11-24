@@ -7,22 +7,22 @@ import AttractionPanel from "@/components/attractions/AttractionPanel.vue";
 const attractions = ref([]);
 const selectAttraction = ref({});
 
-const onUpdateAttractions = (newValue) =>{
+const onUpdateAttractions = (newValue) => {
   attractions.value = newValue;
-}
-const onUpdateSelectAttractions = (newValue) =>{
+  console.log("updatedAttractions: ", attractions);
+};
+const onUpdateSelectAttractions = (newValue) => {
   selectAttraction.value = newValue;
-}
-
+};
 </script>
 
 <template>
   <div class="map-container">
     <AttractionPanel
-    :attractions="attractions"
-    :selectAttraction="selectAttraction"
-    @updateAttractions="onUpdateAttractions"
-    @updateSelectAttraction="onUpdateSelectAttractions"
+      :attractions="attractions"
+      :selectAttraction="selectAttraction"
+      @updateAttractions="onUpdateAttractions"
+      @updateSelectAttraction="onUpdateSelectAttractions"
     />
 
     <VKakaoMap

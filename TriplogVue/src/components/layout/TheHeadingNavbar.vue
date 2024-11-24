@@ -23,7 +23,11 @@ const logout = () => {
   <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
     <div class="container-fluid">
       <router-link :to="{ name: 'main' }" class="navbar-brand">
-        <img src="@/assets/ssafy_logo.png" class="rounded mx-auto d-block" alt="..." />
+        <img
+          src="@/assets/ssafy_logo.png"
+          class="rounded mx-auto d-block"
+          alt="..."
+        />
       </router-link>
       <button
         class="navbar-toggler"
@@ -83,11 +87,27 @@ const logout = () => {
               게시판
             </a>
             <ul class="dropdown-menu">
-              <li><router-link :to="{ name: 'board' }" class="dropdown-item">전체 게시판</router-link></li>
+              <li>
+                <router-link :to="{ name: 'board' }" class="dropdown-item"
+                  >전체 게시판</router-link
+                >
+              </li>
               <li><hr class="dropdown-divider" /></li>
-              <li><router-link :to="{ name: 'star-article-list' }" class="dropdown-item">즐겨찾기</router-link></li>
+              <li>
+                <router-link
+                  :to="{ name: 'star-article-list' }"
+                  class="dropdown-item"
+                  >즐겨찾기</router-link
+                >
+              </li>
               <li><hr class="dropdown-divider" /></li>
-              <li><router-link :to="{ name: 'my-article-list' }" class="dropdown-item">내 게시글</router-link></li>
+              <li>
+                <router-link
+                  :to="{ name: 'my-article-list' }"
+                  class="dropdown-item"
+                  >내 게시글</router-link
+                >
+              </li>
             </ul>
           </li>
           <li class="nav-item">
@@ -113,16 +133,21 @@ const logout = () => {
             <template v-if="menu.show">
               <template v-if="menu.routeName === 'user-logout'">
                 <li class="nav-item">
-                  <router-link to="/" @click.prevent="logout" class="nav-link">{{
-                    menu.name
-                  }}</router-link>
+                  <router-link
+                    to="/"
+                    @click.prevent="logout"
+                    class="nav-link"
+                    >{{ menu.name }}</router-link
+                  >
                 </li>
               </template>
               <template v-else>
                 <li class="nav-item">
-                  <router-link :to="{ name: menu.routeName }" class="nav-link">{{
-                    menu.name
-                  }}</router-link>
+                  <router-link
+                    :to="{ name: menu.routeName }"
+                    class="nav-link"
+                    >{{ menu.name }}</router-link
+                  >
                 </li>
               </template>
             </template>
