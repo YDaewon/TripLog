@@ -21,7 +21,7 @@ const deletePlan = (event) => {
   <div class="d-flex justify-content-between mb-3">
     <button
       class="btn"
-      @click="$router.push({ name: 'plan', params: { planNo: planNo } })"
+      @click="$router.go(-1)"
     >
       ◀ 돌아가기
     </button>

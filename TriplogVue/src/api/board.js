@@ -41,6 +41,10 @@ function deleteStarArticle(articleno, success, fail) {
   local.delete(`/article/star/${articleno}`).then(success).catch(fail);
 }
 
+function linkPlan(param, success, fail) {
+  local.get(`/article/link`, { params: param }).then(success).catch(fail);
+}
+
 export {
   listArticle,
   listMyArticle,
@@ -51,4 +55,5 @@ export {
   IsStar,
   createStarArticle,
   deleteStarArticle,
+  linkPlan,
 };

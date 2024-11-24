@@ -11,6 +11,10 @@ const plans = ref([]);
 const memberStore = useMemberStore();
 const { userInfo } = storeToRefs(memberStore);
 
+const props = defineProps({
+  type: String,
+});
+
 const isModalOpen = ref(false);
 const selectedRange = ref({
   startDate: null,
@@ -73,23 +77,41 @@ const newPlan = (range) => {
     }
   );
 };
+
+const selectedPlanNo = ref(0);
+
+const emit = defineEmits(['plan-selected']);
+
+function handlePlanClick(plan) {
+    emit('plan-selected', plan.planNo);
+    this.selectedPlanNo = plan.planNo; // 선택된 플랜 번호 업데이트
+  }
 </script>
 
 <template>
-  <div>
-    <h1>내 여행 계획</h1>
-    <button class="btn btn-primary" @click="openModal">플랜 만들기</button>
+  <h1 v-if="type === 'mkarticle'">플랜 등록</h1>
+  <h3 v-if="type === 'viewarticle'">my Plan</h3>
+  <h1 v-if="type !== 'mkarticle' && type !== 'viewarticle'">내 플랜 목록</h1>
+  <div v-if="type !== 'viewarticle'">
+    <button v-if="type === 'plan'" class="btn btn-primary" @click="openModal">플랜 만들기</button>
     <div>
       <PlanCard
         v-for="plan in plans"
         :key="plan.planNo"
         :plan="plan"
-        @click="
-          $router.push({
-            name: 'planDetail',
-            params: { planNo: plan.planNo, isEditMode: false },
-          })
-        "
+        :is-selected="plan.planNo === selectedPlanNo"
+        @click= "handlePlanClick(plan)"
+      />
+    </div>
+  </div>
+  <div v-else>
+    <div>
+      <PlanCard
+        v-for="plan in plans"
+        :key="plan.planNo"
+        :plan="plan"
+        :is-selected=true
+        @click= "$router.push({name: 'planDetail', params: { planNo: plan.planNo, isEditMode: false },})"
       />
     </div>
     <PlanDate
