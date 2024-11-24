@@ -165,7 +165,6 @@ public class UserController {
 			try {
 //				로그인 사용자 정보.
 				UserDto userDto = UserService.getUser(tokenId);
-				System.out.println(userDto.toString());
 				resultMap.put("userInfo", userDto);
 				status = HttpStatus.OK;
 			} catch (Exception e) {

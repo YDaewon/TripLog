@@ -1,19 +1,34 @@
 <script setup>
-import PlanBody from './PlanBody.vue';
-import PlanHeader from './PlanHeader.vue';
+import PlanBody from "./PlanBody.vue";
+import PlanHeader from "./PlanHeader.vue";
 defineProps({
-    plan: Object
+  plan: {
+    type: Object,
+    required: true,
+  },
+  destinations: Array,
+  isEditMode: Boolean,
 });
-const onUpdatePlan = (newValue) =>{
-    plan.value = newValue;
-};
+const emit = defineEmits();
 </script>
 <template>
-    <div class="bg-white shadow-lg rounded-lg overflow-hidden h-100 d-flex flex-column">
+  <div
+    class="bg-white shadow-lg rounded-lg overflow-hidden h-100 d-flex flex-column"
+  >
     <PlanHeader
-    :plan="plan" @updatePlan="onUpdatePlan"
+      :plan="plan"
+      :isEditMode="isEditMode"
+      @updatePlan="$emit('updatePlan', $event)"
+      @savePlan="$emit('savePlan', $event)"
+      @deletePlan="$emit('deletePlan', $event)"
+      @updateEditMode="$emit('updateEditMode', $event)"
     />
-    <PlanBody />
-    </div>
+    <PlanBody
+      :destinations="destinations"
+      :plan="plan"
+      :isEditMode="isEditMode"
+      @updatePlan="$emit('updatePlan', $event)"
+    />
+  </div>
 </template>
 <style></style>
