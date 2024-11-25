@@ -1,26 +1,26 @@
 <script setup>
 import { ref, watch, onMounted } from "vue";
-import { useAttractionStore } from "@/stores/attraction";
+import { usePlanStore } from "@/stores/plan";
 import { storeToRefs } from "pinia";
-const attractionStore = useAttractionStore();
-const { selectedAttraction, attractions } = storeToRefs(attractionStore);
-
+const planStore = usePlanStore();
+const {selectedDestination, tempDestinations} = storeToRefs(planStore);
 var map;
 const positions = ref([]);
 const markers = ref([]);
+const isKakaoLoaded = ref(false); // Kakao API 로드 상태 추적
+
+const props = defineProps({ destinations: Array });
 
 watch(
-  () => selectedAttraction.value,
+  () => selectedDestination.value,
   () => {
     // 이동할 위도 경도 위치를 생성합니다
     console.log(
-      selectedAttraction.value.latitude +
-        " " +
-        selectedAttraction.value.longitude
+      selectedDestination.value.latitude + " " + selectedDestination.value.longitude
     );
     var moveLatLon = new kakao.maps.LatLng(
-      selectedAttraction.value.latitude,
-      selectedAttraction.value.longitude
+      selectedDestination.value.latitude,
+      selectedDestination.value.longitude
     );
 
     // 지도 중심을 부드럽게 이동시킵니다
@@ -33,6 +33,7 @@ watch(
 onMounted(() => {
   if (window.kakao && window.kakao.maps) {
     initMap();
+    isKakaoLoaded.value = true;
   } else {
     const script = document.createElement("script");
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${
@@ -41,7 +42,10 @@ onMounted(() => {
 
     script.onload = () => {
       if (window.kakao && window.kakao.maps) {
-        kakao.maps.load(() => initMap());
+        kakao.maps.load(() => {
+          initMap();
+          isKakaoLoaded.value = true;
+        });
       } else {
         console.error("Kakao Maps API is not available.");
       }
@@ -50,19 +54,22 @@ onMounted(() => {
   }
 });
 
+// watch를 수정하여 Kakao API가 로드된 후에만 실행되도록 합니다
 watch(
-  () => attractions,
+  () => tempDestinations,
   () => {
+    if (!isKakaoLoaded.value) return; // API가 로드되지 않았다면 실행하지 않음
+
     positions.value = [];
-    attractions.value.forEach((attraction) => {
+    tempDestinations.value.forEach((destination) => {
       let obj = {};
       obj.latlng = new kakao.maps.LatLng(
-        attraction.latitude,
-        attraction.longitude
+        destination.latitude,
+        destination.longitude
       );
-      obj.title = attraction.title;
-      obj.image = attraction.firstImage1 || attraction.firstImage1;
-      obj.addr = attraction.addr1;
+      obj.title = destination.title;
+      obj.image = destination.firstImage1 || destination.firstImage1;
+      obj.addr = destination.addr1;
 
       positions.value.push(obj);
     });
@@ -71,6 +78,26 @@ watch(
   { deep: true }
 );
 
+// props.destinations가 변경되었을 때 Kakao API 로드 상태도 함께 감시
+watch(isKakaoLoaded, (newValue) => {
+  if (newValue && props.destinations?.length) {
+    // API가 로드되고 destinations 데이터가 있으면 마커 업데이트
+    positions.value = [];
+    props.destinations.forEach((destination) => {
+      let obj = {};
+      obj.latlng = new kakao.maps.LatLng(
+        destination.latitude,
+        destination.longitude
+      );
+      obj.title = destination.title;
+      obj.image = destination.firstImage1 || destination.firstImage1;
+      obj.addr = destination.addr1;
+
+      positions.value.push(obj);
+    });
+    loadMarkers();
+  }
+});
 const initMap = () => {
   const container = document.getElementById("map");
   const options = {
@@ -78,6 +105,8 @@ const initMap = () => {
     level: 3,
   };
   map = new kakao.maps.Map(container, options);
+
+  // loadMarkers();
 };
 
 const loadMarkers = () => {

@@ -28,10 +28,6 @@ public class JwtInterceptor implements HandlerInterceptor {
         System.out.println("\u001B[32m" + "URI: " + "\u001B[0m" + request.getRequestURI());
         System.out.println("\u001B[32m" + "Query String: " + "\u001B[0m" + request.getQueryString());
         System.out.println("\u001B[36m" + "========================"+ "\u001B[0m");
-        System.out.println("=== Headers ===");
-        request.getHeaderNames().asIterator().forEachRemaining(header -> 
-            System.out.println(header + ": " + request.getHeader(header))
-        );
         System.out.println("token: " + token);
 	    if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
 	        response.setStatus(HttpServletResponse.SC_OK); // OPTIONS 요청에 200 OK 반환

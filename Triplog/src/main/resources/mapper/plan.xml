@@ -102,6 +102,20 @@
 		ORDER BY pd.destination_order;
 	</select>
 
+	<select id="getDestinationInfo" parameterType="int" resultMap="destination">
+		SELECT 
+		    a.attraction_no,
+		    a.title,
+		    ct.content_type_name,
+		    a.first_image1,
+		    a.addr1,
+		    a.latitude,
+		    a.longitude
+		FROM attractions a 
+        JOIN contenttypes ct ON a.content_type_id = ct.content_type_id
+		WHERE a.attraction_no = #{attractionNo};
+	</select>
+
 	<insert id="addDestinations" parameterType="DestinationDto">
 	    INSERT INTO plan_destinations (
 	        attraction_no,

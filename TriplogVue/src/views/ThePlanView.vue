@@ -1,25 +1,22 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { getPlans, createPlan } from "@/api/plan";
+import { createPlan } from "@/api/plan";
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member";
 import PlanCard from "@/components/plan/PlanCard.vue";
 import router from "@/router";
 import PlanDate from "@/components/plan/PlanDate.vue";
+import { usePlanStore } from "@/stores/plan";
+const planStore = usePlanStore();
+const {plan,plans,tempPlan, isEditMode} = storeToRefs(planStore)
 
-const plans = ref([]);
 const memberStore = useMemberStore();
 const { userInfo } = storeToRefs(memberStore);
 
 const isModalOpen = ref(false);
-const selectedRange = ref({
-  startDate: null,
-  endDate: null,
-});
 const openModal = () => {
   isModalOpen.value = true;
 };
-
 const closeModal = () => {
   isModalOpen.value = false;
 };
@@ -34,24 +31,16 @@ const formatDate = (date) => {
 };
 
 const handleDateSelect = (range) => {
+  console.log(range);
   newPlan(range);
 };
 
 onMounted(() => {
-  getUserPlans();
+  console.log("onMounted");
+  if (userInfo.value && userInfo.value.userNo) {
+    planStore.loadPlans(userInfo.value.userNo);
+  }
 });
-
-const getUserPlans = () => {
-  getPlans(
-    { userNo: userInfo.value.userNo },
-    ({ data }) => {
-      plans.value = data;
-    },
-    (err) => {
-      console.log(err);
-    }
-  );
-};
 
 const newPlan = (range) => {
   createPlan(
@@ -63,15 +52,27 @@ const newPlan = (range) => {
       endAt: formatDate(range.endDate),
     },
     (planNo) => {
+      isEditMode.value = true;
       router.push({
         name: "planDetail",
-        params: { planNo: planNo.data, isEditMode: true },
+        params: { planNo: planNo.data},
       });
     },
     (err) => {
       console.log(err);
     }
   );
+};
+
+const onClickPlanCard = (selPlan) => {
+  plan.value = selPlan;
+  tempPlan.value = selPlan;
+  planStore.loadDestinations(plan.value.planNo);
+  isEditMode.value = false;
+  router.push({
+    name: "planDetail",
+    params: { planNo: plan.value.planNo },
+  });
 };
 </script>
 
@@ -84,12 +85,7 @@ const newPlan = (range) => {
         v-for="plan in plans"
         :key="plan.planNo"
         :plan="plan"
-        @click="
-          $router.push({
-            name: 'planDetail',
-            params: { planNo: plan.planNo, isEditMode: false },
-          })
-        "
+        @click="onClickPlanCard(plan)"
       />
     </div>
     <PlanDate
