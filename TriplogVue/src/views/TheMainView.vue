@@ -7,9 +7,9 @@
 
   <!-- Cards -->
   <div class="row justify-content-center">
-    <div class="col-md-3" v-for="(card, index) in cards" :key="index">
+    <div class="col-md-2" v-for="(card, index) in cards" :key="index">
       <div
-        class="card mb-4"
+        class="card mb-5"
         data-bs-toggle="modal"
         :data-bs-target="'#' + card.id"
         style="cursor: pointer; transition: transform 0.3s ease-in-out;">

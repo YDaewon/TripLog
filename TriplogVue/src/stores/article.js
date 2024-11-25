@@ -17,7 +17,7 @@ export const useArticleStore = defineStore("articleStore", () => {
       (response) => {
         if (response.status === httpStatusCode.OK) {
           articleInfo.value = response.data
-          console.log(response.data)
+          //console.log(response.data)
         } else {
           console.log("게시글 정보 없음!!!!")
         }

@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { deleteArticle, createStarArticle, IsStar, deleteStarArticle } from "@/api/board";
 import { storeToRefs } from "pinia"
@@ -42,7 +42,8 @@ onMounted(async () => {
   await IsStar(
     articleno,
     (response) => {
-      if (response.data != 0) {
+      console.log(response.data)
+      if (response.data == 1) {
         isStar.value = true;
         //console.log("현재 게시글 즐겨찾기 되어있음")
       }
@@ -56,6 +57,10 @@ onMounted(async () => {
   );
   article.value = articleInfo.value;
   isLoad.value = true; // 로드 완료 표시
+});
+
+onUnmounted(async () => {
+  isStar.value = false;
 });
 
 watch(articleInfo, (newArticleInfo) => {
