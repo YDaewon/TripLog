@@ -31,22 +31,23 @@ public class commentController {
     @Operation(summary = "댓글 생성", description = "새로운 댓글을 생성합니다.")
     @PostMapping("")
     public ResponseEntity<Void> createComment(@RequestBody commentDto commentDto) {
+    	System.out.println(commentDto.toString());
         commentService.createComment(commentDto);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "댓글 수정", description = "기존 댓글을 수정합니다.")
-    @PutMapping("/{commentNo}")
+    @PutMapping("")
     public ResponseEntity<Void> modifyComment(
-            @PathVariable int commentNo,
-            @RequestBody commentDto commentDto) {
-        commentDto.setCommentNo(commentNo);
-        commentService.modifyComment(commentDto);
+    		@RequestParam("commentNo") Long commentNo,
+            @RequestParam("comment") String comment) {
+    	System.out.println(commentNo + ", " + comment);
+        commentService.modifyComment(commentNo, comment);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "댓글 삭제", description = "댓글을 삭제합니다.")
-    @DeleteMapping("/{commentNo}")
+    @PutMapping("/delete/{commentNo}")
     public ResponseEntity<Void> deleteComment(@PathVariable int commentNo) {
         commentService.deleteComment(commentNo);
         return ResponseEntity.ok().build();

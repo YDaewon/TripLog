@@ -27,8 +27,8 @@ public class commentServiceImpl implements commentService {
 	}
 
 	@Override
-	public void modifyComment(commentDto commentDto) {
-		commentMapper.modifyComment(commentDto);
+	public void modifyComment(Long commentNo, String comment) {
+		commentMapper.modifyComment(commentNo, comment);
 	}
 
 	@Override

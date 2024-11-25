@@ -283,10 +283,11 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `triplog`.`comment` (
   `comment_no` INT NOT NULL AUTO_INCREMENT,
   `article_no` INT NOT NULL,
+  `user_no` INT NOT NULL,
   `content` VARCHAR(200) NOT NULL,
   `parent` INT NULL,
   `create_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `user_no` INT NOT NULL,
+  `delete_at` TIMESTAMP NULL,
   PRIMARY KEY (`comment_no`),
   INDEX `fk_comment_articles1_idx` (`article_no` ASC) VISIBLE,
   INDEX `fk_comment_users1_idx` (`user_no` ASC) VISIBLE,

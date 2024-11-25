@@ -13,18 +13,19 @@
 		<result column="content" property="content" />
 		<result column="parent" property="parent" />
 		<result column="create_at" property="createAt" />
-		<result column="delete_at" property="createAt" />
+		<result column="delete_at" property="deleteAt" />
 	</resultMap>
 
 	<select id="getComments" resultMap="comment">
 		SELECT 
 		    c.comment_no,
 		    c.article_no,
+		    c.user_no,
 		    c.content,
 		    c.parent,
 		    c.create_at,
 		    c.delete_at,
-		    u.user_name as author,
+		    u.nickname as author,
 		    u.user_image as author_image
 		FROM comment c
 		JOIN users u ON c.user_no = u.user_no
@@ -39,12 +40,12 @@
 	
 	<update id="modifyComment">
 		update comment
-		set comment = #{comment}
+		set content = #{comment}
 		where comment_no = #{commentNo}
 	</update>
 	
 	<update id="deleteComment">
-		update FROM comment set delete_at = CURRENT_TIMESTAMP
+		update comment set delete_at = CURRENT_TIMESTAMP
 		WHERE comment_no = #{commentNo};
 	</update>
 	
