@@ -1,20 +1,16 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import CommentItem from "./CommentItem.vue";
-import { getComments, createCommnet } from "@/api/comment"
-import { useArticleStore } from "@/stores/article"
+import { getComments, createComment } from "@/api/comment"
 import { useMemberStore } from "@/stores/member"
 import { storeToRefs } from "pinia"
 
 const route = useRoute();
-const router = useRouter();
 
 const memberStore = useMemberStore()
 const { userInfo } = storeToRefs(memberStore)
 
-const articleStore = useArticleStore()
-const { articleInfo } = storeToRefs(articleStore)
 // 댓글 데이터 관리
 const comments = ref([]);
 const commentTree = ref([]);
@@ -28,24 +24,33 @@ const Comment = ref({
 });
 
 // 댓글 추가 함수
-function addComment() {
-  createCommnet(
-    articleno,
-    async (response) => {
-      if (response.status == 201) {
-        await getComments(articleInfo.value.articleNo);
+async function addComment() {
+  createComment(
+    Comment.value,
+    (response) => {
+      if (response.status == 200) {
+        fetchComments(); // 댓글 목록 업데이트
+        Comment.value.content = ""; // 작성란 초기화
       }
     },
+    (error) => {
+      console.error("댓글 작성 중 에러 발생:", error);
+    }
   )
-  Comment.value.content = ""; // 작성란 초기화
 }
 
 onMounted(() => {
+  fetchComments();
+});
+
+// 댓글 목록 가져오기 함수
+async function fetchComments() {
   getComments(
     articleno,
     (response) => {
       if (response.status == 200) {
         comments.value = response.data;
+        console.log(response.data)
         commentTree.value = createCommentTree(comments.value);
       }
     },
@@ -53,8 +58,7 @@ onMounted(() => {
       console.error(error);
     }
   );
-});
-
+}
 
 
 function createCommentTree(comments) {
@@ -98,7 +102,7 @@ function createCommentTree(comments) {
     <div>
       <h4>댓글</h4>
       <ul class="comment-list">
-        <CommentItem v-for="comment in commentTree" :key="comment.commentNo" :comment="comment" />
+        <CommentItem v-for="comment in commentTree" :key="comment.commentNo" :comment="comment" @fetch-comments="fetchComments" />
       </ul>
     </div>
   </div>

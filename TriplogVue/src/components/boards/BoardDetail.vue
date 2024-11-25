@@ -6,7 +6,7 @@ import { storeToRefs } from "pinia"
 import { useMemberStore } from "@/stores/member"
 import { useArticleStore } from "@/stores/article"
 import ThePlanView from "@/views/ThePlanView.vue";
-import Comment from "./Comment/Comment.vue";
+import Comment from "./Comment/CommentView.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -170,7 +170,7 @@ function onDeleteArticle() {
           <div class="clearfix align-content-center content-container" v-html="articleInfo.content"></div>
           <div class="divider mt-3 mb-3"></div>
           <div v-if="article.planNo != 0">
-            <ThePlanView type="viewarticle" :planNo=article.planNo @plan-selected="usePlanNo" />
+            <ThePlanView type="viewarticle" :planNo=article.planNo />
           </div>
           <div class="d-flex justify-content-end">
             <button type="button" v-if="!isStar" class="btn btn-outline-warning mb-3" @click="createStar">

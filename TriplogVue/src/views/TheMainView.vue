@@ -25,6 +25,7 @@
   <div
     class="modal fade"
     v-for="(modal, index) in modals"
+    :key="index"
     :id="modal.id"
     tabindex="-1"
     :aria-labelledby="modal.labelId"

@@ -57,12 +57,10 @@ const filteredPlans = computed(() => {
 
 
 const getUserPlans = () => {
-  console.log(props.type !== 'viewarticle' ? userInfo.value.userNo : articleInfo.value.userNo)
   getPlans(
     props.type !== 'viewarticle' ? userInfo.value.userNo : articleInfo.value.userNo,
     ({ data }) => {
       plans.value = data;
-      console.log("return plan cnt: " + plans.value)
     },
     (err) => {
       console.log(err);
@@ -96,12 +94,7 @@ const newPlan = (range) => {
 
 const selectedPlanNo = ref(0);
 
-const emit = defineEmits(['plan-selected']);
 
-function handlePlanClick(plan) {
-    emit('plan-selected', plan.planNo);
-    this.selectedPlanNo = plan.planNo; // 선택된 플랜 번호 업데이트
-  }
 </script>
 
 <template>
