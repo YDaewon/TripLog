@@ -26,6 +26,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public int nicknameCheck(String nickname) {
+		return userMapper.nicknameCheck(nickname);
+	}
+
+	@Override
 	public void joinUser(UserDto userDto) throws SQLException {
 		userMapper.joinUser(userDto);
 	}
@@ -80,5 +85,12 @@ public class UserServiceImpl implements UserService {
 		map.put("token", null);
 		userMapper.deleteRefreshToken(map);
 	}
+
+	@Override
+	public void changePwd(String userId, String pwd) {
+		userMapper.changePwd(userId, pwd);
+		
+	}
+
 
 }

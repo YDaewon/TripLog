@@ -71,13 +71,13 @@ onMounted(() => {
     (response) => {
       if (response.status === 200) {
         const sidoCount = response.data
-        console.log(`${sidoCount.length}, ${JSON.stringify(sidoCount)}`)
+        //console.log(`${sidoCount.length}, ${JSON.stringify(sidoCount)}`)
 
         // labels와 data에 데이터 설정
         chartData.value.labels = sidoCount.map((item: { sido_name: string }) => item.sido_name)
         chartData.value.datasets[0].data = sidoCount.map((item: { count: number }) => item.count)
 
-        console.log(chartData.value.labels[0])
+        //console.log(chartData.value.labels[0])
         isDone.value = true;
       }
     },

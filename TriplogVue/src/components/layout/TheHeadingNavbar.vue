@@ -42,7 +42,7 @@ const darkImage = "/dark_logo.png";
 const currentImage = ref("");
 
 const logout = () => {
-  userLogout();
+  userLogout(userInfo.value.userId);
   changeMenuState(false);
 };
 </script>

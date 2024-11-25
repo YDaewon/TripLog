@@ -29,9 +29,11 @@ const article = ref({
 });
 
 if (props.type !== 'modify') {
+  article.value.articleNo = 0;
   article.value.title = "";
   article.value.content = "";
   article.value.planNo = 0;
+  article.value.content = "";
   articleInfo.value.content = "";
 }
 
