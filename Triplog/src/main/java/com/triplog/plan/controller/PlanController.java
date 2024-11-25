@@ -73,9 +73,9 @@ public class PlanController {
 
 	@GetMapping("")
 	@Operation(summary = "여행 계획 조회", description = "여행 계획 정보를 조회합니다.")
-	public ResponseEntity<?> getPlans(HttpServletRequest request) {
+	public ResponseEntity<?> getPlans(@RequestParam String param, HttpServletRequest request) {
 		try {
-			List<PlanDto> results = planService.getPlans((Integer)request.getAttribute("userNo"));
+			List<PlanDto> results = planService.getPlans(Integer.parseInt(param));
 			return new ResponseEntity<>(results, HttpStatus.OK);
 		} catch (Exception e) {
 			System.out.println(e.toString());
@@ -149,7 +149,6 @@ public class PlanController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("목적지 조회 중 문제 발생");
 		}
 	}
-	
 	
 	
 	/* 목적지 추가

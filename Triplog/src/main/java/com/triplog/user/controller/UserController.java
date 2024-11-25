@@ -52,11 +52,23 @@ public class UserController {
 	}
 
 	// 아이디 중복 체크
-	@GetMapping("/{userId}")
+	@GetMapping("/checkid/{userId}")
 	@Operation(summary = "아이디 중복 체크", description = "회원가입 중 ID의 중복 여부를 체크")
 	public ResponseEntity<Map<String, Integer>> idCheck(@PathVariable("userId") String userId) throws Exception {
 		System.out.println(userId);
 		int cnt = UserService.idCheck(userId);
+		Map<String, Integer> response = new HashMap<>();
+		response.put("cnt", cnt);
+
+		return ResponseEntity.ok(response);
+	}
+	
+	// 닉네임 중복 체크
+	@GetMapping("/checknickname/{nickname}")
+	@Operation(summary = "닉네임 중복 체크", description = "회원가입 중 닉네임의 중복 여부를 체크")
+	public ResponseEntity<Map<String, Integer>> nicknameCheck(@PathVariable("nickname") String nickname) throws Exception {
+		//System.out.println(nickname);
+		int cnt = UserService.nicknameCheck(nickname);
 		Map<String, Integer> response = new HashMap<>();
 		response.put("cnt", cnt);
 
@@ -142,6 +154,7 @@ public class UserController {
 		HttpStatus status = HttpStatus.ACCEPTED;
 		try {
 			UserService.deleRefreshToken(userId);
+			resultMap.put("message", "로그아웃 완료!!");
 			status = HttpStatus.OK;
 		} catch (Exception e) {
 			log.error("로그아웃 실패 : {}", e);
@@ -208,6 +221,36 @@ public class UserController {
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
+	
+	// 비밀번호 변경
+	@PutMapping("/info/pwd/{userId}")
+	@Operation(summary = "비밀번호 변경", description = "비밀번호를 변경하는 URL")
+	public ResponseEntity<Map<String, Object>> changePwd(@RequestParam String param,
+	                                                     @PathVariable("userId") String userId,
+	                                                     HttpServletRequest request) {
+	    Map<String, Object> resultMap = new HashMap<>();
+	    HttpStatus status = HttpStatus.ACCEPTED;
+	    String tokenId = (String) request.getAttribute("userId");
+
+	    if (userId.equals(tokenId)) {
+	        log.info("사용 가능한 토큰!!!");
+	        try {
+	            System.out.println(userId + ", " + param);
+	            UserService.changePwd(userId, param);
+	            resultMap.put("message", "비밀번호 변경 성공");
+	            status = HttpStatus.OK;
+	        } catch (Exception e) {
+	            log.error("비밀번호 변경 실패 : {}", e);
+	            resultMap.put("message", "비밀번호 변경 중 문제 발생");
+	            status = HttpStatus.INTERNAL_SERVER_ERROR;
+	        }
+	    } else {
+	        log.error("사용 불가능 토큰!!!");
+	        status = HttpStatus.UNAUTHORIZED;
+	    }
+	    return new ResponseEntity<>(resultMap, status);
+	}
+	
 
 	@DeleteMapping("/info/{userId}")
 	@Operation(summary = "계정 삭제", description = "userNo에 해당하는 계정 정보를 삭제")

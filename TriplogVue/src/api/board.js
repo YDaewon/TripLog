@@ -30,6 +30,7 @@ function deleteArticle(articleno, success, fail) {
 }
 
 function IsStar(articleno, success, fail) {
+  local.defaults.headers["accessToken"] = sessionStorage.getItem("accessToken");
   local.get(`/article/star/${articleno}`).then(success).catch(fail);
 }
 
@@ -39,6 +40,10 @@ function createStarArticle(articleno, success, fail) {
 
 function deleteStarArticle(articleno, success, fail) {
   local.delete(`/article/star/${articleno}`).then(success).catch(fail);
+}
+
+function linkPlan(param, success, fail) {
+  local.get(`/article/link`, { params: param }).then(success).catch(fail);
 }
 
 export {
@@ -51,4 +56,5 @@ export {
   IsStar,
   createStarArticle,
   deleteStarArticle,
+  linkPlan,
 };
