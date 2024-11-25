@@ -1,39 +1,59 @@
 <script setup>
-import { watch } from "vue";
+import { deletePlan } from "@/api/plan";
+import router from "@/router";
+import { usePlanStore } from "@/stores/plan";
+import { storeToRefs } from "pinia";
+const planStore = usePlanStore();
+const { isEditMode } = storeToRefs(planStore);
 
-const props = defineProps({
-  isEditMode: Boolean,
-  planNo: Number,
-});
-const emit = defineEmits();
-const savePlan = (event) => {
-  if (props.isEditMode) {
-    emit("savePlan", event);
+const onDeletePlan = () => {
+  if (confirm("삭제하시겠습니까?")) {
+    deletePlan(
+      planStore.plan.planNo,
+      (response) => {
+        alert("삭제되었습니다.");
+        router.push({ name: "plan" });
+      },
+      (error) => {
+        alert("삭제 중 오류발생");
+        console.log(error);
+      }
+    );
+  } else {
+    alert("삭제 취소");
   }
-  emit("updateEditMode", !props.isEditMode);
 };
 
-const deletePlan = (event) => {
-  emit("deletePlan", event);
+const saveEdit = () => {
+  if (planStore.isEditMode) {
+    console.log("저장시작---------------------");
+    planStore.commitCreatedDestinations();
+    planStore.commitUpdatedDestinations();
+    planStore.commitDeletedDestinations();
+    planStore.commitPlan();
+    console.log("저장끝-----------------------");
+  }
+  planStore.toggleEditMode();
+};
+const rollback = () => {
+  if (confirm("수정을 취소하시겠습니까?")) {
+    planStore.rollbackDestinations();
+    planStore.rollbackPlan();
+    isEditMode.value = false;
+  }
 };
 </script>
 <template>
   <div class="d-flex justify-content-between mb-3">
-    <button
-      class="btn"
-      @click="$router.go(-1)"
-    >
-      ◀ 돌아가기
-    </button>
+    <button class="btn" @click="$router.go(-1)">◀ 돌아가기</button>
     <div class="d-flex justify-content-end mb-2">
-      <button class="btn" @click="savePlan">
-        {{ props.isEditMode ? "저장" : "수정" }}
+      <button class="btn" @click="saveEdit">
+        {{ planStore.isEditMode ? "저장" : "수정" }}
       </button>
-      <button
-        class="btn btn-outline"
-        @click="deletePlan"
-        v-show="props.isEditMode"
-      >
+      <button class="btn" v-show="planStore.isEditMode" @click="rollback">
+        취소
+      </button>
+      <button class="btn" v-show="!planStore.isEditMode" @click="onDeletePlan">
         삭제
       </button>
     </div>

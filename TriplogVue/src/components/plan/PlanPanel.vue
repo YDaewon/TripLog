@@ -1,37 +1,21 @@
 <script setup>
-import { watch } from "vue";
+import { storeToRefs } from "pinia";
 import PlanBody from "./PlanBody.vue";
 import PlanHeader from "./PlanHeader.vue";
-const props = defineProps({
-  plan: {
-    type: Object,
-    required: true,
-  },
-  destinations: Array,
-  isEditMode: Boolean,
+import { usePlanStore } from "@/stores/plan";
+import { onMounted } from "vue";
+const planStore = usePlanStore();
+const { tempDestinations } = storeToRefs(planStore);
+onMounted(() => {
+  tempDestinations.value = [];
 });
-
-const emit = defineEmits();
 </script>
 <template>
   <div
     class="bg-white shadow-lg rounded-lg overflow-hidden h-100 d-flex flex-column"
   >
-    <PlanHeader
-      :plan="plan"
-      :isEditMode="isEditMode"
-      @updatePlan="$emit('updatePlan', $event)"
-      @savePlan="$emit('savePlan', $event)"
-      @deletePlan="$emit('deletePlan', $event)"
-      @updateEditMode="$emit('updateEditMode', $event)"
-    />
-    <PlanBody
-      :destinations="destinations"
-      :plan="plan"
-      :isEditMode="isEditMode"
-      @updatePlan="$emit('updatePlan', $event)"
-      @createDestination="$emit('createDestination', $event)"
-    />
+    <PlanHeader />
+    <PlanBody />
   </div>
 </template>
 <style></style>

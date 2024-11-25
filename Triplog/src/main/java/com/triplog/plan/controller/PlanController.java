@@ -138,14 +138,15 @@ public class PlanController {
 		}
 	}
 	@GetMapping("/dest/info/{attractionNo}")
-	@Operation(summary = "여행 목적지 조회", description = "여행 목적지 정보들을 조회합니다.")
+	@Operation(summary = "목적지 정보 조회", description = "목적지 정보를 조회합니다.")
 	public ResponseEntity<?> getDestinationInfo(
-			@Parameter(description = "소속된 여행계획 번호", required = true) @PathVariable("attractionNo") int attractionNo) {
+			@Parameter(description = "관광지 번호", required = true) @PathVariable("attractionNo") int attractionNo) {
 		try {
 			DestinationDto result = planService.getDestinationInfo(attractionNo);
+			System.out.println(result);
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 목적지 조회 중 문제 발생");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("목적지 조회 중 문제 발생");
 		}
 	}
 	
