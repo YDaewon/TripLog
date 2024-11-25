@@ -30,6 +30,8 @@ function updateDestination(plan, success, fail) {
     .then(success)
     .catch(fail);
 }
+
+
 export {
   getDestinations,
   createDestination,

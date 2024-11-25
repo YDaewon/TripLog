@@ -10,6 +10,7 @@ import com.triplog.user.model.UserDto;
 
 public interface UserService {
 	int idCheck(String userId) throws SQLException;
+	int nicknameCheck(String nickname);
 	void joinUser(UserDto userDto) throws SQLException;
 	UserDto loginUser(Map<String, String> map) throws SQLException;
 	UserDto getUser(String userId) throws SQLException; // Detail
@@ -23,5 +24,6 @@ public interface UserService {
 	
 	/* Admin */
 	List<UserDto> listUser() throws SQLException;
+	void changePwd(String userId, String pwd);
 
 }

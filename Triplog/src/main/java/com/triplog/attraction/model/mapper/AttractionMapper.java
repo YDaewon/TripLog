@@ -17,4 +17,5 @@ public interface AttractionMapper {
 	List<Map<String, String>> getGuguns(int sidoCode);
 	List<Map<String, String>> getContentTypes();
 	List<AttractionDto> getAttractions(int planNo);
+	List<Map<String, Object>> getSidoCounts();
 }

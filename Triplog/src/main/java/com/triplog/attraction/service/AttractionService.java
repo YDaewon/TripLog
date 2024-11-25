@@ -14,4 +14,5 @@ public interface AttractionService {
 	List<Map<String, String>> getSidos();
 	List<Map<String, String>> getGuguns(int sidoCode);
 	List<Map<String, String>> getContentTypes();
+	List<Map<String, Object>> getSidoCounts();
 }

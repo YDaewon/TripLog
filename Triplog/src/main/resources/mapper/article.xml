@@ -7,6 +7,7 @@
 		<result column="article_no" property="articleNo"/>
 		<result column="user_no" property="userNo"/>
 		<result column="author" property="author"/>
+		<result column="author_image" property="authorImage"/>
 		<result column="plan_no" property="planNo"/>
 		<result column="title" property="title"/>
 		<result column="content" property="content"/>
@@ -75,6 +76,7 @@
 		    a.user_no AS user_no,
 		    a.title AS title,
 		    u.nickname AS author,
+		    u.user_image AS author_image,
 		    a.content AS content,
 		    (SELECT count(*) from article_stars s where a.article_no = s.article_no) AS stars,
 		    a.hit_count AS hitCount,
@@ -99,14 +101,17 @@
 	</update>
 	
 	<insert id="createArticle" parameterType="ArticleDto">
-		insert into articles (user_no, title, content) 
-		values (#{userNo}, #{title}, #{content})
+		insert into articles (user_no, title, content, plan_no) 
+		values (#{userNo}, #{title}, #{content}, 
+		 ${planNo != 0 ? planNo : 'null'}
+		)
 	</insert>
 
 	<update id="modifyArticle" parameterType="ArticleDto">
 		update articles set
 			title = #{title},
-			content = #{content}
+			content = #{content},
+			plan_no = ${planNo != 0 ? planNo : 'null'}
 		where article_no = #{articleNo}
 	</update>
 	
