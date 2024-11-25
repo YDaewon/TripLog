@@ -3,7 +3,7 @@ import { useRouter } from "vue-router"
 import { defineStore } from "pinia"
 
 
-import { userRegister, userConfirm, userModify, userRemove, findById, tokenRegeneration, logout } from "@/api/user"
+import { idCheck, nicknameCheck, userRegister, userConfirm, userModify, userRemove, findById, changePwd, tokenRegeneration, logout } from "@/api/user"
 import { httpStatusCode } from "@/util/http-status"
 
 export const useMemberStore = defineStore("memberStore", () => {
@@ -14,11 +14,42 @@ export const useMemberStore = defineStore("memberStore", () => {
   const isRegister = ref(false)
   const isRegisterError = ref(false)
   const isModify = ref(false)
+  const isChange = ref(0)
   const isModifyError = ref(false)
   const isDelete = ref(false)
   const isDeleteError = ref(false)
   const userInfo = ref(null)
   const isValidToken = ref(false)
+  const idCheckCnt = ref(0);
+  const nicknameCheckCnt = ref(0);
+
+  const checkId = async (userId) => {
+    await idCheck(
+      userId,
+      (response) => {
+        if (response.status === httpStatusCode.OK) {
+          idCheckCnt.value = response.data.cnt
+        }
+      },
+      (error) => {
+        console.error(error)
+      }
+    )
+  }
+
+  const checkNickname = async (nickname) => {
+    await nicknameCheck(
+      nickname,
+      (response) => {
+        if (response.status === httpStatusCode.OK) {
+          nicknameCheckCnt.value = response.data.cnt
+        }
+      },
+      (error) => {
+        console.error(error)
+      }
+    )
+  }
 
 
   const userRegist = async (RegisterUser) => {
@@ -139,6 +170,28 @@ export const useMemberStore = defineStore("memberStore", () => {
     )
   }
 
+  const changePassword = (confirmpwd) => {
+    changePwd(
+      userInfo.value.userId,
+      confirmpwd,
+      (response) => {
+        if (response.status === httpStatusCode.OK) {
+          isChange.value = true;
+        }
+        else{
+          isChange.value = false;
+        }
+      },
+      (error) => {
+        console.error(
+          error.response.status,
+          error.response.statusText
+        )
+        isChange.value = false;
+      }
+    )
+  }
+
   const tokenRegenerate = async () => {
     await tokenRegeneration(
       JSON.stringify(userInfo.value),
@@ -178,14 +231,15 @@ export const useMemberStore = defineStore("memberStore", () => {
     )
   }
 
-  const userLogout = async () => {
+  const userLogout = async (userId) => {
     await logout(
+      userId,
       (response) => {
         if (response.status === httpStatusCode.OK) {
           isLogin.value = false
           userInfo.value = null
           isValidToken.value = false
-          //console.log("로그아웃 완료!!!")
+          alert(response.data.message)
           sessionStorage.removeItem("accessToken")
           sessionStorage.removeItem("refreshToken")
         } else {
@@ -207,13 +261,19 @@ export const useMemberStore = defineStore("memberStore", () => {
     isModifyError,
     isDelete,
     isDeleteError,
+    isChange,
     userInfo,
     isValidToken,
+    idCheckCnt,
+    nicknameCheckCnt,
+    checkId,
+    checkNickname,
     userRegist,
     userLogin,
     userUpdate,
     userDelete,
     getUserInfo,
+    changePassword,
     tokenRegenerate,
     userLogout,
   }

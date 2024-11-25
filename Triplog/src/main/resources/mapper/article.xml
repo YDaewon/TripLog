@@ -7,6 +7,7 @@
 		<result column="article_no" property="articleNo"/>
 		<result column="user_no" property="userNo"/>
 		<result column="author" property="author"/>
+		<result column="author_image" property="authorImage"/>
 		<result column="plan_no" property="planNo"/>
 		<result column="title" property="title"/>
 		<result column="content" property="content"/>
@@ -75,6 +76,7 @@
 		    a.user_no AS user_no,
 		    a.title AS title,
 		    u.nickname AS author,
+		    u.user_image AS author_image,
 		    a.content AS content,
 		    (SELECT count(*) from article_stars s where a.article_no = s.article_no) AS stars,
 		    a.hit_count AS hitCount,

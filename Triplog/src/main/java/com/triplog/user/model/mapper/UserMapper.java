@@ -25,4 +25,6 @@ public interface UserMapper {
 
 	/* Admin */
 	List<UserDto> listUser() throws SQLException;
+	void changePwd(String userId, String userPwd);
+	int nicknameCheck(String nickname);
 }

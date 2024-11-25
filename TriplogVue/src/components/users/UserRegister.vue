@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue"
+import { ref, watch } from "vue"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useMemberStore } from "@/stores/member"
@@ -8,18 +8,67 @@ const router = useRouter()
 
 const memberStore = useMemberStore()
 
-const { isRegister } = storeToRefs(memberStore)
-const { userRegist } = memberStore
+const { isRegister, idCheckCnt, nicknameCheckCnt } = storeToRefs(memberStore)
+const { userRegist, checkId, checkNickname } = memberStore
 
 const RegisterUser = ref({
-  userId: "dog",
-  userPwd: "dog",
-  userName: "dog",
-  pwdCheck: "dog",
-  nickname: "dog",
-  emailId: "dog",
-  emailDomain: "dog"
+  userId: "",
+  userPwd: "",
+  userName: "",
+  pwdCheck: "",
+  nickname: "",
+  emailId: "",
+  emailDomain: "",
+  userImage:"/default.png"
 })
+
+const ckId = ref("");
+const ckNickname = ref("");
+
+// watch로 userId 감시
+watch(
+  () => RegisterUser.value.userId,
+  async (newVal, oldVal) => {
+    if(newVal.length == 0){
+      ckId.value = ""
+      return;
+    }
+    else if(newVal.length < 6 || newVal.length > 12){
+      ckId.value = "ID는 6글자 이상 12글자 이하로 설정해주세요"
+    }
+    else{
+      await checkId(newVal);
+      if(idCheckCnt.value == 1){
+        ckId.value = "중복된 ID가 존재합니다."
+      }
+      else{
+        ckId.value = "사용가능한 ID 입니다."
+      }
+    }
+  }
+);
+
+// watch로 nickname 감시
+watch(
+  () => RegisterUser.value.nickname,
+  async (newVal, oldVal) => {
+    if(newVal.length == 0){
+      ckNickname.value = ""
+    }
+    else if(newVal.length < 2 || newVal.length > 16){
+      ckNickname.value = "닉네임은 2글자 이상 16글자 이하로 설정해주세요"
+    }
+    else{
+      await checkNickname(newVal);
+      if(nicknameCheckCnt.value == 1){
+        ckNickname.value = "중복된 닉네임이 존재합니다."
+      }
+      else{
+        ckNickname.value = "사용가능한 닉네임 입니다."
+      }
+    }
+  }
+);
 
 const register = async () => {
   if (RegisterUser.value.userPwd !== RegisterUser.value.pwdCheck) {
@@ -28,6 +77,7 @@ const register = async () => {
   else {
     await userRegist(RegisterUser.value)
     if (isRegister.value) {
+      alert("회원가입이 완료되었습니다.")
       router.replace("/")
     }
   }
@@ -49,31 +99,31 @@ const register = async () => {
         <div class="col-md-6">
           <div class="card shadow">
             <div class="card-body p-5">
-              <h2 class="text-center mb-4">회원가입</h2>
+              <h2 class="text-center mb-4">Registar</h2>
               <form>
                 <div class="mb-3">
-                  <label for="userName" class="form-label">이름 : </label>
-                  <input type="text" v-model="RegisterUser.userName" class="form-control" placeholder="이름..." />
+                  <label for="userName" class="form-label">Name : </label>
+                  <input type="text" v-model="RegisterUser.userName" class="form-control" placeholder="Name..." />
                 </div>
                 <div class="mb-3">
-                  <label for="nickname" class="form-label">닉네임 : </label>
-                  <input type="text" v-model="RegisterUser.nickname" class="form-control" placeholder="닉네임..." />
+                  <label for="nickname" class="form-label">Nickname : {{ ckNickname }}</label>
+                  <input type="text" v-model="RegisterUser.nickname" class="form-control" placeholder="Nickname..." />
                 </div>
                 <div class="mb-3">
-                  <label for="userId" class="form-label">아이디 : </label>
-                  <input type="text" v-model="RegisterUser.userId" class="form-control" placeholder="아이디..." />
+                  <label for="userId" class="form-label">ID : {{ ckId }}</label>
+                  <input type="text" v-model="RegisterUser.userId" class="form-control" placeholder="ID..." />
                 </div>
                 <div class="mb-3">
-                  <label for="userPwd" class="form-label">비밀번호 : </label>
-                  <input type="text" v-model="RegisterUser.userPwd" class="form-control" placeholder="비밀번호..." />
+                  <label for="userPwd" class="form-label">Password : </label>
+                  <input type="text" v-model="RegisterUser.userPwd" class="form-control" placeholder="Password..." />
                 </div>
                 <div class="mb-3">
-                  <label for="pwdcheck" class="form-label">비밀번호확인 : </label>
+                  <label for="pwdcheck" class="form-label">confirm Password : </label>
                   <input type="text" v-model="RegisterUser.pwdCheck" class="form-control" id="pwdcheck"
-                    placeholder="비밀번호확인..." />
+                    placeholder="confirm Password..." />
                 </div>
                 <div class="mb-3">
-                  <label for="emailId" class="form-label">이메일 : </label>
+                  <label for="emailId" class="form-label">Email : </label>
                   <div class="input-group">
                     <input type="text" v-model="RegisterUser.emailId" class="form-control" placeholder="이메일아이디" />
                     <span class="input-group-text">@</span>

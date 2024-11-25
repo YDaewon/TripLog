@@ -13,7 +13,7 @@
         data-bs-toggle="modal"
         :data-bs-target="'#' + card.id"
         style="cursor: pointer; transition: transform 0.3s ease-in-out;">
-        <img :src="card.img" class="card-img-top" :alt="card.alt" style="width:300px; height:200px">
+        <img :src="card.img" class="card-img-top" :alt="card.alt" style="width:100%; height:200px">
         <div class="card-body">
           <p class="card-text">{{ card.text }}</p>
         </div>
@@ -45,12 +45,12 @@
 
   <div class="d-flex justify-content-center my-4">
     <div class="chart-container">
-      <Chart />
+      <Chart v-show="shouldRenderChart" />
     </div>
   </div>
 </template>
 
-<style>
+<style scoped>
 .chart-container {
   width: 100%;
   height: auto;
@@ -70,7 +70,7 @@
 
 <script setup>
 import Chart from '@/components/layout/mkChart.vue';
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 
 const cards = ref([
   { id: 'modal1', img: '/src/assets/make_plan.png', alt: '설명', text: '플랜 작성' },
@@ -83,4 +83,22 @@ const modals = ref([
   { id: 'modal2', labelId: 'modalLabel2', title: '여행지 검색', body: '가고 싶은 여행지를 검색해서 자세한 정보를 확인하세요!', img: '/src/assets/attraction_list.png' },
   { id: 'modal3', labelId: 'modalLabel3', title: '게시판 공유', body: '게시판을 이용해 플랜 후기나 공유를 받을 수 있어요', img: '/src/assets/board.png' }
 ]);
+const shouldRenderChart = ref(true);
+
+
+function handleResize() {
+  shouldRenderChart.value = false; // Chart 컴포넌트 제거
+  setTimeout(() => {
+    shouldRenderChart.value = true; // Chart 컴포넌트를 다시 렌더링
+  }, 0); // 다음 렌더링 사이클에서 다시 렌더링
+}
+
+onMounted(() => {
+  window.addEventListener("resize", handleResize);
+});
+
+// `resize` 이벤트 해제
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
 </script>
