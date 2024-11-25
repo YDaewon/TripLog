@@ -66,6 +66,7 @@ public class AttractionController {
 	public ResponseEntity<?> getSidos() {
 		List<Map<String, String>> sidos = attractionService.getSidos();
 		if(sidos!=null) {
+			System.out.println(sidos);
 			return new ResponseEntity<>(sidos, HttpStatus.OK);
 		}else {
 	        return new ResponseEntity<>("시/도 목록을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);

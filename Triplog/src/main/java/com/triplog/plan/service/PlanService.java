@@ -15,6 +15,7 @@ public interface PlanService {
 	int deletePlanAdmin(Map<String, Integer> map);
 	
 	List<DestinationDto> getDestinations(int planNo);
+	DestinationDto getDestinationInfo(int attractionNo);
 	void addDestinations(DestinationDto destinationDto);
 	void deleteDestination(int destinationNo);
 	void updateDestination(DestinationDto destinationDto);
