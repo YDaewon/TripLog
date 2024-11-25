@@ -74,4 +74,9 @@ public class PlanServiceImpl implements PlanService {
 		}
 	}
 
+	@Override
+	public DestinationDto getDestinationInfo(int attractionNo) {
+		return planMapper.getDestinationInfo(attractionNo);
+	}
+
 }
