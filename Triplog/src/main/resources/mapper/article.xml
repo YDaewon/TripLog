@@ -103,12 +103,7 @@
 	<insert id="createArticle" parameterType="ArticleDto">
 		insert into articles (user_no, title, content, plan_no) 
 		values (#{userNo}, #{title}, #{content}, 
-		<if test="planNo != 0">
-		  #{planNo}
-		</if>
-		<if test="planNo == 0">
-		  null
-		</if>
+		 ${planNo != 0 ? planNo : 'null'}
 		)
 	</insert>
 

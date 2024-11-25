@@ -6,6 +6,7 @@ import { storeToRefs } from "pinia"
 import { useMemberStore } from "@/stores/member"
 import { useArticleStore } from "@/stores/article"
 import ThePlanView from "@/views/ThePlanView.vue";
+import Comment from "./Comment/Comment.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -53,7 +54,7 @@ onMounted(async () => {
       console.error(error);
     }
   );
-  article.value = articleInfo.value ;
+  article.value = articleInfo.value;
   isLoad.value = true; // 로드 완료 표시
 });
 
@@ -89,7 +90,7 @@ function createStar() {
       console.error(error);
     }
   );
-  article.value.stars = article.value.stars+1;
+  article.value.stars = article.value.stars + 1;
 }
 
 function deleteStar() {
@@ -105,7 +106,7 @@ function deleteStar() {
       console.error(error);
     }
   );
-  article.value.stars = article.value.stars-1;
+  article.value.stars = article.value.stars - 1;
 }
 
 function onDeleteArticle() {
@@ -124,6 +125,9 @@ function onDeleteArticle() {
     );
   }
 }
+
+
+
 </script>
 
 <template>
@@ -144,8 +148,7 @@ function onDeleteArticle() {
                  object-fit: cover;
                  object-position: center;
                  border-radius: 50%;
-                "
-                />
+                " />
               <p>
                 <span class="fw-bold">{{ article.author }}</span> <br />
                 <span class="text-secondary fw-light">
@@ -155,23 +158,19 @@ function onDeleteArticle() {
             </div>
           </div>
           <div class="col-md-4 align-self-center text-end">
-              <p>
-                <span>조회수: {{ article.hitCount }}</span> <br />
-                <span>
-                  ⭐: {{ article.stars }}
-                </span>
-              </p>
-            
+            <p>
+              <span>조회수: {{ article.hitCount }}</span> <br />
+              <span>
+                ⭐: {{ article.stars }}
+              </span>
+            </p>
+
           </div>
           <div class="divider mb-3"></div>
           <div class="clearfix align-content-center content-container" v-html="articleInfo.content"></div>
           <div class="divider mt-3 mb-3"></div>
           <div v-if="article.planNo != 0">
-            <ThePlanView
-              type="viewarticle"
-              :planNo=article.planNo
-              @plan-selected="usePlanNo"
-            />
+            <ThePlanView type="viewarticle" :planNo=article.planNo @plan-selected="usePlanNo" />
           </div>
           <div class="d-flex justify-content-end">
             <button type="button" v-if="!isStar" class="btn btn-outline-warning mb-3" @click="createStar">
@@ -191,23 +190,32 @@ function onDeleteArticle() {
             </button>
           </div>
         </div>
+        <Comment
+        :a_no = articleno
+        />
       </div>
     </div>
   </div>
-
 </template>
 
 <style scoped>
 .content-container {
-  max-width: 100%; /* 부모 요소의 너비를 제한 */
-  overflow: hidden; /* 콘텐츠가 벗어나지 않도록 제한 */
+  max-width: 100%;
+  /* 부모 요소의 너비를 제한 */
+  overflow: hidden;
+  /* 콘텐츠가 벗어나지 않도록 제한 */
 }
 
 /* v-html에서 렌더링된 이미지 스타일 */
 .content-container img {
-  max-width: 100%; /* 이미지를 부모 요소의 너비에 맞춤 */
-  height: auto; /* 비율을 유지하며 크기를 조정 */
-  display: block; /* 이미지가 inline 요소로 간주되지 않도록 설정 */
-  margin: 0 auto; /* 이미지 중앙 정렬 */
+  max-width: 100%;
+  /* 이미지를 부모 요소의 너비에 맞춤 */
+  height: auto;
+  /* 비율을 유지하며 크기를 조정 */
+  display: block;
+  /* 이미지가 inline 요소로 간주되지 않도록 설정 */
+  margin: 0 auto;
+  /* 이미지 중앙 정렬 */
 }
+
 </style>
