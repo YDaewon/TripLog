@@ -50,7 +50,7 @@ async function fetchComments() {
     (response) => {
       if (response.status == 200) {
         comments.value = response.data;
-        console.log(response.data)
+        //console.log(response.data)
         commentTree.value = createCommentTree(comments.value);
       }
     },

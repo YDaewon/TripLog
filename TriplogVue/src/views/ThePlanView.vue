@@ -94,6 +94,9 @@ const newPlan = (range) => {
 
 const selectedPlanNo = ref(0);
 
+function handlePlanClick(plan){
+  selectedPlanNo.value = plan.planNo;
+}
 
 </script>
 

@@ -236,10 +236,10 @@ export const useMemberStore = defineStore("memberStore", () => {
       userId,
       (response) => {
         if (response.status === httpStatusCode.OK) {
+          alert(response.data.message)
           isLogin.value = false
           userInfo.value = null
           isValidToken.value = false
-          alert(response.data.message)
           sessionStorage.removeItem("accessToken")
           sessionStorage.removeItem("refreshToken")
         } else {

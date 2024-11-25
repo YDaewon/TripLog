@@ -30,6 +30,7 @@ function deleteArticle(articleno, success, fail) {
 }
 
 function IsStar(articleno, success, fail) {
+  local.defaults.headers["accessToken"] = sessionStorage.getItem("accessToken");
   local.get(`/article/star/${articleno}`).then(success).catch(fail);
 }
 
