@@ -6,6 +6,11 @@ function getDestinations(planNo, success, fail) {
   local.defaults.headers["accessToken"] = sessionStorage.getItem("accessToken");
   local.get(`/plan/dest/${planNo}`).then(success).catch(fail);
 }
+function getDestinationInfo(attractionNo, success, fail) {
+  local.defaults.headers["accessToken"] = sessionStorage.getItem("accessToken");
+  local.get(`/plan/dest/info/${attractionNo}`).then(success).catch(fail);
+}
+
 function createDestination(destination, success, fail) {
   local
     .post(`/plan/dest`, JSON.stringify(destination), {
@@ -32,4 +37,5 @@ export {
   createDestination,
   deleteDestination,
   updateDestination,
+  getDestinationInfo,
 };

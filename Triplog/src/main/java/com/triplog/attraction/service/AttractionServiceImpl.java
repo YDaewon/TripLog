@@ -25,6 +25,11 @@ public class AttractionServiceImpl implements AttractionService{
 	}
 
 	@Override
+	public List<AttractionDto> getAttractions(int planNo) {
+		return attractionMapper.getAttractions(planNo);
+	}
+	 
+	@Override
 	public void UpdateHitCount(int attractionNo) {
 		attractionMapper.UpdateHitCount(attractionNo);
 	}
@@ -59,5 +64,6 @@ public class AttractionServiceImpl implements AttractionService{
 	public List<Map<String, Object>> getSidoCounts() {
 	    return attractionMapper.getSidoCounts();
 	}
+
 
 }

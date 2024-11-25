@@ -1,44 +1,24 @@
 <template>
   <div class="search-container">
-    <SearchPanel
-      class="search-header"
-      @updateShowAttractionDetail="onUpdateShowAttractionDetail"
-      @updateAttractions="$emit('updateAttractions', $event)"
-    />
-
-    <AttractionList
-      class="search-results"
-      v-show="!showAttractionDetail"
-      :attractions="attractions"
-      :isPlan="isPlan"
-      @selectDestination="$emit('selectDestination', $event)"
-      @updateSelectAttraction="$emit('updateSelectAttraction', $event)"
-    />
-    <AttractionDetail :selectAttraction="selectAttraction" />
+    <SearchPanel class="search-header" />
+    <AttractionList class="search-results" />
+    <AttractionDetail />
   </div>
 </template>
 
 <script setup>
-import { ref, defineProps } from "vue";
 import SearchPanel from "./SearchPanel.vue";
 import AttractionList from "./AttractionList.vue";
 import AttractionDetail from "./AttractionDetail.vue";
-
-const props = defineProps({
-  attractions: {
-    type: Array,
-  },
-  selectAttraction: {
-    type: Object,
-  },
-  isPlan: Boolean,
-});
-const showAttractionDetail = ref(false);
-const emit = defineEmits();
-
-const onUpdateShowAttractionDetail = (newValue) => {
-  showAttractionDetail.value = newValue;
-};
+import { onMounted } from "vue";
+import { storeToRefs } from "pinia";
+import { useAttractionStore } from "@/stores/attraction";
+const attractionStore = useAttractionStore();
+const {attractions, selectedAttraction} = storeToRefs(attractionStore);
+onMounted(()=>{
+  attractions.value = [];
+  selectedAttraction.value = {};
+})
 </script>
 
 <style>

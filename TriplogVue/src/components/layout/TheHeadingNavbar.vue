@@ -7,8 +7,6 @@ import { storeToRefs } from "pinia";
 const menuStore = useMenuStore();
 const memberStore = useMemberStore();
 
-
-
 // 반응형을 유지하면서 스토어에서 속성을 추출하려면, storeToRefs()를 사용
 // https://pinia.vuejs.kr/core-concepts/
 const { menuList } = storeToRefs(menuStore);
