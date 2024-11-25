@@ -21,7 +21,7 @@
           type="button"
           class="btn btn-outline-primary mb-1"
           style="white-space: nowrap; height: 100%; width: 20%"
-          @click="attractionStore.getAttractions(searchParam)"
+          @click="getAttractions"
         >
           검색
         </button>
@@ -30,16 +30,16 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineProps } from "vue";
+import { listAttractions } from "@/api/attraction";
 import { listSido, listGugun, listContentType } from "@/api/map";
 import VSelect from "../common/VSelect.vue";
-import { useAttractionStore } from "@/stores/attraction";
-const attractionStore = useAttractionStore();
+
+const emit = defineEmits();
 
 const sidoList = ref([]);
 const gugunList = ref([{ text: "구군선택", value: "" }]);
 const contentList = ref([]);
-
 const searchParam = ref({
   pageNo: 1,
   numOfRows: 20,
@@ -115,6 +115,42 @@ const onChangeGugun = (val) => {
 };
 const onChangeContentType = (val) => {
   searchParam.value.contentTypeId = val;
+};
+
+const getAttractions = () => {
+  listContentType(
+    (response) => {
+      const contentTypes = response.data;
+      console.log("Extracted content types:", contentTypes);
+
+      listAttractions(
+        searchParam.value,
+        ({ data }) => {
+          console.log("Raw attractions data:", data);
+
+          // contentTypeName을 추가하여 새로운 배열 생성
+          const updatedAttractions = data.map((attraction) => {
+            const match = contentTypes.find(
+              (type) => type.content_type_id === attraction.contentTypeId
+            );
+            return {
+              ...attraction, // 기존 속성 복사
+              contentTypeName: match ? match.content_type_name : null, // contentTypeName 추가
+            };
+          });
+
+          // 결과를 저장
+          emit("updateAttractions", updatedAttractions);
+        },
+        (err) => {
+          console.log("Error fetching attractions:", err);
+        }
+      );
+    },
+    (err) => {
+      console.log("Error fetching content types:", err);
+    }
+  );
 };
 </script>
 <style>

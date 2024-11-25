@@ -44,7 +44,7 @@
 			</if>
 		</where>
 	</select>
-	
+
 	<select id="getDetailAttraction" parameterType="int" resultMap="attraction">
 		SELECT * FROM attractions
 		<where>
