@@ -18,4 +18,5 @@ public interface PlanService {
 	void addDestinations(DestinationDto destinationDto);
 	void deleteDestination(int destinationNo);
 	void updateDestination(DestinationDto destinationDto);
+	DestinationDto getDestinationInfo(int attractionNo);
 }
