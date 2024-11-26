@@ -1,19 +1,80 @@
 <script setup>
-import { ref, watch, onMounted } from "vue";
-import { useAttractionStore } from "@/stores/attraction";
-import { storeToRefs } from "pinia";
+import { ref, watch, onMounted, computed } from "vue";
 
 const props = defineProps({
-  attractions: Array,
-  selected: Object,
+  attractions: {
+    type: Array,
+    default: () => [],
+  },
+  selectedAttraction: {
+    type: Object,
+    default: null,
+  },
+  tempDestinations: {
+    type: Array,
+    default: () => [],
+  },
+  selectedDestination: {
+    type: Object,
+    default: null,
+  },
 });
 
-const attractiontore = useAttractionStore();
 const map = ref(null);
 const positions = ref([]);
 const markers = ref([]);
 const isKakaoLoaded = ref(false);
 const mapContainer = ref(null);
+
+// 현재 표시할 위치들 계산
+const currentPositions = computed(() => {
+  const allPositions = [...props.attractions, ...props.tempDestinations];
+  return allPositions;
+});
+
+// 현재 선택된 위치들 watch
+const moveToLocation = (location) => {
+  if (
+    !isKakaoLoaded.value ||
+    !map.value ||
+    !location?.latitude ||
+    !location?.longitude
+  )
+    return;
+
+  const moveLatLon = new window.kakao.maps.LatLng(
+    location.latitude,
+    location.longitude
+  );
+  map.value.panTo(moveLatLon);
+};
+
+const temporaryMarker = ref(null); // 임시 마커 참조 저장
+
+// 임시 마커 생성/갱신 함수
+const updateTemporaryMarker = (location) => {
+  if (!location?.latitude || !location?.longitude) return;
+
+  // 기존 임시 마커가 있다면 제거
+  if (temporaryMarker.value) {
+    temporaryMarker.value.setMap(null);
+  }
+
+  const position = new window.kakao.maps.LatLng(
+    location.latitude,
+    location.longitude
+  );
+
+  temporaryMarker.value = new window.kakao.maps.Marker({
+    map: map.value,
+    position: position,
+    title: location.title,
+    zIndex: 2, // 다른 마커들보다 앞에 표시
+  });
+
+  // 지도 중심 이동
+  map.value.panTo(position);
+};
 
 // Kakao 맵 초기화 함수
 const initMap = () => {
@@ -48,7 +109,7 @@ const loadKakaoMapScript = () => {
   });
 };
 
-// 마커 로드 함수
+// 마커 로드 함수 수정
 const loadMarkers = () => {
   if (!isKakaoLoaded.value || !map.value) return;
 
@@ -70,11 +131,13 @@ const loadMarkers = () => {
     markers.value.push(marker);
   });
 
+  // 마커가 있는 경우 지도 범위 재설정
   if (positions.value.length > 0) {
     const bounds = positions.value.reduce(
       (bounds, position) => bounds.extend(position.latlng),
       new window.kakao.maps.LatLngBounds()
     );
+    map.value.setBounds(bounds);
   }
 };
 
@@ -82,6 +145,21 @@ const deleteMarkers = () => {
   if (markers.value.length > 0) {
     markers.value.forEach((marker) => marker.setMap(null));
   }
+};
+
+// 위치 객체 생성 헬퍼 함수
+const createPositionObject = (destination) => {
+  if (!destination?.latitude || !destination?.longitude) return null;
+
+  return {
+    latlng: new window.kakao.maps.LatLng(
+      destination.latitude,
+      destination.longitude
+    ),
+    title: destination.title,
+    image: destination.firstImage1,
+    addr: destination.addr1,
+  };
 };
 
 // 마운트 시 Kakao 맵 초기화
@@ -95,39 +173,38 @@ onMounted(async () => {
   }
 });
 
-// 선택된 목적지 변경 감시
+// selectedAttraction 변경 감시
 watch(
-  () => props.selected,
-  () => {
-    if (!isKakaoLoaded.value || !map.value || !props.selected) return;
-
-    const moveLatLon = new window.kakao.maps.LatLng(
-      props.selected.latitude,
-      props.selected.longitude
-    );
-    map.value.panTo(moveLatLon);
+  () => props.selectedAttraction,
+  (newValue) => {
+    if (newValue) {
+      updateTemporaryMarker(newValue);
+      moveToLocation(newValue);
+    }
   },
   { deep: true }
 );
 
-// attractions 변경 감시
+// selectedDestination 변경 감시
 watch(
-  () => props.attractions,
-  () => {
+  () => props.selectedDestination,
+  (newValue) => {
+    if (newValue) {
+      moveToLocation(newValue);
+    }
+  },
+  { deep: true }
+);
+
+// 표시할 위치들 변경 감시
+watch(
+  currentPositions,
+  (newValue) => {
     if (!isKakaoLoaded.value) return;
 
-    positions.value = [];
-    props.attractions?.forEach((destination) => {
-      let obj = {};
-      obj.latlng = new window.kakao.maps.LatLng(
-        destination.latitude,
-        destination.longitude
-      );
-      obj.title = destination.title;
-      obj.image = destination.firstImage1;
-      obj.addr = destination.addr1;
-      positions.value.push(obj);
-    });
+    positions.value = newValue
+      .map(createPositionObject)
+      .filter((position) => position !== null);
     loadMarkers();
   },
   { deep: true, immediate: true }
@@ -135,19 +212,10 @@ watch(
 
 // Kakao API 로드 상태 감시
 watch(isKakaoLoaded, (newValue) => {
-  if (newValue && props.attractions?.length) {
-    positions.value = [];
-    props.attractions.forEach((destination) => {
-      let obj = {};
-      obj.latlng = new window.kakao.maps.LatLng(
-        destination.latitude,
-        destination.longitude
-      );
-      obj.title = destination.title;
-      obj.image = destination.firstImage1;
-      obj.addr = destination.addr1;
-      positions.value.push(obj);
-    });
+  if (newValue && currentPositions.value?.length > 0) {
+    positions.value = currentPositions.value
+      .map(createPositionObject)
+      .filter((position) => position !== null);
     loadMarkers();
   }
 });
@@ -156,3 +224,10 @@ watch(isKakaoLoaded, (newValue) => {
 <template>
   <div id="map" ref="mapContainer"></div>
 </template>
+
+<style scoped>
+#map {
+  width: 100%;
+  height: 100%;
+}
+</style>

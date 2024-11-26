@@ -38,6 +38,38 @@ const rollback = () => {
     isEditMode.value = false;
   }
 };
+
+const forkPlan = async () => {
+  await getPlan(
+    planStore.plan.planNo,
+    ({ data }) => {
+      plan.value = JSON.parse(JSON.stringify(data));
+      tempPlan.value = JSON.parse(JSON.stringify(data));
+    },
+    (err) => {
+      console.log(err);
+    }
+  );
+
+  await createPlan(
+    {
+      title: "제목없음",
+      description: "설명없음",
+      userNo: userInfo.value.userNo,
+      startAt: formatDate(range.startDate),
+      endAt: formatDate(range.endDate),
+    },
+    (planNo) => {
+      router.push({
+        name: "planDetail",
+        params: { planNo: planNo.data, isArticle: false },
+      });
+    },
+    (err) => {
+      console.log(err);
+    }
+  );
+};
 </script>
 <template>
   <div class="d-flex justify-content-between mb-3">
@@ -46,6 +78,7 @@ const rollback = () => {
       <button class="btn" @click="saveEdit" v-if="!isArticle">
         {{ planStore.isEditMode ? "저장" : "수정" }}
       </button>
+      <button class="btn" @click="forkPlan" v-if="isArticle">계획 복사</button>
       <button class="btn" v-show="planStore.isEditMode" @click="rollback">
         취소
       </button>

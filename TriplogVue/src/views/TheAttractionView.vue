@@ -17,7 +17,7 @@ onMounted(async () => {
     <KakaoMap
       class="map"
       :attractions="attractions"
-      :selected="selectedAttraction"
+      :selectedAttraction="selectedAttraction"
     ></KakaoMap>
     <!-- <VKakaoMap class="map" /> -->
   </div>

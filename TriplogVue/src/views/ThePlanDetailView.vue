@@ -1,12 +1,16 @@
 <script setup>
 import PlanPanel from "@/components/plan/PlanPanel.vue";
-import PlanKaKaoMap from "@/components/common/PlanKaKaoMap.vue";
 import { usePlanStore } from "@/stores/plan";
+import { useAttractionStore } from "@/stores/attraction";
 import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 import { onMounted, onUnmounted } from "vue";
+import KakaoMap from "@/components/common/KakaoMap.vue";
 const planStore = usePlanStore();
-const { destinations, isArticle } = storeToRefs(planStore);
+const attractionStore = useAttractionStore();
+const { attractions, selectedAttraction } = storeToRefs(attractionStore);
+const { tempDestinations, selectedDestination, isArticle } =
+  storeToRefs(planStore);
 const route = useRoute();
 onMounted(async () => {
   await planStore.loadPlan(route.params.planNo);
@@ -24,7 +28,12 @@ onUnmounted(() => {
 
 <template>
   <div class="position-relative vh-100 vw-100 overflow-hidden">
-    <PlanKaKaoMap class="map w-100 h-100" />
+    <KakaoMap
+      class="map w-100 h-100"
+      :tempDestinations="tempDestinations"
+      :selectedAttraction="selectedAttraction"
+      :selectedDestination="selectedDestination"
+    />
     <div class="plan-container p-0 border">
       <PlanPanel />
     </div>
