@@ -2,7 +2,7 @@
   <div class="search-container">
     <SearchPanel class="search-header" />
     <AttractionList class="search-results" />
-    <AttractionDetail />
+    <!-- <AttractionDetail /> -->
   </div>
 </template>
 
