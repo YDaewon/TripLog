@@ -4,7 +4,7 @@ import router from "@/router";
 import { usePlanStore } from "@/stores/plan";
 import { storeToRefs } from "pinia";
 const planStore = usePlanStore();
-const { isEditMode, selectedDate } = storeToRefs(planStore);
+const { isEditMode, isArticle } = storeToRefs(planStore);
 const onDeletePlan = () => {
   if (confirm("삭제하시겠습니까?")) {
     deletePlan(
@@ -43,7 +43,7 @@ const rollback = () => {
   <div class="d-flex justify-content-between mb-3">
     <button class="btn" @click="$router.go(-1)">◀ 돌아가기</button>
     <div class="d-flex justify-content-end mb-2">
-      <button class="btn" @click="saveEdit">
+      <button class="btn" @click="saveEdit" v-if="!isArticle">
         {{ planStore.isEditMode ? "저장" : "수정" }}
       </button>
       <button class="btn" v-show="planStore.isEditMode" @click="rollback">

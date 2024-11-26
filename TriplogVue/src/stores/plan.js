@@ -151,6 +151,7 @@ export const usePlanStore = defineStore(
     const isEditMode = ref(false);
     const isPlan = ref(false);
     const isAddMode = ref(false);
+    const isArticle = ref(true);
 
     // 기타 =============================================================================================================
 
@@ -273,6 +274,7 @@ export const usePlanStore = defineStore(
       isEditMode,
       isPlan,
       isAddMode,
+      isArticle,
       plan,
       tempPlan,
       plans,

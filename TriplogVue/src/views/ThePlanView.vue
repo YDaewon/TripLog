@@ -78,7 +78,7 @@ const newPlan = (range) => {
     (planNo) => {
       router.push({
         name: "planDetail",
-        params: { planNo: planNo.data, isEditMode: true },
+        params: { planNo: planNo.data, isArticle: false },
       });
     },
     (err) => {
@@ -87,46 +87,27 @@ const newPlan = (range) => {
   );
 };
 
-const selectedPlanNo = ref(0);
-const emit = defineEmits(['plan-selected']);
-function handlePlanClick(plan){
-  selectedPlanNo.value = plan.planNo;
-  emit('plan-selected', plan.planNo);
-}
+
 const onClickPlanCard = (plan) => {
   isEditMode.value = false;
   router.push({
     name: "planDetail",
-    params: { planNo: plan.planNo },
+    params: { planNo: plan.planNo, isArticle:false },
   });
 };
 </script>
 
 <template>
-  <h3 v-if="type === 'mkarticle' && plans.length > 0">등록할 플랜 선택</h3>
-  <h3 v-if="type === 'mkarticle' && plans.length === 0">등록된 플랜이 없어요...</h3>
-  <h3 v-if="type === 'viewarticle'">Plan</h3>
-  <h3 v-if="type !== 'mkarticle' && type !== 'viewarticle'">내 플랜 목록</h3>
-  <div v-if="type !== 'viewarticle'">
-    <button v-if="type !== 'mkarticle' && type !== 'viewarticle'" class="btn btn-primary" @click="openModal">플랜 만들기</button>
+  <h3>내 플랜 목록</h3>
+  <div>
+    <button class="btn btn-primary" @click="openModal">플랜 만들기</button>
     <div>
       <PlanCard
         v-for="plan in plans"
         :key="plan.planNo"
         :plan="plan"
         :is-selected="plan.planNo === selectedPlanNo"
-        @click= "type !== 'mkarticle' && type !== 'viewarticle' ? onClickPlanCard(plan) : handlePlanClick(plan)"
-      />
-    </div>
-  </div>
-  <div v-else>
-    <div>
-      <PlanCard
-        v-for="plan in filteredPlans"
-        :key="plan.planNo"
-        :plan="plan"
-        :is-selected= true
-        @click= "onClickPlanCard(plan)"
+        @click="onClickPlanCard(plan)"
       />
     </div>
   </div>

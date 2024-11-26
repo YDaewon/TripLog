@@ -7,6 +7,8 @@ import { useMemberStore } from "@/stores/member"
 import { useArticleStore } from "@/stores/article"
 import ThePlanView from "@/views/ThePlanView.vue";
 import Comment from "./Comment/CommentView.vue";
+import PlanCard from "../plan/PlanCard.vue";
+import { getPlan } from "@/api/plan";
 
 const route = useRoute();
 const router = useRouter();
@@ -22,6 +24,7 @@ const { articleInfo } = storeToRefs(articleStore)
 const { getArticle } = articleStore;
 const isStar = ref(false);
 const isLoad = ref(false);
+const plan = ref({});
 
 const article = ref({
   articleNo: articleno,
@@ -54,6 +57,14 @@ onMounted(async () => {
       console.error(error);
     }
   );
+  await getPlan(articleInfo.value.planNo,
+    (response)=>{
+      console.log(response);
+      plan.value = response.data;
+    }, (err)=>{
+      console.log(err);
+    }
+  )
   article.value = articleInfo.value;
   isLoad.value = true; // 로드 완료 표시
 });
@@ -130,7 +141,12 @@ function onDeleteArticle() {
   }
 }
 
-
+function showPlan(){
+  router.push({
+        name: "planDetail",
+        params: { planNo: plan.value.planNo, isArticle:true },
+      });
+}
 
 </script>
 
@@ -174,7 +190,7 @@ function onDeleteArticle() {
           <div class="clearfix align-content-center content-container" v-html="articleInfo.content"></div>
           <div class="divider mt-3 mb-3"></div>
           <div v-if="article.planNo != 0">
-            <ThePlanView type="viewarticle" :planNo=article.planNo />
+            <PlanCard :plan="plan" @click="showPlan"></PlanCard>
           </div>
           <div class="d-flex justify-content-end">
             <button type="button" v-if="!isStar" class="btn btn-outline-warning mb-3" @click="createStar">
