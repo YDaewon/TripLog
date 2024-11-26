@@ -2,7 +2,7 @@
   <div class="chat-input">
     <input
       v-model="userInput"
-      placeholder="Type your message..."
+      placeholder="메시지를 입력해주세요"
       @keyup.enter="sendMessage"
     />
     <button @click="sendMessage">
@@ -27,15 +27,27 @@ export default {
   methods: {
     async sendMessage() {
       if (!this.userInput.trim()) return;
-
+      const now = new Date();
+      const formattedDate = now.toLocaleString("ko-KR", {
+        timeZone: "Asia/Seoul", // 한국 시간대
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false, // 24시간 형식
+      }).replace(/\./g, "-").replace(/ /, " "); // 포맷 조정
       this.$emit('message-sent', {
-        sender: "user", 
-        text: this.userInput, 
-        timestamp: new Date().toLocaleTimeString() 
+        sender: "user",
+        text: this.userInput,
+        timestamp: formattedDate
       });
 
       try {
-        const response = await local.post("/api/chat", { message: this.userInput });
+        const temp = this.userInput;
+        this.userInput = "";
+        const response = await local.post("/api/chat", { message: temp });
 
         if (response.data && response.data.botReply) {
           this.$emit('bot-reply', {
@@ -54,18 +66,17 @@ export default {
         console.error("Error:", error);
         this.$emit('bot-reply', {
           sender: "bot",
-          text: "Oops! Unable to process your request. Please try again later.",
+          text: "에러 발생! 나중에 다시 질문해주세요",
           timestamp: new Date().toLocaleTimeString(),
         });
       }
 
-      this.userInput = "";
     },
 
     formatResponse(response) {
-      response = response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); 
-      response = response.replace(/\*(.*?)\*/g, '<em>$1</em>'); 
-      response = response.replace(/\n/g, '<br>'); 
+      response = response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      response = response.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      response = response.replace(/\n/g, '<br>');
       return response;
     }
   }
