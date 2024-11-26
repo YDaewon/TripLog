@@ -88,9 +88,10 @@ const newPlan = (range) => {
 };
 
 const selectedPlanNo = ref(0);
-
+const emit = defineEmits(['plan-selected']);
 function handlePlanClick(plan){
   selectedPlanNo.value = plan.planNo;
+  emit('plan-selected', plan.planNo);
 }
 const onClickPlanCard = (plan) => {
   isEditMode.value = false;
@@ -107,7 +108,7 @@ const onClickPlanCard = (plan) => {
   <h3 v-if="type === 'viewarticle'">Plan</h3>
   <h3 v-if="type !== 'mkarticle' && type !== 'viewarticle'">내 플랜 목록</h3>
   <div v-if="type !== 'viewarticle'">
-    <button v-if="type === 'plan'" class="btn btn-primary" @click="openModal">플랜 만들기</button>
+    <button v-if="type !== 'mkarticle' && type !== 'viewarticle'" class="btn btn-primary" @click="openModal">플랜 만들기</button>
     <div>
       <PlanCard
         v-for="plan in plans"
@@ -128,12 +129,12 @@ const onClickPlanCard = (plan) => {
         @click= "onClickPlanCard(plan)"
       />
     </div>
-    <PlanDate
-      :isOpen="isModalOpen"
-      @close="closeModal"
-      @select="handleDateSelect"
-    />
   </div>
+  <PlanDate
+    :isOpen="isModalOpen"
+    @close="closeModal"
+    @select="handleDateSelect"
+  />
 </template>
 
 <style></style>

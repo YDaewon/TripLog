@@ -5,7 +5,7 @@ import { usePlanStore } from "@/stores/plan";
 import { onMounted, ref } from "vue";
 import AttractionPanel from "@/components/attractions/AttractionPanel.vue";
 const planStore = usePlanStore();
-const { selectedDestination, isAddMode, isEditMode, selectedDate } =
+const { selectedDestination, isAddMode, isEditMode, selectedDate, plan } =
   storeToRefs(planStore);
 const props = defineProps({
   group: Object,
@@ -21,7 +21,7 @@ onMounted(() => {
 
 const onAddDestination = () => {
   isAddMode.value = true;
-  selectedDestination.value = { visitDate: props.group.date };
+  selectedDestination.value = { visitDate: props.group.date, planNo: plan.value.planNo};
 };
 </script>
 <template>
@@ -41,6 +41,7 @@ const onAddDestination = () => {
       <button
         class="btn btn-outline-secondary w-40 ms-auto"
         @click="onAddDestination"
+        v-show="isEditMode"
       >
         목적지 추가
       </button>

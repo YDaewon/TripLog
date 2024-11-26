@@ -42,7 +42,6 @@ onMounted(async () => {
   await IsStar(
     articleno,
     (response) => {
-      console.log(response.data)
       if (response.data == 1) {
         isStar.value = true;
         //console.log("현재 게시글 즐겨찾기 되어있음")

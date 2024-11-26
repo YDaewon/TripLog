@@ -6,12 +6,12 @@
         style="height: 200px; position: relative"
       >
         <template v-if="attraction.firstImage1 || attraction.firstImage2">
-          <img
+          <!-- <img
             :src="attraction.firstImage1 || attraction.firstImage2"
             class="card-img-top"
             :alt="attraction.title"
             style="width: 100%; height: 100%; object-fit: cover"
-          />
+          /> -->
         </template>
         <template v-else>
           <div class="no-image-text">사진없음</div>
@@ -46,16 +46,13 @@
 import { usePlanStore } from "@/stores/plan";
 import { storeToRefs } from "pinia";
 const planStore = usePlanStore();
-const { selectedDestination, isAddMode, tempDestinations } =
+const { selectedDestination, isAddMode } =
   storeToRefs(planStore);
 
 const attToDest = (attraction) => {
-  const dest = {
-    planNo: planStore.plan.planNo,
-    attractionNo: attraction.attractionNo,
-  };
-  selectedDestination.value = { ...selectedDestination.value, ...dest };
+  selectedDestination.value = { ...selectedDestination.value, attractionNo: attraction.attractionNo, };
   planStore.addDestination(attraction.attractionNo);
+
   isAddMode.value = false;
 };
 

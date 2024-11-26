@@ -3,15 +3,20 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.triplog.plan.model.mapper.PlanMapper">
-	<resultMap type="PlanDto" id="plan">
-		<result column="plan_no" property="planNo" />
-		<result column="user_no" property="userNo" />
-		<result column="title" property="title" />
-		<result column="description" property="description" />
-		<result column="fork_count" property="forkCount" />
+	<resultMap id="plan" type="PlanDto">
+	    <result column="plan_no" property="planNo" />
+	    <result column="user_no" property="userNo" />
+	    <result column="title" property="title" />
+	    <result column="description" property="description" />
+	    <result column="created_at" property="createdAt" />
+	    <result column="deleted_at" property="deletedAt" />
+	    <result column="fork_count" property="forkCount" />
+	    <result column="start_at" property="startAt" />
+	    <result column="end_at" property="endAt" />
 	</resultMap>
 
-	<resultMap type="DestinationDto" id="destination">
+	<resultMap type="DestinationDto" id="destination">	
+	    <result property="planNo" column="plan_no"/>
 	    <result property="destinationNo" column="destination_no"/>
 	    <result property="destinationOrder" column="destination_order"/>
 	    <result property="visitDate" column="visit_date"/>
@@ -25,34 +30,60 @@
 	    <result property="longitude" column="longitude"/>
 	</resultMap>
 
-	<!-- plan insert -->
+	<!-- plans -->
 	<insert id="createPlan" parameterType="PlanDto">
-		INSERT INTO plans (user_no, title, description)
-		VALUES(#{userNo}, #{title}, #{description});
+		INSERT INTO plans (user_no, title, description, start_at, end_at) 
+		VALUES(#{userNo}, #{title}, #{description}, #{startAt}, #{endAt});
 	</insert>
+	<select id="getLastCreatedPlanNo" parameterType="int" resultType="int">
+		SELECT plan_no FROM plans
+		WHERE user_no = #{userNo} 
+		ORDER BY plan_no DESC 
+		LIMIT 1;
+	</select>
 
-	<!-- plan delete -->
-	<update id="deletePlan" parameterType="String">
+	<update id="deletePlan" parameterType="int">
 		UPDATE plans
 		SET deleted_at = CURRENT_TIMESTAMP
 		WHERE plan_no = #{planNo}
 	</update>
 
-
-	<!-- plan read -->
-	<select id="getPlan" parameterType="map" resultMap="plan">
-		SELECT p.plan_no, p.title, p.description, p.created_at, p.fork_count, u.user_name, u.user_image,
-		(SELECT COUNT(*) FROM plan_destinations pd WHERE pd.plan_no = p.plan_no) as destination_count
+	<select id="getPlan" parameterType="int" resultMap="plan">
+		SELECT *
 		FROM plans p
-		JOIN users u ON p.user_no = u.user_no
 		WHERE p.plan_no = #{planNo}
-		AND u.user_id = #{userId}
 		AND p.deleted_at IS NULL;
 	</select>
+	
+	<select id="getPlans" parameterType="int" resultMap="plan">
+		SELECT *
+		FROM plans p
+		JOIN users u ON u.user_no = p.user_no
+		AND u.user_no = #{userNo}
+		WHERE p.deleted_at IS NULL;
+	</select>
+	
+	<update id="updatePlan" parameterType="PlanDto">
+		UPDATE plans
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="title != null">title = #{title},</if>
+			<if test="description != null">description = #{description},</if>
+			<if test="startAt != null">start_at = #{startAt},</if>
+			<if test="endAt != null">end_at = #{endAt},</if>
+		</trim>
+		WHERE plan_no = #{planNo}
+		AND deleted_at IS NULL;
+	</update>
 
-	<!-- destinations read -->
-	<select id="getDestinations" parameterType="String" resultMap="destination">
+	<!-- delete(admin) -->
+	<delete id="deletePlanAdmin" parameterType="map">
+		DELETE FROM plans WHERE plan_no = #{planNo}
+	</delete>
+	
+	<!-- destinations -->
+	<select id="getDestinations" parameterType="int" resultMap="destination">
 		SELECT 
+			pd.plan_no,
 		    pd.destination_no,
 		    pd.destination_order,
 		    pd.visit_date,
@@ -67,31 +98,71 @@
 		FROM plan_destinations pd
 		JOIN attractions a ON pd.attraction_no = a.attraction_no
 		JOIN contenttypes ct ON a.content_type_id = ct.content_type_id
-		WHERE pd.plan_no = 1
+		WHERE pd.plan_no = #{planNo}
 		ORDER BY pd.destination_order;
 	</select>
 
-	<select id="getPlans" parameterType="String" resultMap="plan">
-		SELECT plan_no, p.user_no, title, p.created_at, description, fork_count,
-		u.user_name
-		FROM plans p
-		JOIN users u ON u.user_id = #{userId}
-		AND u.user_no = p.user_no
-		WHERE p.deleted_at IS NULL;
+	<select id="getDestinationInfo" parameterType="int" resultMap="destination">
+		SELECT 
+			a.attraction_no,
+		    a.title,
+		    ct.content_type_name,
+		    a.first_image1,
+		    a.addr1,
+		    a.latitude,
+		    a.longitude
+		FROM attractions a
+		JOIN contenttypes ct ON a.content_type_id = ct.content_type_id
+		WHERE a.attraction_no = #{attractionNo};
 	</select>
 
-	<!-- plan update -->
-	<update id="updatePlan" parameterType="PlanDto">
-		UPDATE plans
-		<trim prefix="SET" suffixOverrides=",">
-			<if test="title != null">title = #{title},</if>
-			<if test="description != null">description = #{description},</if>
-		</trim>
-		WHERE plan_no = #{planNo}
+	<insert id="addDestinations" parameterType="DestinationDto">
+	    INSERT INTO plan_destinations (
+	        attraction_no,
+	        plan_no,
+	        visit_date,
+	        destination_order,
+	        memo
+	    )
+	    VALUES (
+	        #{attractionNo},
+	        #{planNo},
+	        #{visitDate},
+	        #{destinationOrder},
+	        #{memo}
+	    )
+	</insert>
+
+	<update id="updateDestination" parameterType="DestinationDto">
+	    UPDATE plan_destinations
+	    <set>
+	        <if test="destinationOrder != null">destination_order = #{destinationOrder},</if>
+	        <if test="visitDate != null">visit_date = #{visitDate},</if>
+	        <if test="memo != null">memo = #{memo},</if>
+	        <if test="attractionNo != null">attraction_no = #{attractionNo},</if>
+	    </set>
+	    WHERE destination_no = #{destinationNo}
 	</update>
 
-	<!-- delete(admin) -->
-	<delete id="deletePlanAdmin" parameterType="String">
-		DELETE FROM plans WHERE plan_no = #{planNo}
+	<delete id="deleteDestinationsByPlanNo" parameterType="int">
+	   DELETE FROM plan_destinations 
+	   WHERE plan_no = #{planNo}
 	</delete>
+	
+	<!-- Insert new destinations -->
+	<insert id="updateDestinations" parameterType="java.util.List">
+	   INSERT INTO plan_destinations 
+	   (plan_no, visit_date, memo, attraction_no)
+	   VALUES
+	   <foreach collection="list" item="item" separator=",">
+	       (#{item.planNo}, #{item.visitDate}, 
+	        #{item.memo}, #{item.attractionNo})
+	   </foreach>
+	</insert>
+	
+	<delete id="deleteDestination" parameterType="int">
+	    DELETE FROM plan_destinations
+	    WHERE destination_no = #{destinationNo}
+	</delete>
+
 </mapper>
