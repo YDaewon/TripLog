@@ -16,8 +16,6 @@ public class ArticleDto {
 	private int userNo;
 	@Schema(description = "작성자 닉네임", example = "대복이")
 	private String author;
-	@Schema(description = "작성자 사진", example = "image.png")
-	private String authorImage;
 	@Schema(description = "제목", example = "글 제목입니다")
 	private String title;
 	@Schema(description = "내용", example = "글 내용 입니다.")
