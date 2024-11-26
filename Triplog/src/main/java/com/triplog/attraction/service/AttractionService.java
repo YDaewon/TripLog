@@ -7,11 +7,11 @@ import com.triplog.attraction.model.AttractionDto;
 
 public interface AttractionService {
 	List<AttractionDto> getAttractions(Map<String, String> map);
+	List<AttractionDto> getAttractions(int planNo);
 	void UpdateHitCount(int attractionNo);
 	void UpdateHitLog(int attractionNo, String tokenId);
 	AttractionDto getDetailAttraction(int attractionNo);
 	List<Map<String, String>> getSidos();
 	List<Map<String, String>> getGuguns(int sidoCode);
 	List<Map<String, String>> getContentTypes();
-	List<Map<String, Object>> getSidoCounts();
 }
