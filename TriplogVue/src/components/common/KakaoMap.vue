@@ -1,32 +1,57 @@
 <script setup>
 import { ref, watch, onMounted } from "vue";
-import { usePlanStore } from "@/stores/plan";
+import { useAttractionStore } from "@/stores/attraction";
 import { storeToRefs } from "pinia";
 
-const planStore = usePlanStore();
-const { selectedDestination, tempDestinations, selectedDate } =
-  storeToRefs(planStore);
+const props = defineProps({
+  attractions: Array,
+  selected: Object,
+});
+
+const attractiontore = useAttractionStore();
 const map = ref(null);
 const positions = ref([]);
 const markers = ref([]);
 const isKakaoLoaded = ref(false);
-const props = defineProps({ destinations: Array });
+const mapContainer = ref(null);
 
 // Kakao 맵 초기화 함수
 const initMap = () => {
-  const container = document.getElementById("map");
+  if (!mapContainer.value) return;
+
   const options = {
     center: new window.kakao.maps.LatLng(33.450701, 126.570667),
     level: 3,
   };
-  map.value = new window.kakao.maps.Map(container, options);
+  map.value = new window.kakao.maps.Map(mapContainer.value, options);
+};
+
+// 스크립트 로드 함수
+const loadKakaoMapScript = () => {
+  return new Promise((resolve) => {
+    if (window.kakao && window.kakao.maps) {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${
+      import.meta.env.VITE_KAKAO_MAP_SERVICE_KEY
+    }&libraries=services,clusterer`;
+
+    script.onload = () => {
+      window.kakao.maps.load(() => {
+        resolve();
+      });
+    };
+    document.head.appendChild(script);
+  });
 };
 
 // 마커 로드 함수
 const loadMarkers = () => {
   if (!isKakaoLoaded.value || !map.value) return;
 
-  // 현재 표시되어있는 marker들이 있다면 map에 등록된 marker를 제거한다.
   deleteMarkers();
   markers.value = [];
 
@@ -45,13 +70,11 @@ const loadMarkers = () => {
     markers.value.push(marker);
   });
 
-  // 지도 범위 설정
   if (positions.value.length > 0) {
     const bounds = positions.value.reduce(
       (bounds, position) => bounds.extend(position.latlng),
       new window.kakao.maps.LatLngBounds()
     );
-    // map.value.setBounds(bounds);
   }
 };
 
@@ -62,50 +85,39 @@ const deleteMarkers = () => {
 };
 
 // 마운트 시 Kakao 맵 초기화
-onMounted(() => {
-  if (window.kakao && window.kakao.maps) {
+onMounted(async () => {
+  try {
+    await loadKakaoMapScript();
     initMap();
     isKakaoLoaded.value = true;
-  } else {
-    const script = document.createElement("script");
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${
-      import.meta.env.VITE_KAKAO_MAP_SERVICE_KEY
-    }&libraries=services,clusterer`;
-
-    script.onload = () => {
-      window.kakao.maps.load(() => {
-        initMap();
-        isKakaoLoaded.value = true;
-      });
-    };
-    document.head.appendChild(script);
+  } catch (error) {
+    console.error("Failed to initialize Kakao Map:", error);
   }
 });
 
 // 선택된 목적지 변경 감시
 watch(
-  () => selectedDestination.value,
+  () => props.selected,
   () => {
-    if (!isKakaoLoaded.value || !map.value || !selectedDestination.value)
-      return;
+    if (!isKakaoLoaded.value || !map.value || !props.selected) return;
 
     const moveLatLon = new window.kakao.maps.LatLng(
-      selectedDestination.value.latitude,
-      selectedDestination.value.longitude
+      props.selected.latitude,
+      props.selected.longitude
     );
     map.value.panTo(moveLatLon);
   },
   { deep: true }
 );
 
-// 임시 목적지 목록 변경 감시
+// attractions 변경 감시
 watch(
-  () => tempDestinations.value,
+  () => props.attractions,
   () => {
     if (!isKakaoLoaded.value) return;
 
     positions.value = [];
-    tempDestinations.value?.forEach((destination) => {
+    props.attractions?.forEach((destination) => {
       let obj = {};
       obj.latlng = new window.kakao.maps.LatLng(
         destination.latitude,
@@ -118,43 +130,14 @@ watch(
     });
     loadMarkers();
   },
-  { deep: true }
-);
-
-// 선택된 날짜 변경 감시
-watch(
-  () => selectedDate.value,
-  () => {
-    if (!isKakaoLoaded.value) return;
-
-    positions.value = [];
-    tempDestinations.value?.forEach((destination) => {
-      if (
-        (destination.visitDate === selectedDate.value &&
-          selectedDate.value !== "") ||
-        selectedDate.value === ""
-      ) {
-        let obj = {};
-        obj.latlng = new window.kakao.maps.LatLng(
-          destination.latitude,
-          destination.longitude
-        );
-        obj.title = destination.title;
-        obj.image = destination.firstImage1;
-        obj.addr = destination.addr1;
-        positions.value.push(obj);
-      }
-    });
-    loadMarkers();
-  },
-  { deep: true }
+  { deep: true, immediate: true }
 );
 
 // Kakao API 로드 상태 감시
 watch(isKakaoLoaded, (newValue) => {
-  if (newValue && tempDestinations.value?.length) {
+  if (newValue && props.attractions?.length) {
     positions.value = [];
-    tempDestinations.value.forEach((destination) => {
+    props.attractions.forEach((destination) => {
       let obj = {};
       obj.latlng = new window.kakao.maps.LatLng(
         destination.latitude,
@@ -171,12 +154,5 @@ watch(isKakaoLoaded, (newValue) => {
 </script>
 
 <template>
-  <div id="map"></div>
+  <div id="map" ref="mapContainer"></div>
 </template>
-
-<style>
-#map {
-  width: 100%;
-  height: 100%;
-}
-</style>

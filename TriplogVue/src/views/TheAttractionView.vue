@@ -1,12 +1,25 @@
 <script setup>
-import VKakaoMap from "@/components/common/VKakaoMap.vue";
 import AttractionPanel from "@/components/attractions/AttractionPanel.vue";
+import KakaoMap from "@/components/common/KakaoMap.vue";
+import { useAttractionStore } from "@/stores/attraction";
+import { storeToRefs } from "pinia";
+import { onMounted } from "vue";
+const attractionStore = useAttractionStore();
+const { selectedAttraction, attractions } = storeToRefs(attractionStore);
+onMounted(async () => {
+  await attractionStore.initData();
+});
 </script>
 
 <template>
   <div class="map-container">
-    <AttractionPanel/>
-    <VKakaoMap class="map"/>
+    <AttractionPanel />
+    <KakaoMap
+      class="map"
+      :attractions="attractions"
+      :selected="selectedAttraction"
+    ></KakaoMap>
+    <!-- <VKakaoMap class="map" /> -->
   </div>
 </template>
 
