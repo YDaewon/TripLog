@@ -8,23 +8,23 @@ import { onMounted, onUnmounted } from "vue";
 const planStore = usePlanStore();
 const { destinations, isArticle } = storeToRefs(planStore);
 const route = useRoute();
-onMounted(async ()=>{
+onMounted(async () => {
   await planStore.loadPlan(route.params.planNo);
   await planStore.loadDestinations(route.params.planNo);
-  if(route.params.isArticle==="false"){
+  if (route.params.isArticle === "false") {
     isArticle.value = false;
-  }else{
+  } else {
     isArticle.value = true;
   }
-})
-onUnmounted(()=>{
-  isArticle.value=false;
-})
+});
+onUnmounted(() => {
+  isArticle.value = false;
+});
 </script>
 
 <template>
   <div class="position-relative vh-100 vw-100 overflow-hidden">
-    <PlanKaKaoMap class="map w-100 h-100" :destinations="destinations" />
+    <PlanKaKaoMap class="map w-100 h-100" />
     <div class="plan-container p-0 border">
       <PlanPanel />
     </div>
