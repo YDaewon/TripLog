@@ -103,7 +103,7 @@ function handlePlanClick(plan){
 <h3 v-if="type === 'writeArticle' && plans.length > 0">등록할 플랜 선택</h3>
   <h3 v-if="type === 'writeArticle' && plans.length === 0">등록된 플랜이 없어요...</h3>
   <h3 v-if="type !== 'writeArticle'">내 플랜 목록</h3>
-  <button v-if="type === 'writeArticle'" class="btn btn-primary" @click="openModal">플랜 만들기</button>
+  <button v-if="type !== 'writeArticle'" class="btn btn-primary" @click="openModal">플랜 만들기</button>
   <div>
     <PlanCard
       v-for="plan in plans"

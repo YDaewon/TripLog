@@ -159,7 +159,7 @@ function moveList() {
   </form>
   <div v-if="viewPlan">
     <ThePlanView
-      type="mkarticle"
+      type="writeArticle"
       @plan-selected="usePlanNo"
     />
   </div>
