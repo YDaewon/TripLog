@@ -6,12 +6,12 @@
         style="height: 200px; position: relative"
       >
         <template v-if="attraction.firstImage1 || attraction.firstImage2">
-          <!-- <img
+          <img
             :src="attraction.firstImage1 || attraction.firstImage2"
             class="card-img-top"
             :alt="attraction.title"
             style="width: 100%; height: 100%; object-fit: cover"
-          /> -->
+          />
         </template>
         <template v-else>
           <div class="no-image-text">사진없음</div>

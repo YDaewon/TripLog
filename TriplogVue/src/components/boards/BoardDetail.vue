@@ -26,47 +26,39 @@ const isStar = ref(false);
 const isLoad = ref(false);
 const plan = ref({});
 
-const article = ref({
-  articleNo: articleno,
-  author: "",
-  authorImage: "",
-  content: "",
-  createdAt: "",
-  deletedAt: null,
-  hitCount: 0,
-  planNo: 1,
-  stars: 0,
-  title: "",
-  userNo: 0,
-});
+// const article = ref({
+//   articleNo: articleno,
+//   author: "",
+//   authorImage: "",
+//   content: "",
+//   createdAt: "",
+//   deletedAt: null,
+//   hitCount: 0,
+//   planNo: 1,
+//   stars: 0,
+//   title: "",
+//   userNo: 0,
+// });
+
+const article = ref(null);
 
 onMounted(async () => {
-  await getArticle(articleno);
-  article.value = articleInfo.value;
-  await IsStar(
-    articleno,
-    (response) => {
-      if (response.data == 1) {
-        isStar.value = true;
-        //console.log("현재 게시글 즐겨찾기 되어있음")
-      }
-      else {
-        isStar.value = false;
-      }
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
-  await getPlan(articleInfo.value.planNo,
-    (response)=>{
-      console.log(response);
-      plan.value = response.data;
-    }, (err)=>{
-      console.log(err);
-    }
-  )
-  isLoad.value = true; // 로드 완료 표시
+  try {
+    // 첫 번째 비동기 작업: 게시글 정보 가져오기
+    await getArticle(articleno);
+
+    // 두 번째 비동기 작업: 즐겨찾기 상태 확인
+    await IsStar(
+      articleno,
+      (response) => {
+        isStar.value = response.data === 1;
+      },
+      (error) => {
+        console.error(error);
+      })
+  } catch (error) {
+    console.error("에러 발생:", error);
+  }
 });
 
 onUnmounted(async () => {
@@ -76,6 +68,17 @@ onUnmounted(async () => {
 watch(articleInfo, (newArticleInfo) => {
   if (newArticleInfo) {
     article.value = { ...newArticleInfo }; // articleInfo 값을 article로 갱신
+    getPlan(
+      article.value.planNo,
+      (response) => {
+        plan.value = response.data;
+        isLoad.value = true; // 로드 완료 표시
+      },
+      (err) => {
+        console.error(err);
+      }
+    );
+    isLoad.value = true;
   }
 });
 
@@ -141,11 +144,11 @@ function onDeleteArticle() {
   }
 }
 
-function showPlan(){
+function showPlan() {
   router.push({
-        name: "planDetail",
-        params: { planNo: plan.value.planNo, isArticle:true },
-      });
+    name: "planDetail",
+    params: { planNo: plan.value.planNo, isArticle: true },
+  });
 }
 
 </script>
@@ -210,9 +213,7 @@ function showPlan(){
             </button>
           </div>
         </div>
-        <Comment
-        :a_no = articleno
-        />
+        <Comment :a_no=articleno />
       </div>
     </div>
   </div>
@@ -237,5 +238,4 @@ function showPlan(){
   margin: 0 auto;
   /* 이미지 중앙 정렬 */
 }
-
 </style>

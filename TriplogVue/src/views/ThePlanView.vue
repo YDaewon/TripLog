@@ -110,7 +110,7 @@ function handlePlanClick(plan){
       :key="plan.planNo"
       :plan="plan"
       :is-selected="plan.planNo === selectedPlanNo"
-      @click= "type !== 'mkarticle' ? onClickPlanCard(plan) : handlePlanClick(plan)"
+      @click= "type !== 'writeArticle' ? onClickPlanCard(plan) : handlePlanClick(plan)"
     />
   </div>
   <div>
