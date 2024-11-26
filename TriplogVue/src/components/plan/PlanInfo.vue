@@ -4,7 +4,7 @@ import PlanDate from "./PlanDate.vue";
 import { usePlanStore } from "@/stores/plan";
 import { storeToRefs } from "pinia";
 const planStore = usePlanStore();
-const { tempPlan } = storeToRefs(planStore);
+const { tempPlan, isEditMode} = storeToRefs(planStore);
 
 console.log();
 const nights = computed(() => {
@@ -55,7 +55,7 @@ const descInput = ref(null);
         @click="isEditMode && (showTitleEdit = true)"
       >
         <input
-          v-if="showTitleEdit && isEditMode.value"
+          v-if="showTitleEdit && isEditMode"
           v-model="tempPlan.title"
           class="form-control"
           @blur="showTitleEdit = false"
@@ -66,11 +66,11 @@ const descInput = ref(null);
       </h1>
       <!-- 설명 -->
       <p
-        @click="isEditMode.value && (showDescEdit = true)"
+        @click="isEditMode && (showDescEdit = true)"
         :class="{ 'edit-mode': isEditMode }"
       >
         <textarea
-          v-if="showDescEdit && isEditMode.value"
+          v-if="showDescEdit && isEditMode"
           v-model="tempPlan.description"
           class="form-control"
           @blur="showDescEdit = false"
