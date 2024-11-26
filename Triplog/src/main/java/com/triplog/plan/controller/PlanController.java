@@ -150,6 +150,7 @@ public class PlanController {
 	}
 	
 	
+
 	/* 목적지 추가
 	{
 	  "planNo": 2,
@@ -164,7 +165,6 @@ public class PlanController {
 	public ResponseEntity<?> addDestinations(
 			@Parameter(description = "추가할 목적지 정보", required = true) @RequestBody DestinationDto destinationDto) {
 		try {
-			System.out.println(destinationDto.toString());
 			planService.addDestinations(destinationDto);
 			return ResponseEntity.status(HttpStatus.CREATED).body("목적지 추가 성공");
 		} catch (Exception e) {
@@ -193,6 +193,19 @@ public class PlanController {
 	        return new ResponseEntity<>("여행 목적지 수정 성공", HttpStatus.OK);
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 목적지 수정 중 문제 발생");
+	    }
+	}
+
+	@PutMapping("/dest/bulk/{planNo}")
+	@Operation(summary = "여행 목적지 일괄 수정", description = "여러 여행 목적지를 일괄 수정합니다.")
+	public ResponseEntity<?> updateDestinations(
+	    @Parameter(description = "변경할 목적지 정보 목록", required = true) 
+	    @RequestBody List<DestinationDto> destinationDtos, @PathVariable int planNo) {
+	    try {
+	        planService.updateDestinations(destinationDtos, planNo);
+	        return new ResponseEntity<>("여행 목적지 일괄 수정 성공", HttpStatus.OK);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 목적지 일괄 수정 중 문제 발생");
 	    }
 	}
 	
