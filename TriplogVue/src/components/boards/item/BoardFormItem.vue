@@ -114,6 +114,7 @@ function makePlanList(){
 function unLinkPlan(){
   article.value.planNo = 0;
   articleInfo.value.planNo = 0;
+  makePlanList();
 }
 
 function usePlanNo(planNo) {
