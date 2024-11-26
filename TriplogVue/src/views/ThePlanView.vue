@@ -50,7 +50,6 @@ const filteredPlans = computed(() => {
   return plans.value.filter(plan => plan.planNo === props.planNo);
 });
 
-
 const getUserPlans = () => {
   getPlans(
     props.type !== 'viewarticle' ? userInfo.value.userNo : articleInfo.value.userNo,
@@ -62,9 +61,6 @@ const getUserPlans = () => {
     }
   );
 };
-
-
-
 
 const newPlan = (range) => {
   createPlan(
@@ -87,7 +83,6 @@ const newPlan = (range) => {
   );
 };
 
-
 const onClickPlanCard = (plan) => {
   isEditMode.value = false;
   router.push({
@@ -95,21 +90,37 @@ const onClickPlanCard = (plan) => {
     params: { planNo: plan.planNo, isArticle:false },
   });
 };
+
+const selectedPlanNo = ref(0);
+const emit = defineEmits(['plan-selected']);
+function handlePlanClick(plan){
+  selectedPlanNo.value = plan.planNo;
+  emit('plan-selected', plan.planNo);
+}
 </script>
 
 <template>
-  <h3>내 플랜 목록</h3>
+<h3 v-if="type === 'writeArticle' && plans.length > 0">등록할 플랜 선택</h3>
+  <h3 v-if="type === 'writeArticle' && plans.length === 0">등록된 플랜이 없어요...</h3>
+  <h3 v-if="type !== 'writeArticle'">내 플랜 목록</h3>
+  <button v-if="type === 'writeArticle'" class="btn btn-primary" @click="openModal">플랜 만들기</button>
   <div>
-    <button class="btn btn-primary" @click="openModal">플랜 만들기</button>
-    <div>
-      <PlanCard
-        v-for="plan in plans"
-        :key="plan.planNo"
-        :plan="plan"
-        :is-selected="plan.planNo === selectedPlanNo"
-        @click="onClickPlanCard(plan)"
-      />
-    </div>
+    <PlanCard
+      v-for="plan in plans"
+      :key="plan.planNo"
+      :plan="plan"
+      :is-selected="plan.planNo === selectedPlanNo"
+      @click= "type !== 'mkarticle' ? onClickPlanCard(plan) : handlePlanClick(plan)"
+    />
+  </div>
+  <div>
+    <PlanCard
+      v-for="plan in filteredPlans"
+      :key="plan.planNo"
+      :plan="plan"
+      :is-selected= true
+      @click= "onClickPlanCard(plan)"
+    />
   </div>
   <PlanDate
     :isOpen="isModalOpen"

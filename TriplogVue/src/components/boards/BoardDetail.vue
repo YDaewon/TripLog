@@ -42,6 +42,7 @@ const article = ref({
 
 onMounted(async () => {
   await getArticle(articleno);
+  article.value = articleInfo.value;
   await IsStar(
     articleno,
     (response) => {
@@ -65,7 +66,6 @@ onMounted(async () => {
       console.log(err);
     }
   )
-  article.value = articleInfo.value;
   isLoad.value = true; // 로드 완료 표시
 });
 
