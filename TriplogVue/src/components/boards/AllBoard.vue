@@ -11,7 +11,7 @@ const initialParam = {
   word: "",
 };
 
-const subtitle = "전체 게시판";  
+const subtitle = "전체 게시판";
 
 const selectOptions = [
   { text: "검색조건", value: "" },
