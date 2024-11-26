@@ -4,13 +4,21 @@ import PlanKaKaoMap from "@/components/common/PlanKaKaoMap.vue";
 import { usePlanStore } from "@/stores/plan";
 import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 const planStore = usePlanStore();
-const { destinations } = storeToRefs(planStore);
+const { destinations, isArticle } = storeToRefs(planStore);
 const route = useRoute();
-onMounted(()=>{
-  planStore.loadPlan(route.params.planNo);
-  planStore.loadDestinations(route.params.planNo);
+onMounted(async ()=>{
+  await planStore.loadPlan(route.params.planNo);
+  await planStore.loadDestinations(route.params.planNo);
+  if(route.params.isArticle==="false"){
+    isArticle.value = false;
+  }else{
+    isArticle.value = true;
+  }
+})
+onUnmounted(()=>{
+  isArticle.value=false;
 })
 </script>
 
