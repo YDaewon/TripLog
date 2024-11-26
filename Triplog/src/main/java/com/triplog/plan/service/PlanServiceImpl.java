@@ -79,4 +79,11 @@ public class PlanServiceImpl implements PlanService {
 		return planMapper.getDestinationInfo(attractionNo);
 	}
 
+	@Override
+	public void updateDestinations(List<DestinationDto> destinationDto, int planNo) {
+		planMapper.deleteDestinationsByPlanNo(planNo);
+		planMapper.updateDestinations(destinationDto);
+		System.out.println("test");
+	}
+
 }

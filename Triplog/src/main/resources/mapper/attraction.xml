@@ -44,7 +44,7 @@
 			</if>
 		</where>
 	</select>
-
+	
 	<select id="getDetailAttraction" parameterType="int" resultMap="attraction">
 		SELECT * FROM attractions
 		<where>
@@ -69,7 +69,7 @@
 
     <select id="getSidos" resultType="java.util.Map">
         SELECT sido_code, sido_name
-        FROM sidos
+        FROM triplog.sidos
     </select>
 
     <select id="getGuguns" resultType="java.util.Map">
@@ -82,13 +82,5 @@
         SELECT content_type_id, content_type_name
         FROM triplog.contenttypes;
     </select>
-
-	<select id="getSidoCounts" resultType="java.util.Map">
-	    SELECT s.sido_name, COUNT(*) as count
-	    FROM plan_destinations pd
-	    LEFT JOIN attractions a ON a.attraction_no = pd.attraction_no
-	    LEFT JOIN sidos s ON a.area_code = s.sido_code
-	    GROUP BY a.area_code;
-	</select>
 
 </mapper>

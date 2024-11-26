@@ -28,7 +28,8 @@ CREATE TABLE IF NOT EXISTS `triplog`.`users` (
   `email_domain` VARCHAR(45) NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` TIMESTAMP NULL,
-  `Token` VARCHAR(500) NULL,
+  `token` VARCHAR(500) NULL,
+  `role` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`user_no`),
   UNIQUE INDEX `user_id_UNIQUE` (`user_id` ASC) VISIBLE,
   UNIQUE INDEX `nickname_UNIQUE` (`nickname` ASC) VISIBLE)
@@ -42,13 +43,11 @@ DEFAULT CHARACTER SET = utf8mb3;
 CREATE TABLE IF NOT EXISTS `triplog`.`plans` (
   `plan_no` INT NOT NULL AUTO_INCREMENT,
   `user_no` INT NOT NULL,
-  `title` VARCHAR(100) NOT NULL,
+  `title` VARCHAR(200) NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` TIMESTAMP NULL,
-  `description` VARCHAR(100) NULL DEFAULT '',
+  `description` VARCHAR(1000) NULL DEFAULT '',
   `fork_count` INT NOT NULL DEFAULT 0,
-  `start_at` DATE NOT NULL,
-  `end_at` DATE NOT NULL,
   PRIMARY KEY (`plan_no`),
   INDEX `fk_plan_user1_idx` (`user_no` ASC) VISIBLE,
   CONSTRAINT `fk_plan_user1`
@@ -65,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `triplog`.`articles` (
   `article_no` INT NOT NULL AUTO_INCREMENT,
   `plan_no` INT NULL,
   `user_no` INT NOT NULL,
-  `title` VARCHAR(45) NOT NULL,
+  `title` VARCHAR(200) NOT NULL,
   `content` VARCHAR(10000) NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` TIMESTAMP NULL,
@@ -150,6 +149,7 @@ CREATE TABLE IF NOT EXISTS `triplog`.`attractions` (
   `addr2` VARCHAR(100) NULL DEFAULT NULL,
   `homepage` VARCHAR(1000) NULL DEFAULT NULL,
   `overview` VARCHAR(10000) NULL DEFAULT NULL,
+  `hit_count` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`attraction_no`),
   INDEX `attractions_typeid_to_types_typeid_fk_idx` (`content_type_id` ASC) VISIBLE,
   INDEX `attractions_sido_to_sidos_code_fk_idx` (`area_code` ASC) VISIBLE,
@@ -175,14 +175,13 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `triplog`.`hit_attractions` (
   `hit_no` INT NOT NULL AUTO_INCREMENT,
   `user_no` INT NOT NULL,
-  `destinaion_no` INT NOT NULL,
-  `attractions_title` VARCHAR(200) NOT NULL,
+  `attraction_no` INT NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`hit_no`),
-  INDEX `fk_views_destinations1_idx` (`destinaion_no` ASC) VISIBLE,
+  INDEX `fk_views_destinations1_idx` (`attraction_no` ASC) VISIBLE,
   INDEX `fk_views_user1_idx` (`user_no` ASC) VISIBLE,
   CONSTRAINT `fk_views_destinations1`
-    FOREIGN KEY (`destinaion_no`)
+    FOREIGN KEY (`attraction_no`)
     REFERENCES `triplog`.`attractions` (`attraction_no`),
   CONSTRAINT `fk_views_user1`
     FOREIGN KEY (`user_no`)
@@ -258,52 +257,51 @@ DEFAULT CHARACTER SET = utf8mb3;
 
 
 -- -----------------------------------------------------
--- Table `triplog`.`notice`
+-- Table `triplog`.`user_image`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `triplog`.`notice` (
-  `notice_no` INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `triplog`.`user_image` (
+  `image_no` INT NOT NULL AUTO_INCREMENT,
   `user_no` INT NOT NULL,
-  `title` VARCHAR(100) NOT NULL,
-  `content` VARCHAR(10000) NULL,
-  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `deleted_at` TIMESTAMP NULL,
-  PRIMARY KEY (`notice_no`),
-  INDEX `fk_notice_user1_idx` (`user_no` ASC) VISIBLE,
-  CONSTRAINT `fk_notice_user1`
+  `image` VARCHAR(200) NULL DEFAULT NULL,
+  PRIMARY KEY (`image_no`),
+  INDEX `fk_user_image_user1_idx` (`user_no` ASC) VISIBLE,
+  CONSTRAINT `fk_user_image_user1`
     FOREIGN KEY (`user_no`)
     REFERENCES `triplog`.`users` (`user_no`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `triplog`.`comment`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `triplog`.`comment` (
-  `comment_no` INT NOT NULL AUTO_INCREMENT,
-  `article_no` INT NOT NULL,
-  `user_no` INT NOT NULL,
-  `content` VARCHAR(200) NOT NULL,
-  `parent` INT NULL,
-  `create_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `delete_at` TIMESTAMP NULL,
-  PRIMARY KEY (`comment_no`),
-  INDEX `fk_comment_articles1_idx` (`article_no` ASC) VISIBLE,
-  INDEX `fk_comment_users1_idx` (`user_no` ASC) VISIBLE,
-  CONSTRAINT `fk_comment_articles1`
-    FOREIGN KEY (`article_no`)
-    REFERENCES `triplog`.`articles` (`article_no`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_comment_users1`
-    FOREIGN KEY (`user_no`)
-    REFERENCES `triplog`.`users` (`user_no`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+use triplog;
+
+select * from attractions;
+select * from hit_attractions;
+
+select * from articles;
+select * from hit_articles;
+select * from article_stars;
+
+insert into article_stars(user_no, article_no) values (3, 5);
+
+update 
+
+		SELECT 
+		    a.article_no AS articleNo,
+		    a.title AS articleTitle,
+		    u.nickname AS author,
+		    (SELECT count(*) from article_stars s where a.article_no = s.article_no) AS stars,
+		    hit_count AS hitCount,
+		    a.created_at AS registTime
+		  FROM 
+		    articles a
+		  LEFT JOIN
+		    users u ON a.user_no = u.user_no
+		  WHERE 
+		    a.deleted_at IS NULL
+		  ORDER BY a.created_at DESC;
