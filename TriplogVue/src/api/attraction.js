@@ -1,6 +1,5 @@
-import { attractionAxios,localAxios } from "@/util/http-commons";
+import { attractionAxios } from "@/util/http-commons";
 
-const local = localAxios();
 const attraction = attractionAxios();
 
 function listAttractions(param, success, fail) {
@@ -10,9 +9,4 @@ function getAttractions(planNo, success, fail) {
   attraction.get(`/attraction/${planNo}`).then(success).catch(fail);
 }
 
-function getSidosCount(success, fail) {
-  local.get(`/attraction/sido-counts`).then(success).catch(fail);
-}
-
-
-export { listAttractions, getAttractions, getSidosCount };
+export { listAttractions, getAttractions };

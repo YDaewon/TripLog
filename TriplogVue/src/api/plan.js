@@ -4,8 +4,7 @@ const local = localAxios();
 
 function getPlans(param, success, fail) {
   local.defaults.headers["accessToken"] = sessionStorage.getItem("accessToken");
-  const query = new URLSearchParams({param}).toString();
-  local.get(`/plan?${query}`).then(success).catch(fail);
+  local.get(`/plan`, { params: param }).then(success).catch(fail);
 }
 
 function getPlan(planNo, success, fail) {

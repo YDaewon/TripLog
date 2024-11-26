@@ -1,37 +1,15 @@
 <script setup>
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref } from "vue";
 import PlanDate from "./PlanDate.vue";
+import { usePlanStore } from "@/stores/plan";
+import { storeToRefs } from "pinia";
+const planStore = usePlanStore();
+const { tempPlan } = storeToRefs(planStore);
 
-const props = defineProps({
-  plan: {
-    type: Object,
-    required: true,
-  },
-  isEditMode: Boolean,
-});
-
-const emit = defineEmits();
-
-const editablePlan = ref({
-  title: props.plan.title,
-  description: props.plan.description,
-  startAt: props.plan.startAt,
-  endAt: props.plan.endAt,
-});
-
-// Watch for changes in props to update editablePlan
-watchEffect(() => {
-  editablePlan.value = { ...props.plan };
-});
-
-// Function to save changes and emit the updated plan
-const saveChanges = () => {
-  emit("updatePlan", editablePlan.value);
-};
-
+console.log();
 const nights = computed(() => {
   return (
-    (new Date(props.plan.endAt) - new Date(props.plan.startAt)) /
+    (new Date(tempPlan.value.endAt) - new Date(tempPlan.value.startAt)) /
     (1000 * 60 * 60 * 24)
   );
 });
@@ -56,12 +34,11 @@ const formatDate = (date) => {
 };
 
 const handleDateSelect = (range) => {
-  props.plan.startAt = formatDate(range.startDate);
-  props.plan.endAt = formatDate(range.endDate);
-  emit("updatePlan", props.plan);
+  tempPlan.value.startAt = formatDate(range.startDate);
+  tempPlan.value.endAt = formatDate(range.endDate);
+  planStore.adjustDates();
 };
 
-// ===============test=====================
 const showTitleEdit = ref(false);
 const showDescEdit = ref(false);
 const titleInput = ref(null);
@@ -74,42 +51,40 @@ const descInput = ref(null);
       <!-- 제목 -->
       <h1
         class="h1 font-weight-bold"
-        :class="{ 'edit-mode': isEditMode }"
-        @click="isEditMode && (showTitleEdit = true)"
+        :class="{ 'edit-mode': planStore.isEditMode }"
+        @click="planStore.isEditMode && (showTitleEdit = true)"
       >
         <input
-          v-if="showTitleEdit && isEditMode"
-          v-model="editablePlan.title"
+          v-if="showTitleEdit && planStore.isEditMode"
+          v-model="tempPlan.value.title"
           class="form-control"
           @blur="showTitleEdit = false"
-          @focusout="saveChanges"
           ref="titleInput"
           @keyup.enter="$event.target.blur()"
         />
-        <span v-else>{{ plan.title }}</span>
+        <span v-else>{{ tempPlan.title }}</span>
       </h1>
       <!-- 설명 -->
       <p
-        @click="isEditMode && (showDescEdit = true)"
-        :class="{ 'edit-mode': isEditMode }"
+        @click="planStore.isEditMode && (showDescEdit = true)"
+        :class="{ 'edit-mode': planStore.isEditMode }"
       >
         <textarea
-          v-if="showDescEdit && isEditMode"
-          v-model="editablePlan.description"
+          v-if="showDescEdit && planStore.isEditMode"
+          v-model="tempPlan.value.description"
           class="form-control"
           @blur="showDescEdit = false"
-          @focusout="saveChanges"
           ref="descInput"
         ></textarea>
-        <span v-else>{{ plan.description }}</span>
+        <span v-else>{{ tempPlan.description }}</span>
       </p>
       <!-- 기간 -->
       <p
         class="text-secondary"
-        v-on="isEditMode ? { click: openModal } : {}"
-        :class="{ 'edit-mode': isEditMode }"
+        v-on="planStore.isEditMode ? { click: openModal } : {}"
+        :class="{ 'edit-mode': planStore.isEditMode }"
       >
-        {{ plan.startAt }} ~ {{ plan.endAt }} ({{ nights }}박
+        {{ tempPlan.startAt }} ~ {{ tempPlan.endAt }} ({{ nights }}박
         {{ nights + 1 }}일)
       </p>
       <!-- 달력 모달 -->

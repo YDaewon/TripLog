@@ -122,7 +122,7 @@ const router = createRouter({
       component: () => import("@/views/ThePlanView.vue"),
     },
     {
-      path: "/planDetail/:planNo/:isEditMode",
+      path: "/planDetail/:planNo",
       name: "planDetail",
       beforeEnter: onlyAuthUser,
       component: () => import("@/views/ThePlanDetailView.vue"),
