@@ -8,6 +8,10 @@ export const useAttractionStore = defineStore(
   () => {
     const attractions = ref([]);
     const selectedAttraction = ref({});
+    const initData = () => {
+      attractions.value = [];
+      selectedAttraction.value = {};
+    };
     const getAttractions = (searchParam) => {
       listContentType(
         (response) => {
@@ -41,7 +45,7 @@ export const useAttractionStore = defineStore(
         }
       );
     };
-    return { attractions, selectedAttraction, getAttractions };
+    return { attractions, selectedAttraction, getAttractions, initData };
   },
   { persist: { storage: localStorage } }
 );
