@@ -115,11 +115,11 @@ const register = async () => {
                 </div>
                 <div class="mb-3">
                   <label for="userPwd" class="form-label">Password : </label>
-                  <input type="text" v-model="RegisterUser.userPwd" class="form-control" placeholder="Password..." />
+                  <input type="password" v-model="RegisterUser.userPwd" class="form-control" placeholder="Password..." />
                 </div>
                 <div class="mb-3">
                   <label for="pwdcheck" class="form-label">confirm Password : </label>
-                  <input type="text" v-model="RegisterUser.pwdCheck" class="form-control" id="pwdcheck"
+                  <input type="password" v-model="RegisterUser.pwdCheck" class="form-control" id="pwdcheck"
                     placeholder="confirm Password..." />
                 </div>
                 <div class="mb-3">

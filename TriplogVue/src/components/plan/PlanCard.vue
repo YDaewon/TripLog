@@ -8,7 +8,7 @@ defineProps({
 });
 </script>
 <template>
-  <div class="col-12 col-md-6 col-lg-4">
+  <div class="col-12 col-md-6 col-lg-4 m-3">
     <div class="card cursor-pointer shadow-sm transition-shadow hover-shadow-lg">
       <div :class="['plan-card', { 'selected': isSelected }]">
         <div class="card-header">

@@ -218,11 +218,11 @@ DEFAULT CHARACTER SET = utf8mb3;
 -- Table `triplog`.`plan_destinations`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `triplog`.`plan_destinations` (
-  `destination_no` INT NOT NULL,
+  `destination_no` INT NOT NULL  AUTO_INCREMENT,
   `attraction_no` INT NOT NULL,
   `plan_no` INT NOT NULL,
   `visit_date` DATE NOT NULL,
-  `destination_order` INT NOT NULL AUTO_INCREMENT,
+  `destination_order` INT NOT NULL default 999,
   `memo` VARCHAR(300) NULL DEFAULT NULL,
   PRIMARY KEY (`destination_no`),
   INDEX `fk_destinations_attractions1_idx` (`attraction_no` ASC) VISIBLE,
@@ -287,3 +287,28 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+use triplog;
+
+INSERT INTO plans (plan_no, user_no, title, description, created_at, deleted_at, fork_count, start_at, end_at)
+VALUES
+(1, 1, 'Plan A', 'Description for Plan A', '2024-11-23 10:00:00', NULL, 0, '2024-11-23', '2024-11-25'),
+(2, 1, 'Plan B', 'Description for Plan B', '2024-11-23 11:00:00', NULL, 2, '2024-11-23', '2024-11-25'),
+(3, 1, 'Plan C', 'Description for Plan C', '2024-11-23 12:00:00', NULL, 1, '2024-11-23', '2024-11-25');
+
+-- dests (for Plan 1)
+INSERT INTO plan_destinations (plan_no, destination_no, destination_order, visit_date, memo, attraction_no)
+VALUES
+(1, 1, 1, '2024-11-23', 'Visit first destination of day 1', 3818),
+(1, 2, 2, '2024-11-23', 'Visit second destination of day 1', 3819),
+(1, 3, 3, '2024-11-24', 'Visit first destination of day 2', 3820),
+(1, 4, 4, '2024-11-24', 'Visit second destination of day 2', 3821),
+(1, 5, 5, '2024-11-25', 'Visit first destination of day 3', 3825),
+(1, 6, 6, '2024-11-25', 'Visit second destination of day 3', 3828),
+(2, 7, 1, '2024-11-23', 'Visit first destination of day 1', 3820),
+(2, 8, 2, '2024-11-23', 'Visit second destination of day 1', 3825),
+(2, 9, 3, '2024-11-24', 'Visit first destination of day 2', 3818),
+(2, 10, 4, '2024-11-24', 'Visit second destination of day 2', 3819),
+(2, 11, 5, '2024-11-25', 'Visit first destination of day 3', 3828),
+(2, 12, 6, '2024-11-25', 'Visit second destination of day 3', 3821);

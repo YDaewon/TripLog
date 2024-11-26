@@ -60,30 +60,10 @@ const logout = () => {
         </button>
         <div class="collapse navbar-collapse" id="navbarScroll">
           <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px">
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                여행계획
-              </a>
-              <ul class="dropdown-menu">
-                <li>
-                  <a class="dropdown-item">
-                    <router-link :to="{ name: 'plan' }" class="nav-link">
-                      내 여행계획
-                    </router-link>
-                  </a>
-                </li>
-                <a class="dropdown-item">
-                  <router-link :to="{ name: 'plan' }" class="nav-link">
-                    여행계획 목록
-                  </router-link>
-                </a>
-                <a class="dropdown-item">
-                  <router-link :to="{ name: 'board' }" class="nav-link">
-                    여행계획 즐겨찾기
-                  </router-link>
-                </a>
-              </ul>
+            <li>
+              <router-link :to="{ name: 'plan' }" class="nav-link">
+                여행계획 목록
+              </router-link>
             </li>
             <li><router-link :to="{ name: 'board' }" class="nav-link">전체 게시판</router-link></li>
             <li class="nav-item">
@@ -123,6 +103,4 @@ const logout = () => {
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
