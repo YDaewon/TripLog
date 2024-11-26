@@ -16,6 +16,7 @@ export const usePlanStore = defineStore(
     const plans = ref([]);
     const plan = ref({}); // 표시용
     const tempPlan = ref({}); // 수정용
+
     const commitPlan = () => {
       updatePlan(
         tempPlan.value,
@@ -43,8 +44,8 @@ export const usePlanStore = defineStore(
       await getPlan(
         planNo,
         ({ data }) => {
-          plan.value = data;
-          tempPlan.value = data;
+          plan.value = JSON.parse(JSON.stringify(data));
+          tempPlan.value = JSON.parse(JSON.stringify(data));
         },
         (err) => {
           console.log(err);
@@ -55,10 +56,6 @@ export const usePlanStore = defineStore(
       console.log("rollback plan:", tempPlan.value, plan.value);
       tempPlan.value = plan.value;
     };
-
-    watch(tempPlan.value, (newVal) => {
-      console.log("tempplan changed ", tempPlan.value, "to", newVal);
-    });
 
     // dest 관련 ========================================================================================================
     const destinations = ref([]); //표시용
@@ -112,10 +109,6 @@ export const usePlanStore = defineStore(
             currentDate.setDate(currentDate.getDate() + 1);
           }
         }
-        console.log(
-          "groups:",
-          groups.sort((a, b) => new Date(a.date) - new Date(b.date))
-        );
         return groups.sort((a, b) => new Date(a.date) - new Date(b.date));
       } catch (error) {
         console.error("Error in groupedDestinations:", error);
@@ -140,8 +133,8 @@ export const usePlanStore = defineStore(
       await getDestinations(
         planNo,
         (dests) => {
-          destinations.value = dests.data;
-          tempDestinations.value = dests.data;
+          destinations.value = JSON.parse(JSON.stringify(dests.data));
+          tempDestinations.value = JSON.parse(JSON.stringify(dests.data));
         },
         (err) => {
           console.log(err);
@@ -165,10 +158,11 @@ export const usePlanStore = defineStore(
       getDestinationInfo(
         attNo,
         ({ data }) => {
+          console.log(data);
           selectedDestination.value = { ...data, ...selectedDestination.value };
           tempDestinations.value.push(selectedDestination.value);
           selectedDestination.value = {};
-          console.log("Added destination:", selectedDestination.value);
+          console.log("now dests:", tempDestinations.value, destinations.value);
         },
         (err) => {
           console.log(err);
@@ -279,6 +273,8 @@ export const usePlanStore = defineStore(
       isEditMode,
       isPlan,
       isAddMode,
+      plan,
+      tempPlan,
       plans,
       tempPlan,
       selectedDate,

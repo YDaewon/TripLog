@@ -21,6 +21,7 @@ public class AttractionServiceImpl implements AttractionService{
 
 	@Override
 	public List<AttractionDto> getAttractions(Map<String, String> map) {
+		System.out.println(attractionMapper.getAttractions(map));
 		return attractionMapper.getAttractions(map);
 	}
 

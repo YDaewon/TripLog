@@ -4,11 +4,14 @@ import PlanKaKaoMap from "@/components/common/PlanKaKaoMap.vue";
 import { usePlanStore } from "@/stores/plan";
 import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
+import { onMounted } from "vue";
 const planStore = usePlanStore();
 const { destinations } = storeToRefs(planStore);
 const route = useRoute();
-planStore.loadPlan(route.params.planNo);
-planStore.loadDestinations(route.params.planNo);
+onMounted(()=>{
+  planStore.loadPlan(route.params.planNo);
+  planStore.loadDestinations(route.params.planNo);
+})
 </script>
 
 <template>

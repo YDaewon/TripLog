@@ -51,12 +51,12 @@ const descInput = ref(null);
       <!-- 제목 -->
       <h1
         class="h1 font-weight-bold"
-        :class="{ 'edit-mode': planStore.isEditMode }"
-        @click="planStore.isEditMode && (showTitleEdit = true)"
+        :class="{ 'edit-mode': isEditMode }"
+        @click="isEditMode && (showTitleEdit = true)"
       >
         <input
-          v-if="showTitleEdit && planStore.isEditMode"
-          v-model="tempPlan.value.title"
+          v-if="showTitleEdit && isEditMode.value"
+          v-model="tempPlan.title"
           class="form-control"
           @blur="showTitleEdit = false"
           ref="titleInput"
@@ -66,12 +66,12 @@ const descInput = ref(null);
       </h1>
       <!-- 설명 -->
       <p
-        @click="planStore.isEditMode && (showDescEdit = true)"
-        :class="{ 'edit-mode': planStore.isEditMode }"
+        @click="isEditMode.value && (showDescEdit = true)"
+        :class="{ 'edit-mode': isEditMode }"
       >
         <textarea
-          v-if="showDescEdit && planStore.isEditMode"
-          v-model="tempPlan.value.description"
+          v-if="showDescEdit && isEditMode.value"
+          v-model="tempPlan.description"
           class="form-control"
           @blur="showDescEdit = false"
           ref="descInput"
