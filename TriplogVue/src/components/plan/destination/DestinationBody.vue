@@ -1,19 +1,17 @@
 <script setup>
-import { storeToRefs } from "pinia";
 import DestinationCard from "./DestinationCard.vue";
-import { usePlanStore } from "@/stores/plan";
-
 defineProps({
   destinations: Array,
+  isEditMode: Boolean,
 });
-
 </script>
 <template>
-  <div class="d-flex flex-column">
+  <div class="p-4 d-flex flex-column">
     <!-- for로 여러 개 표시 -->
     <DestinationCard
       v-for="destination in destinations"
       :destination="destination"
+      :isEditMode="isEditMode"
     ></DestinationCard>
   </div>
 </template>

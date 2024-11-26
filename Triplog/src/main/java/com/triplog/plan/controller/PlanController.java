@@ -73,9 +73,9 @@ public class PlanController {
 
 	@GetMapping("")
 	@Operation(summary = "여행 계획 조회", description = "여행 계획 정보를 조회합니다.")
-	public ResponseEntity<?> getPlans(HttpServletRequest request) {
+	public ResponseEntity<?> getPlans(@RequestParam String param, HttpServletRequest request) {
 		try {
-			List<PlanDto> results = planService.getPlans((Integer)request.getAttribute("userNo"));
+			List<PlanDto> results = planService.getPlans(Integer.parseInt(param));
 			return new ResponseEntity<>(results, HttpStatus.OK);
 		} catch (Exception e) {
 			System.out.println(e.toString());
@@ -138,18 +138,16 @@ public class PlanController {
 		}
 	}
 	@GetMapping("/dest/info/{attractionNo}")
-	@Operation(summary = "목적지 정보 조회", description = "목적지 정보를 조회합니다.")
+	@Operation(summary = "여행 목적지 조회", description = "여행 목적지 정보들을 조회합니다.")
 	public ResponseEntity<?> getDestinationInfo(
-			@Parameter(description = "관광지 번호", required = true) @PathVariable("attractionNo") int attractionNo) {
+			@Parameter(description = "소속된 여행계획 번호", required = true) @PathVariable("attractionNo") int attractionNo) {
 		try {
 			DestinationDto result = planService.getDestinationInfo(attractionNo);
-			System.out.println(result);
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("목적지 조회 중 문제 발생");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 목적지 조회 중 문제 발생");
 		}
 	}
-	
 	
 	
 	/* 목적지 추가
@@ -195,20 +193,6 @@ public class PlanController {
 	        return new ResponseEntity<>("여행 목적지 수정 성공", HttpStatus.OK);
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("여행 목적지 수정 중 문제 발생");
-	    }
-	}
-	
-	@PutMapping("/dest/bulk/{planNo}")
-	@Operation(summary = "여행 목적지 일괄 수정", description = "여러 여행 목적지를 일괄 수정합니다.")
-	public ResponseEntity<?> updateDestinations(
-	    @Parameter(description = "변경할 목적지 정보 목록", required = true) 
-	    @RequestBody List<DestinationDto> destinationDtos, @PathVariable int planNo) {
-	    try {
-	        planService.updateDestinations(destinationDtos, planNo);
-	        return new ResponseEntity<>("여행 목적지 일괄 수정 성공", HttpStatus.OK);
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	            .body("여행 목적지 일괄 수정 중 문제 발생");
 	    }
 	}
 	

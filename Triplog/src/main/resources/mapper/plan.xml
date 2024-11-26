@@ -104,15 +104,14 @@
 
 	<select id="getDestinationInfo" parameterType="int" resultMap="destination">
 		SELECT 
-		    a.attraction_no,
 		    a.title,
 		    ct.content_type_name,
 		    a.first_image1,
 		    a.addr1,
 		    a.latitude,
 		    a.longitude
-		FROM attractions a 
-        JOIN contenttypes ct ON a.content_type_id = ct.content_type_id
+		FROM attractions a JOIN contenttypes ct
+		ON a.content_type_id = ct.content_type_id
 		WHERE a.attraction_no = #{attractionNo};
 	</select>
 
@@ -143,23 +142,6 @@
 	    </set>
 	    WHERE destination_no = #{destinationNo}
 	</update>
-
-	<delete id="deleteDestinationsByPlanNo" parameterType="int">
-	   DELETE FROM plan_destinations 
-	   WHERE plan_no = #{planNo}
-	</delete>
-	
-	<!-- Insert new destinations -->
-	<insert id="updateDestinations" parameterType="java.util.List">
-	   INSERT INTO plan_destinations 
-	   (plan_no, visit_date, memo, attraction_no)
-	   VALUES
-	   <foreach collection="list" item="item" separator=",">
-	       (#{item.planNo}, #{item.visitDate}, 
-	        #{item.memo}, #{item.attractionNo})
-	   </foreach>
-	</insert>
-
 
 	<delete id="deleteDestination" parameterType="int">
 	    DELETE FROM plan_destinations

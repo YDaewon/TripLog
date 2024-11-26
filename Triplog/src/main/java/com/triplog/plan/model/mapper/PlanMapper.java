@@ -22,7 +22,5 @@ public interface PlanMapper {
 	void addDestinations(DestinationDto destinationDto);
 	void deleteDestination(int destinationNo);
 	void updateDestination(DestinationDto destinationDto);
-	void updateDestinations(List<DestinationDto> destinationDto);
-	void deleteDestinationsByPlanNo(int planNo);
 	DestinationDto getDestinationInfo(int attractionNo);
 }
