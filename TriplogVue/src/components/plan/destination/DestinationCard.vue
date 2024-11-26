@@ -1,38 +1,23 @@
 <script setup>
-import { usePlanStore } from "@/stores/plan";
-import { storeToRefs } from "pinia";
-const planStore = usePlanStore();
-const { isEditMode, selectedDestination, tempDestinations } =
-  storeToRefs(planStore);
 const props = defineProps({
   destination: Object,
+  isEditMode: Boolean,
 });
-const onClickDestCard = () => {
-  console.log(props.destination);
-  selectedDestination.value = props.destination;
-};
-const deleteDest = () => {
-  // 일치하는 dest만 빼고 다시 만듦.
-  tempDestinations.value = tempDestinations.value.filter(
-    (dest) => dest !== props.destination
-  );
-};
+const moveUp = () => {};
 </script>
 <template>
-  <div class="border" @click="onClickDestCard">
+  <div
+    class="border rounded p-4 shadow-sm hover:shadow-md transition-shadow duration-200"
+  >
     <div class="d-flex justify-content-between">
-      <div class="p-4">
+      <div>
         <h3 class="fw-semibold h5 mb-2">
           {{ destination.attractionTitle }}
         </h3>
         <p class="text-muted">{{ destination.contentTypeName }}</p>
       </div>
-      <div
-        class="d-flex flex-column align-items-center pe-3"
-        :style="{ visibility: isEditMode ? 'visible' : 'hidden' }"
-      >
+      <div class="d-flex flex-column align-items-end" v-if="props.isEditMode">
         <button class="btn" @click="moveUp">△</button>
-        <button class="btn btn-outline-danger" @click="deleteDest">삭제</button>
         <button class="btn" @click="moveDown">▽</button>
       </div>
     </div>

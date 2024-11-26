@@ -4,7 +4,12 @@ import { detailArticle } from "@/api/board"
 import { httpStatusCode } from "@/util/http-status"
 
 export const useArticleStore = defineStore("articleStore", () => {
-  const articleInfo = ref(null)
+  const articleInfo = ref({
+    articleNo: 0,
+    title: "",
+    content: "",
+    planNo : "",
+  });
 
   const getArticle = async (articleNo) => {
     await detailArticle(

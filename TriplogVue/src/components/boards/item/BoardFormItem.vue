@@ -6,6 +6,7 @@ import { useMemberStore } from "@/stores/member"
 import { useArticleStore } from "@/stores/article"
 import { registArticle, modifyArticle } from "@/api/board";
 import ArticleEditor from "@/components/boards/item/ArticleEditor.vue";
+import ThePlanView from "@/views/ThePlanView.vue";
 
 
 const router = useRouter();
@@ -24,10 +25,14 @@ const article = ref({
   title: articleInfo.value.title,
   content: articleInfo.value.content,
   userNo: userInfo.value.userNo,
+  planNo : articleInfo.value.planNo,
 });
 
 if (props.type !== 'modify') {
+  article.value.articleNo = 0;
   article.value.title = "";
+  article.value.content = "";
+  article.value.planNo = 0;
   article.value.content = "";
   articleInfo.value.content = "";
 }
@@ -100,6 +105,23 @@ function updateArticle() {
   );
 }
 
+const viewPlan = ref(false);
+
+function makePlanList(){
+  viewPlan.value = !viewPlan.value;
+}
+
+function unLinkPlan(){
+  article.value.planNo = 0;
+  articleInfo.value.planNo = 0;
+}
+
+function usePlanNo(planNo) {
+    console.log('Selected planNo:', planNo);
+    article.value.planNo = planNo
+}
+
+
 function moveList() {
   router.push({ name: "article-list" });
 }
@@ -123,8 +145,10 @@ function moveList() {
         </div>
       </div>
     </div>
+    <a href="#" v-if="article.planNo == 0" class="text-decoration-none text-muted" @click="makePlanList">플랜 등록</a>
+    <a href="#" v-if="article.planNo != 0" class="text-decoration-none text-muted" @click="unLinkPlan">플랜 삭제</a>
     <div class="col-auto text-center">
-      <button type="submit" class="btn btn-outline-primary mb-3" v-if="type === 'regist'">
+      <button type="submit" class="btn btn-outline-primary mb-3 ms-1" v-if="type === 'regist'">
         글작성
       </button>
       <button type="submit" class="btn btn-outline-success mb-3" v-else>글수정</button>
@@ -133,4 +157,10 @@ function moveList() {
       </button>
     </div>
   </form>
+  <div v-if="viewPlan">
+    <ThePlanView
+      type="mkarticle"
+      @plan-selected="usePlanNo"
+    />
+  </div>
 </template>
