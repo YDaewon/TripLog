@@ -3,7 +3,6 @@ package com.triplog.attraction.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +45,15 @@ public class AttractionController {
 		return ResponseEntity.ok(list);
 	}
 	
+	@GetMapping("/{planNo}")
+	@Operation(summary = "관광지 목록 검색", description = "플랜에 포함된 관광지 리스트를 불러옴")
+	public ResponseEntity<?> getAttractionList(
+			@Parameter(description = "플랜 번호") @PathVariable int planNo) {
+		System.out.println(planNo);
+		List<AttractionDto> list = attractionService.getAttractions(planNo);
+		return ResponseEntity.ok(list);
+	}
+	
 	@GetMapping("/info/{attractionNo}")
 	@Operation(summary = "관광지 상세정보", description = "attractionNo 번호의 관광지 정보를 불러옴")
 	public ResponseEntity<AttractionDto> getDetailAttraction(
@@ -66,22 +74,10 @@ public class AttractionController {
 	public ResponseEntity<?> getSidos() {
 		List<Map<String, String>> sidos = attractionService.getSidos();
 		if(sidos!=null) {
-			System.out.println(sidos);
 			return new ResponseEntity<>(sidos, HttpStatus.OK);
 		}else {
 	        return new ResponseEntity<>("시/도 목록을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 		}
-	}
-	
-	@GetMapping("/sido-counts")
-	@Operation(summary = "시도별 여행지 수", description = "시도별 여행지 수를 반환합니다.")
-	public ResponseEntity<?> getSidoCounts() {
-	    List<Map<String, Object>> counts = attractionService.getSidoCounts();
-	    if (counts != null && !counts.isEmpty()) {
-	        return new ResponseEntity<>(counts, HttpStatus.OK);
-	    } else {
-	        return new ResponseEntity<>("데이터를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
-	    }
 	}
 	
 	@GetMapping("/gugun")

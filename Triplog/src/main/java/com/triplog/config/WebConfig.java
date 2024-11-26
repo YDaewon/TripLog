@@ -43,7 +43,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
-                .addPathPatterns("/user/info/**", "/attraction/info/**", "/plan/**", "/article/**", "/comment/**")          // JWT 검사할 경로
+                .addPathPatterns("/user/info/**", "/attraction/info/**", "/plan/**", "/article/**")          // JWT 검사할 경로
                 .excludePathPatterns();
     }
 }
