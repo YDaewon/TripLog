@@ -172,20 +172,4 @@ public class ArticleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("삭제 중 문제 발생");
         }
     }
-	
-	@PutMapping("/link/")
-	@Operation(summary = "플랜 링크", description = "planNo에 해당하는 플랜으로 아티클과 연결")
-    public ResponseEntity<String> linkPlan(
-    		@Parameter(description = "플랜 번호", required = true)
-    		@RequestParam Map<String, Integer> map, HttpServletRequest request) {
-		int planNo = map.get("planNo");
-		int articleNo = map.get("articleNo");
-        try {
-            articleService.linkPlan(articleNo, planNo);
-            return ResponseEntity.ok("즐겨찾기 삭제 성공");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("삭제 중 문제 발생");
-        }
-    }
-	
 }
