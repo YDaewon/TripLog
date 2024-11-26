@@ -24,6 +24,11 @@ public class AttractionServiceImpl implements AttractionService{
 		return attractionMapper.getAttractions(map);
 	}
 
+	// @Override
+	// public List<AttractionDto> getAttractions(int planNo) {
+	// 	return attractionMapper.getAttractions(planNo);
+	// }
+
 	@Override
 	public void UpdateHitCount(int attractionNo) {
 		attractionMapper.UpdateHitCount(attractionNo);

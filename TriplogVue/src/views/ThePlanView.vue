@@ -4,11 +4,13 @@ import { getPlans, createPlan } from "@/api/plan";
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member";
 import { useArticleStore } from "@/stores/article";
+import { usePlanStore } from "@/stores/plan";
 import PlanCard from "@/components/plan/PlanCard.vue";
 import router from "@/router";
 import PlanDate from "@/components/plan/PlanDate.vue";
+const planStore = usePlanStore();
+const { plans, isEditMode } = storeToRefs(planStore);
 
-const plans = ref([]);
 const memberStore = useMemberStore();
 const { userInfo } = storeToRefs(memberStore);
 
@@ -21,18 +23,12 @@ const props = defineProps({
 });
 
 const isModalOpen = ref(false);
-const selectedRange = ref({
-  startDate: null,
-  endDate: null,
-});
 const openModal = () => {
   isModalOpen.value = true;
 };
-
 const closeModal = () => {
   isModalOpen.value = false;
 };
-
 const formatDate = (date) => {
   if (!date) return "";
   const d = new Date(date);
@@ -41,7 +37,6 @@ const formatDate = (date) => {
   const day = String(d.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
-
 const handleDateSelect = (range) => {
   newPlan(range);
 };
@@ -97,7 +92,13 @@ const selectedPlanNo = ref(0);
 function handlePlanClick(plan){
   selectedPlanNo.value = plan.planNo;
 }
-
+const onClickPlanCard = (plan) => {
+  isEditMode.value = false;
+  router.push({
+    name: "planDetail",
+    params: { planNo: plan.planNo },
+  });
+};
 </script>
 
 <template>
@@ -113,7 +114,7 @@ function handlePlanClick(plan){
         :key="plan.planNo"
         :plan="plan"
         :is-selected="plan.planNo === selectedPlanNo"
-        @click= "type !== 'mkarticle' && type !== 'viewarticle' ? $router.push({name: 'planDetail', params: { planNo: plan.planNo, isEditMode: false },}) : handlePlanClick(plan)"
+        @click= "type !== 'mkarticle' && type !== 'viewarticle' ? onClickPlanCard(plan) : handlePlanClick(plan)"
       />
     </div>
   </div>
@@ -124,7 +125,7 @@ function handlePlanClick(plan){
         :key="plan.planNo"
         :plan="plan"
         :is-selected= true
-        @click= "$router.push({name: 'planDetail', params: { planNo: plan.planNo, isEditMode: false },})"
+        @click= "onClickPlanCard(plan)"
       />
     </div>
     <PlanDate
