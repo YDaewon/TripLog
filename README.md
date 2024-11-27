@@ -10,8 +10,8 @@
 <br>
 
 ## 팀원 구성
-[양대원(YDaewon)] (https://github.com/YDaewon)
-[김휘동(HwiDong6831)] (https://github.com/HwiDong6831)
+[양대원(YDaewon)](https://github.com/YDaewon) <br>
+[김휘동(HwiDong6831)](https://github.com/HwiDong6831)
 
 <br>
 
@@ -81,7 +81,7 @@
 ![E-R 다이어그램](docs/DB/ERD.PNG)
 
 ## 3. 역할 분담
-게시판, 유저, 챗봇, 차트, UI: 양대원
+게시판, 유저, 챗봇, 차트, UI: 양대원 <br>
 여행지 정보, 플랜 관리: 김휘동 
 
 ## 4. 개발 기간
@@ -90,9 +90,9 @@
 
 ## 5. 신경 쓴 부분
 #### 5-1. 게시판 웹 에디터
-- 참고자료: [CKEditor5] (https://ckeditor.com/docs/ckeditor5/latest/getting-started/index.html)
+- 참고자료: [CKEditor5](https://ckeditor.com/docs/ckeditor5/latest/getting-started/index.html)
 #### 5-2. 챗봇
-- 참고자료: [ChatGPT] (https://chatgpt.com/)
+- 참고자료: [ChatGPT](https://chatgpt.com/)
 
 
 ## 6. 페이지별 기능
@@ -109,7 +109,7 @@
 #### 6.6 챗봇
 ![챗봇](docs/기능소개/슬라이드10.PNG)
 
-## 10. 프로젝트 후기
+## 7. 프로젝트 후기
 #### 양대원
 짧은 시간 동안 구현해서 생각했던 기능들을 모두 구현하지 못한 점이 아쉬움. 
 특히 여행의 포크나, 챗봇의 활용도가 미비하다고 느껴졌음.
